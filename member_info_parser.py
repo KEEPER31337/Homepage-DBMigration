@@ -60,4 +60,4 @@ def parseExtraVars(extraVars) :
 
 if __name__ == "__main__" :
     extraVars = input()
-    print(parseExtraVars(extraVars))
+    parseExtraVars(extraVars)
