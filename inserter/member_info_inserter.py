@@ -1,6 +1,6 @@
 
-# Add phone/student number columns, parse extra_vars column and update rows
-# If there is phone/student number column already, it doesn't work. Please drop both of them.
+# Add student number columns, parse extra_vars column and update rows
+# If there is student number column already, it doesn't work. Please drop it.
 # Need member_info_parser.py
 
 from pymysql import connect, cursors
@@ -22,16 +22,14 @@ def getDBCursor(db) :
     return db.cursor(cursors.DictCursor)
 
 def addColumns(cursor) :
-    addPhoneNumberColumnSql = "ALTER TABLE xe_member ADD phone_number VARCHAR(45) DEFAULT NULL"
 
     addStudentNumberColumnSql = "ALTER TABLE xe_member ADD student_number VARCHAR(45) DEFAULT NULL"
 
     try :
-        cursor.execute(addPhoneNumberColumnSql)
         cursor.execute(addStudentNumberColumnSql)
     
     except OperationalError as oe:
-        print(f"{oe} : There is phone or student number column already! Please drop both of them.")
+        print(f"{oe} : There is student number column already! Please drop it.")
         return 1
     
     return 0
@@ -53,7 +51,7 @@ def appendInfo(tableRows) :
     return tableRows
 
 def updateRows(cursor, data, db) :
-    updateMemberSql = "UPDATE xe_member SET phone_number = %s, student_number = %s WHERE member_srl = %s;"
+    updateMemberSql = "UPDATE xe_member SET student_number = %s WHERE member_srl = %s;"
     # 일반 포맷과는 다르게 PyMySQL의 placeholder는 값을 전부 %s로 대치
 
     cursor.executemany(updateMemberSql,data)
@@ -64,7 +62,6 @@ def convertDictToData(dicts) :
     data = []
     for singleDict in dicts :
         singleData = [
-            singleDict['phone_number'],
             singleDict['student_number'],
             singleDict['member_srl']
         ]
