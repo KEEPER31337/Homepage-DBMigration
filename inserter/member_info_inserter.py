@@ -69,12 +69,22 @@ def convertDictToData(dicts) :
     
     return data
 
+def insertMemberInfo(cursor) :
+    addColumns(cursor)
+    
+    tableRows = getRows(cursor)
+    tableRows = appendInfo(tableRows)
+
+    data = convertDictToData(tableRows)
+
+    updateRows(cursor, data, keeper_db)
+
 
 if __name__ == "__main__" :
     keeper_db = getDB()
     cursor = getDBCursor(keeper_db)
     
-    if (addColumns(cursor)) : exit()
+    if (addColumns(cursor)) : exit() # 이미 학번 column이 존재할때
 
     tableRows = getRows(cursor)
     tableRows = appendInfo(tableRows)
