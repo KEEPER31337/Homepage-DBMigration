@@ -1,5 +1,5 @@
 from src.db_controller.db_controller import DBController
-from seperator.job_seperator import JobSeperator
+from src.seperator.job_seperator import JobSeperator
 
 
 if __name__ == "__main__":
