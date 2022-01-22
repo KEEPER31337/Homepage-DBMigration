@@ -1,13 +1,13 @@
-from my_database import MyDatabase
+from db_controller.my_database import DBController
 from seperator.job_seperator import JobSeperator
 
 
 if __name__ == "__main__":
-    oldDB = MyDatabase()
+    oldDB = DBController()
     oldDB.setDBName("keeper")
     oldDB.setDB()
 
-    newDB = MyDatabase()
+    newDB = DBController()
     newDB.setDBName("keeper_new")
     newDB.setDB()
 

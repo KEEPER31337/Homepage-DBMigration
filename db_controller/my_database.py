@@ -2,7 +2,7 @@ from pymysql import connect, cursors
 
 from seperator.job_seperator import JobSeperator
 
-class MyDatabase :
+class DBController :
     db = ""
     user = 'root'
     passwd = ''
