@@ -1,7 +1,5 @@
 from pymysql import connect, cursors
 
-from seperator.job_seperator import JobSeperator
-
 class DBController :
     db = ""
     user = 'root'
@@ -9,8 +7,6 @@ class DBController :
     host = '127.0.0.1'
     dbName = ''
     charset='utf8'
-
-    jobSperator = ""
     
     def setUser(self,user) : self.user = user
     def setDBName(self,dbName) : self.dbName = dbName

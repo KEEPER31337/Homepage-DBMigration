@@ -1,4 +1,4 @@
-from db_controller.my_database import DBController
+from src.db_controller.db_controller import DBController
 from seperator.job_seperator import JobSeperator
 
 
