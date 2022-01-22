@@ -1,3 +1,4 @@
+from src.db_controller.db_controller import DBController
 
 class JobSeperator :
     oldJobSrlDict = {}
@@ -16,23 +17,23 @@ class JobSeperator :
     insertJobMemberTableSql = "INSERT INTO test VALUES(%(member_id)s,%(member_job_id)s)"
 
 
-    def addJobSrl(self,jobName,oldSrl,newSrl) :
+    def addJobSrl(self, jobName: str, oldSrl: int, newSrl: int) -> None:
         self.oldJobSrlDict[jobName] = oldSrl
         self.oldJobSrlDictReversed[oldSrl] = jobName
         self.newJobSrlDict[jobName] = newSrl
 
-    def getSelectJobMemberSrlSql(self) :
+    def getSelectJobMemberSrlSql(self) -> str :
         conditionFormat = "%s"
         for i in range(len(self.oldJobSrlDict)-1) : conditionFormat += ",%s"
         conditionFormat += "));"
 
         return self.selectJobMemberSrlSql + conditionFormat
 
-    def getOldSrlData(self) : return tuple(self.oldJobSrlDict.values())
+    def getOldSrlData(self) -> tuple : return tuple(self.oldJobSrlDict.values())
 
-    def getNewSrlData(self) : return tuple(self.newJobSrlDict.values())
+    def getNewSrlData(self) -> tuple : return tuple(self.newJobSrlDict.values())
 
-    def setJobMemberTable(self,oldDB) :
+    def setJobMemberTable(self, oldDB: DBController) :
         cursor = oldDB.getCursor()
         cursor.execute(
             self.getSelectJobMemberSrlSql(),
@@ -50,7 +51,7 @@ class JobSeperator :
         
         self.newJobMemberTable = tmp
 
-    def insertJobMemberTable(self,newDB) :
+    def insertJobMemberTable(self, newDB: DBController) :
         self.updateJobMemberTable()
         cursor = newDB.getCursor()
         cursor.executemany(

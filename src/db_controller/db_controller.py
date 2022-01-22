@@ -1,4 +1,5 @@
 from pymysql import connect, cursors
+from pymysql.connections import Connection
 
 class DBController :
     db = ""
@@ -8,9 +9,9 @@ class DBController :
     dbName = ''
     charset='utf8'
     
-    def setUser(self,user) : self.user = user
-    def setDBName(self,dbName) : self.dbName = dbName
-    def setPasswd(self,passwd) : self.passwd = passwd
+    def setUser(self, user: str) : self.user = user
+    def setDBName(self, dbName: str) : self.dbName = dbName
+    def setPasswd(self, passwd: str) : self.passwd = passwd
 
     def setDB(self) :
         self.db = connect(user=self.user,
@@ -20,8 +21,7 @@ class DBController :
         charset=self.charset
     )
 
-    def getDB(self) : return self.db
+    def getDB(self) -> Connection : return self.db
 
-    def getCursor(self) :
-        return self.db.cursor(cursors.DictCursor)
+    def getCursor(self) -> cursors.DictCursor : return self.db.cursor(cursors.DictCursor)
 
