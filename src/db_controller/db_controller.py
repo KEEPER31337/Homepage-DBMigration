@@ -25,3 +25,12 @@ class DBController :
 
     def getCursor(self) -> cursors.DictCursor : return self.db.cursor(cursors.DictCursor)
 
+    def selectTable(self, selctQuery: str, data: list) -> list :
+        cursor = self.getCursor()
+        cursor.execute(selctQuery,data)
+        return cursor.fetchall()
+
+    def insertUpdateTable(self, insertUpdateQuery: str, data: list) -> None :
+        cursor = self.getCursor()
+        cursor.executemany(insertUpdateQuery,data)
+        self.db.commit()
