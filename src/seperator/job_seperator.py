@@ -59,5 +59,6 @@ class JobSeperator :
             self.newJobMemberTable
         )
         newDB.getDB().commit()
-
+        
+    
     
