@@ -1,4 +1,4 @@
-from seperator.type_rank_seperator import TypeRankSeperator
+from group_seperator.type_rank_seperator import TypeRankSeperator
 
 class TypeSeperator(TypeRankSeperator):
 

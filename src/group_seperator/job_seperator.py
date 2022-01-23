@@ -1,4 +1,4 @@
-from seperator.group_seperator import GroupSeperator
+from src.group_seperator.group_seperator import GroupSeperator
 from src.db_controller.db_controller import DBController
 
 
