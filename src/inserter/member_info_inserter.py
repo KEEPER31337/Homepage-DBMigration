@@ -5,31 +5,32 @@
 
 from pymysql import connect, cursors
 from pymysql.err import OperationalError
-from inserter.extra_vars_parser import parseExtraVars
+from db_controller.db_controller import DBController
+from inserter.extra_vars_parser import ExtraVarsParser
 
 class ExtraVarsInserter:
-    addStudentNumberColumnSql = "ALTER TABLE xe_member ADD student_number VARCHAR(45) DEFAULT NULL"
-    def addColumns(cursor) :
-        cursor.execute(addStudentNumberColumnSql)
+    addStudentNumberColumnQuery = "ALTER TABLE xe_member ADD student_number VARCHAR(45) DEFAULT NULL"
+    selectMemberQuery = "SELECT member_srl, extra_vars FROM `xe_member`;"
+    updateMemberQuery = "UPDATE xe_member SET student_number = %s WHERE member_srl = %s;"
 
-    def getRows(cursor) :
-        selectMemberSql = "SELECT member_srl, extra_vars FROM `xe_member`;"
-        cursor.execute(selectMemberSql)
+    def addColumns(self,oldDB: DBController) :
+        oldDB.getCursor().execute(self.addStudentNumberColumnQuery)
+
+    def getMemberRows(self,oldDB: DBController) :
+        cursor = oldDB.getCursor()
+        cursor.execute(self.selectMemberQuery)
         return cursor.fetchall()
 
-    def appendInfo(tableRows) :
-        for i, row in enumerate(tableRows) :
+    def appendInfo(self,memberRows) :
+        for i, row in enumerate(memberRows) :
             print(f"Member serial : {row['member_srl']}")
-            extraVars = parseExtraVars(row['extra_vars'])
+            parsedExtraVars = ExtraVarsParser.parseExtraVars(row['extra_vars'])
             print()
-            tableRows[i].update(extraVars)
+            memberRows[i].update(parsedExtraVars)
         
-        return tableRows
+        return memberRows
 
     def updateRows(cursor, data, db) :
-        updateMemberSql = "UPDATE xe_member SET student_number = %s WHERE member_srl = %s;"
-        # 일반 포맷과는 다르게 PyMySQL의 placeholder는 값을 전부 %s로 대치
-
         cursor.executemany(updateMemberSql,data)
         db.commit()
 
@@ -60,7 +61,7 @@ if __name__ == "__main__" :
     keeper_db = getDB()
     cursor = getDBCursor(keeper_db)
     
-    if (addColumns(cursor)) : exit() # 이미 학번 column이 존재할때
+    addColumns(cursor)
 
     tableRows = getRows(cursor)
     tableRows = appendInfo(tableRows)
