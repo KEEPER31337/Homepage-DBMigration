@@ -5,79 +5,55 @@
 
 from pymysql import connect, cursors
 from pymysql.err import OperationalError
-from member_info_parser import parseExtraVars
+from inserter.extra_vars_parser import parseExtraVars
 
-def getDB() :
-    db = connect(
-        user='root', # Your mysql username
-        passwd='', # Your mysql password
-        host='127.0.0.1',
-        db='keeper',
-        charset='utf8'
-    )
-
-    return db
-
-def getDBCursor(db) :
-    return db.cursor(cursors.DictCursor)
-
-def addColumns(cursor) :
-
+class ExtraVarsInserter:
     addStudentNumberColumnSql = "ALTER TABLE xe_member ADD student_number VARCHAR(45) DEFAULT NULL"
-
-    try :
+    def addColumns(cursor) :
         cursor.execute(addStudentNumberColumnSql)
-    
-    except OperationalError as oe:
-        print(f"{oe} : There is student number column already! Please drop it.")
-        return 1
-    
-    return 0
 
-def getRows(cursor) :
-    selectMemberSql = "SELECT member_srl, extra_vars FROM `xe_member`;"
-    cursor.execute(selectMemberSql)
-    result = cursor.fetchall()
+    def getRows(cursor) :
+        selectMemberSql = "SELECT member_srl, extra_vars FROM `xe_member`;"
+        cursor.execute(selectMemberSql)
+        return cursor.fetchall()
 
-    return result
+    def appendInfo(tableRows) :
+        for i, row in enumerate(tableRows) :
+            print(f"Member serial : {row['member_srl']}")
+            extraVars = parseExtraVars(row['extra_vars'])
+            print()
+            tableRows[i].update(extraVars)
+        
+        return tableRows
 
-def appendInfo(tableRows) :
-    for i, row in enumerate(tableRows) :
-        print(f"Member serial : {row['member_srl']}")
-        extraVars = parseExtraVars(row['extra_vars'])
-        print()
-        tableRows[i].update(extraVars)
-    
-    return tableRows
+    def updateRows(cursor, data, db) :
+        updateMemberSql = "UPDATE xe_member SET student_number = %s WHERE member_srl = %s;"
+        # 일반 포맷과는 다르게 PyMySQL의 placeholder는 값을 전부 %s로 대치
 
-def updateRows(cursor, data, db) :
-    updateMemberSql = "UPDATE xe_member SET student_number = %s WHERE member_srl = %s;"
-    # 일반 포맷과는 다르게 PyMySQL의 placeholder는 값을 전부 %s로 대치
-
-    cursor.executemany(updateMemberSql,data)
-    db.commit()
+        cursor.executemany(updateMemberSql,data)
+        db.commit()
 
 
-def convertDictToData(dicts) :
-    data = []
-    for singleDict in dicts :
-        singleData = [
-            singleDict['student_number'],
-            singleDict['member_srl']
-        ]
-        data.append(singleData)
-    
-    return data
+    def convertDictToData(dicts) :
+        data = []
+        for singleDict in dicts :
+            singleData = [
+                singleDict['student_number'],
+                singleDict['member_srl']
+            ]
+            data.append(singleData)
+        
+        return data
 
-def insertMemberInfo(cursor) :
-    addColumns(cursor)
-    
-    tableRows = getRows(cursor)
-    tableRows = appendInfo(tableRows)
+    def insertMemberInfo(cursor) :
+        addColumns(cursor)
+        
+        tableRows = getRows(cursor)
+        tableRows = appendInfo(tableRows)
 
-    data = convertDictToData(tableRows)
+        data = convertDictToData(tableRows)
 
-    updateRows(cursor, data, keeper_db)
+        updateRows(cursor, data, keeper_db)
 
 
 if __name__ == "__main__" :
