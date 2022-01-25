@@ -1,9 +1,10 @@
+from typing import Dict, List, Union
 from db_controller.db_controller import DBController
 
 
 class GroupSeperator:
-    oldGroupSrlDict = {}
-    newGroupSrlDict = {}
+    oldGroupSrlDict: Dict[str, int] = dict()
+    newGroupSrlDict: Dict[str, int] = dict()
 
     selectGroupSrlQueryFormat = (
         "SELECT t1.member_srl AS {memberSrlCol}, t2.group_srl AS {groupSrlCol}, t2.title AS {groupTitleCol}"
@@ -16,9 +17,9 @@ class GroupSeperator:
     groupSrlCol = "group_id"
     groupTitleCol = "group_name"
 
-    oldGroupTable = []
-    newGroupTable = []
-
+    oldGroupTable: List[Dict[str, Union[int, str]]] = list()
+    newGroupTable: List[Dict[str, Union[int, str]]] = list()
+    
     def __init__(self) -> None:
         # Columns are set as default value.
         pass
@@ -52,11 +53,10 @@ class GroupSeperator:
     def getSelectGroupSrlQuery(self) -> str:
         return self.formatSelectGroupQuery() + self.getSelectGroupConditionFormat()
 
-    def getOldSrlData(self) -> list: return list(self.oldGroupSrlDict.values())
+    def getOldSrlData(self) -> List[int]:
+        return list(self.oldGroupSrlDict.values())
 
-    def getNewSrlData(self) -> list: return list(self.newGroupSrlDict.values())
-
-    def updateGroupTable(self) -> list:
+    def updateGroupTable(self) -> List[Dict[str, Union[int, str]]]:
         tmp = self.oldGroupTable
 
         for i, d in enumerate(tmp):
@@ -67,7 +67,7 @@ class GroupSeperator:
 
         return self.newGroupTable
 
-    def selectGroupTable(self, oldDB: DBController) -> list:
+    def selectGroupTable(self, oldDB: DBController) -> List[Dict[str, Union[int, str]]]:
         cursor = oldDB.getCursor()
         cursor.execute(
             self.getSelectGroupSrlQuery(),

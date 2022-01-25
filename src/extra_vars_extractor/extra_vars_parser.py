@@ -1,5 +1,7 @@
 # Input xpress engine database extravars.
 # Output student number as dictionary
+from pickle import LIST
+from typing import Dict, List
 
 class ExtraVarsParser:
 
@@ -8,7 +10,7 @@ class ExtraVarsParser:
         return rawValue.split(':')[-1].strip('\"')
 
     @classmethod
-    def parseStudentNumber(cls, splitedExtraVars: list) -> str:
+    def parseStudentNumber(cls, splitedExtraVars: List[str]) -> str:
         studentNumberKey = "s:13:\"studentnumber\""
 
         try:
@@ -24,7 +26,7 @@ class ExtraVarsParser:
         return studentNumber
 
     @classmethod
-    def parseExtraVars(cls, extraVars: str) -> dict:
+    def parseExtraVars(cls, extraVars: str) -> Dict[str,str]:
         splitedExtraVars = extraVars.split(';')
         splitedExtraVars = [x.strip('}').strip('{') for x in splitedExtraVars]
 

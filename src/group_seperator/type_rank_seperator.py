@@ -4,7 +4,7 @@ from src.db_controller.db_controller import DBController
 
 class TypeRankSeperator(GroupSeperator):
 
-    typeRankIdCol = ""
+    typeRankIdCol: str
     updateTypeRankQueryFormat = ("UPDATE member"
                                  " SET {typeRankIdCol} = %({groupSrlCol})s"
                                  " WHERE id = %({memberSrlCol})s;")
