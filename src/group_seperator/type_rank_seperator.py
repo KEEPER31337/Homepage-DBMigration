@@ -22,3 +22,7 @@ class TypeRankSeperator(GroupSeperator):
             self.updateGroupTable()
         )
         newDB.getDB().commit()
+
+    def seperateTypeRank(self) -> None:
+        self.selectGroupTable(self.oldDBController)
+        self.updateTypeRankTable(self.newDBController)

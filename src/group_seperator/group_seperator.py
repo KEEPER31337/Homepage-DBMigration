@@ -3,6 +3,9 @@ from db_controller.db_controller import DBController
 
 
 class GroupSeperator:
+    oldDBController: DBController
+    newDBController: DBController
+
     oldGroupSrlDict: Dict[str, int] = dict()
     newGroupSrlDict: Dict[str, int] = dict()
 
@@ -19,7 +22,7 @@ class GroupSeperator:
 
     oldGroupTable: List[Dict[str, Union[int, str]]] = list()
     newGroupTable: List[Dict[str, Union[int, str]]] = list()
-    
+
     def __init__(self) -> None:
         # Columns are set as default value.
         pass
@@ -31,6 +34,12 @@ class GroupSeperator:
         self.memberSrlCol = memberSrlCol
         self.groupSrlCol = groupSrlCol
         self.groupTitleCol = groupTitleCol
+
+    def setOldDBController(self, dbController: DBController):
+        self.oldDBController = dbController
+
+    def setNewDBController(self, dbController: DBController):
+        self.newDBController = dbController
 
     def addGroupSrl(self, groupName: str, oldSrl: int, newSrl: int) -> None:
         self.oldGroupSrlDict[groupName] = oldSrl

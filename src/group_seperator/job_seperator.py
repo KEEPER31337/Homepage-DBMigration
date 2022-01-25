@@ -20,3 +20,7 @@ class JobSeperator(GroupSeperator):
             self.updateGroupTable()
         )
         newDB.getDB().commit()
+
+    def seperateJob(self):
+        self.selectGroupTable(self.oldDBController)
+        self.insertJobTable(self.newDBController)
