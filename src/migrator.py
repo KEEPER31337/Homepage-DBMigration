@@ -1,7 +1,8 @@
+from db_controller.db_controller import DBController
+from extra_vars_extractor.extra_vars_inserter import ExtraVarsInserter
+from group_seperator.job_seperator import JobSeperator
 from group_seperator.rank_seperator import RankSeperator
 from group_seperator.type_seperator import TypeSeperator
-from src.db_controller.db_controller import DBController
-from src.group_seperator.job_seperator import JobSeperator
 
 
 if __name__ == "__main__":
@@ -12,6 +13,14 @@ if __name__ == "__main__":
     newDB = DBController()
     newDB.setDBName("keeper_new")
     newDB.setDB()
+
+    # --------------------------------------
+
+    extraVarsInserter = ExtraVarsInserter()
+    extraVarsInserter.setDBController(oldDB)
+    # extraVarsInserter.insertExtraVars()
+
+    # --------------------------------------
 
     jobSeperator = JobSeperator()
     jobSeperator.setOldDBController(oldDB)
@@ -27,9 +36,9 @@ if __name__ == "__main__":
     jobSeperator.addGroupSrl("사서", 75521, 8)
 
     jobSeperator.seperateJob()
-    
+
     # --------------------------------------
-    
+
     typeSeperator = TypeSeperator()
     typeSeperator.setOldDBController(oldDB)
     typeSeperator.setNewDBController(newDB)
@@ -41,9 +50,9 @@ if __name__ == "__main__":
     typeSeperator.addGroupSrl("탈퇴", 51938, 5)
 
     typeSeperator.seperateTypeRank()
-    
+
     # --------------------------------------
-    
+
     rankSeperator = RankSeperator()
     rankSeperator.setOldDBController(oldDB)
     rankSeperator.setNewDBController(newDB)
@@ -51,3 +60,5 @@ if __name__ == "__main__":
     rankSeperator.addGroupSrl("신입회원", 21359, 1)
     rankSeperator.addGroupSrl("우수회원", 28004, 2)
     rankSeperator.addGroupSrl("특별회원", 52603, 3)
+
+    rankSeperator.seperateTypeRank()

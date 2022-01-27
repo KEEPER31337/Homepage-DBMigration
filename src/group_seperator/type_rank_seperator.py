@@ -1,5 +1,5 @@
 from group_seperator.group_seperator import GroupSeperator
-from src.db_controller.db_controller import DBController
+from db_controller.db_controller import DBController
 
 
 class TypeRankSeperator(GroupSeperator):

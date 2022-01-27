@@ -1,4 +1,5 @@
 from typing import Dict, List, Union
+from multipledispatch import dispatch
 from db_controller.db_controller import DBController
 
 
@@ -23,13 +24,17 @@ class GroupSeperator:
     oldGroupTable: List[Dict[str, Union[int, str]]] = list()
     newGroupTable: List[Dict[str, Union[int, str]]] = list()
 
+    @dispatch()
     def __init__(self) -> None:
         # Columns are set as default value.
-        pass
+        print("init void")
+        # pass
 
+    @dispatch(str)
     def __init__(self, groupSrlCol: str) -> None:
         self.groupSrlCol = groupSrlCol
 
+    @dispatch(str, str, str)
     def __init__(self, memberSrlCol: str, groupSrlCol: str, groupTitleCol: str) -> None:
         self.memberSrlCol = memberSrlCol
         self.groupSrlCol = groupSrlCol
@@ -73,7 +78,7 @@ class GroupSeperator:
             tmp[i][self.groupSrlCol] = self.newGroupSrlDict[job]
 
         self.newGroupTable = tmp
-
+        print(self.newGroupTable)
         return self.newGroupTable
 
     def selectGroupTable(self, oldDB: DBController) -> List[Dict[str, Union[int, str]]]:
