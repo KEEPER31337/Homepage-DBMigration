@@ -34,6 +34,7 @@ if __name__ == "__main__":
     jobSeperator.addGroupSrl("서기", 34601, 6)
     jobSeperator.addGroupSrl("총무", 34602, 7)
     jobSeperator.addGroupSrl("사서", 75521, 8)
+    jobSeperator.setDefaultJobId(9)
 
     jobSeperator.seperateJob()
 
