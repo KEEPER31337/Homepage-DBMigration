@@ -19,10 +19,9 @@ class TypeRankSeperator(GroupSeperator):
         cursor = newDB.getCursor()
         cursor.executemany(
             self.getUpdateTypeRankQuery(),
-            self.updateGroupTable()
+            self.getGroupTable()
         )
         newDB.getDB().commit()
 
     def seperateTypeRank(self) -> None:
-        self.selectGroupTable(self.oldDBController)
         self.updateTypeRankTable(self.newDBController)

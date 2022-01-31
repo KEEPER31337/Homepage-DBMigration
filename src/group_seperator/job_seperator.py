@@ -8,7 +8,7 @@ class JobSeperator(GroupSeperator):
 
     groupSrlCol = "member_job_id"
     defaultJobId: int
-    memberSrlTable: List[Dict[str, int]] = list()
+
     insertJobQueryFormat = ("INSERT INTO test"
                             " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
 
@@ -34,22 +34,22 @@ class JobSeperator(GroupSeperator):
     def setDefaultJobId(self, id: int) -> None:
         self.defaultJobId = id
 
-    def getDefaultJobData(self) -> List[Dict[str, int]]:
-        memberSrlTable = self.selectMemberSrlTable()
+    def getDefaultJobTable(self) -> List[Dict[str, int]]:
+        memberSrlTable = self.selectMemberSrlTable(self.newDBController)
         for i in enumerate(memberSrlTable):
             memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
 
         return memberSrlTable
 
-    def getJobSeperateData(self) -> List[Dict[str, Union[int, str]]]:
-        return self.updateGroupTable() + self.getDefaultJobData()
+    def getJobSeperateTable(self) -> List[Dict[str, Union[int, str]]]:
+        return self.getGroupTable() + self.getDefaultJobTable()
 
     def insertJobTable(self, newDB: DBController) -> None:
         cursor = newDB.getCursor()
 
         cursor.executemany(
             self.getInsertJobQuery(),
-            self.getJobSeperateData()
+            self.getJobSeperateTable()
         )
         newDB.getDB().commit()
 
