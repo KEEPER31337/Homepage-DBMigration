@@ -1,6 +1,6 @@
-from group_seperator.group_seperator import GroupSeperator, Table
+from group_seperator.group_seperator import GroupSeperator
 from db_controller.db_controller import DBController
-
+from utils.typedef import Table
 
 class JobSeperator(GroupSeperator):
 

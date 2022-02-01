@@ -1,8 +1,6 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 from db_controller.db_controller import DBController
-
-Table = List[Dict[str, Union[int, str]]]
-
+from utils.typedef import Table
 
 class GroupSeperator:
     oldDBController: DBController
