@@ -2,6 +2,7 @@ from typing import Dict, List
 from db_controller.db_controller import DBController
 from utils.typedef import Table
 
+
 class GroupSeperator:
     oldDBController: DBController
     newDBController: DBController
@@ -30,10 +31,10 @@ class GroupSeperator:
         self.groupSrlCol = groupSrlCol
         self.groupTitleCol = groupTitleCol
 
-    def setOldDBController(self, dbController: DBController):
+    def setOldDBController(self, dbController: DBController) -> None:
         self.oldDBController = dbController
 
-    def setNewDBController(self, dbController: DBController):
+    def setNewDBController(self, dbController: DBController) -> None:
         self.newDBController = dbController
 
     def addGroupSrl(self, groupName: str, oldSrl: int, newSrl: int) -> None:
@@ -60,8 +61,7 @@ class GroupSeperator:
     def getOldSrlData(self) -> List[int]:
         return list(self.oldGroupSrlDict.values())
 
-    def updateGroupTable(self,
-                         oldGroupTable: Table) -> Table:
+    def editGroupTable(self, oldGroupTable: Table) -> Table:
         newGroupTable = oldGroupTable
 
         for i, d in enumerate(newGroupTable):
@@ -71,10 +71,10 @@ class GroupSeperator:
         return newGroupTable
 
     def getGroupTable(self) -> Table:
-        return self.updateGroupTable(self.selectGroupTable(self.oldDBController))
+        return self.editGroupTable(self.selectGroupTable())
 
-    def selectGroupTable(self, oldDB: DBController) -> Table:
-        cursor = oldDB.getCursor()
+    def selectGroupTable(self) -> Table:
+        cursor = self.oldDBController.getCursor()
         cursor.execute(
             self.getSelectGroupSrlQuery(),
             self.getOldSrlData()

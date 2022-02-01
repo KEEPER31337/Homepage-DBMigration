@@ -1,5 +1,4 @@
 from group_seperator.group_seperator import GroupSeperator
-from db_controller.db_controller import DBController
 
 
 class TypeRankSeperator(GroupSeperator):
@@ -16,13 +15,13 @@ class TypeRankSeperator(GroupSeperator):
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol)
 
-    def updateTypeRankTable(self, newDB: DBController) -> None:
-        cursor = newDB.getCursor()
+    def updateTypeRankTable(self) -> None:
+        cursor = self.newDBController.getCursor()
         cursor.executemany(
             self.getUpdateTypeRankQuery(),
             self.getGroupTable()
         )
-        newDB.getDB().commit()
+        self.newDBController.getDB().commit()
 
     def seperateTypeRank(self) -> None:
-        self.updateTypeRankTable(self.newDBController)
+        self.updateTypeRankTable()

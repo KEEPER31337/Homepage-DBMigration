@@ -1,5 +1,4 @@
 from group_seperator.group_seperator import GroupSeperator
-from db_controller.db_controller import DBController
 from utils.typedef import Table
 
 class JobSeperator(GroupSeperator):
@@ -25,8 +24,8 @@ class JobSeperator(GroupSeperator):
             memberSrlCol=self.memberSrlCol
         )
 
-    def selectMemberSrlTable(self, oldDB: DBController) -> Table:
-        cursor = oldDB.getCursor()
+    def selectMemberSrlTable(self) -> Table:
+        cursor = self.oldDBController.getCursor()
         cursor.execute(self.getSelectMemberSrlQuery())
 
         memberSrlTable = cursor.fetchall()
@@ -36,7 +35,7 @@ class JobSeperator(GroupSeperator):
         self.defaultJobId = id
 
     def getDefaultJobTable(self) -> Table:
-        memberSrlTable = self.selectMemberSrlTable(self.newDBController)
+        memberSrlTable = self.selectMemberSrlTable()
         for i in enumerate(memberSrlTable):
             memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
 
@@ -45,15 +44,14 @@ class JobSeperator(GroupSeperator):
     def getJobSeperateTable(self) -> Table:
         return self.getGroupTable() + self.getDefaultJobTable()
 
-    def insertJobTable(self, newDB: DBController) -> None:
-        cursor = newDB.getCursor()
+    def insertJobTable(self) -> None:
+        cursor = self.newDBController.getCursor()
 
         cursor.executemany(
             self.getInsertJobQuery(),
             self.getJobSeperateTable()
         )
-        newDB.getDB().commit()
+        self.newDBController.getDB().commit()
 
     def seperateJob(self) -> None:
-        self.selectGroupTable(self.oldDBController)
-        self.insertJobTable(self.newDBController)
+        self.insertJobTable()
