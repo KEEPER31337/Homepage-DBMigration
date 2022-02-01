@@ -50,7 +50,7 @@ if __name__ == "__main__":
     typeSeperator.addGroupSrl("졸업", 6236, 4)
     typeSeperator.addGroupSrl("탈퇴", 51938, 5)
 
-    typeSeperator.seperateTypeRank()
+    typeSeperator.seperateType()
 
     # --------------------------------------
 
@@ -62,4 +62,4 @@ if __name__ == "__main__":
     rankSeperator.addGroupSrl("우수회원", 28004, 2)
     rankSeperator.addGroupSrl("특별회원", 52603, 3)
 
-    rankSeperator.seperateTypeRank()
+    rankSeperator.seperateRank()
