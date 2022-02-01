@@ -3,7 +3,7 @@
 
 from db_controller.db_controller import DBController
 from extra_vars_extractor.extra_vars_parser import ExtraVarsParser
-from typing import Dict, List
+from utils.typedef import Table
 
 
 class ExtraVarsInserter:
@@ -12,7 +12,7 @@ class ExtraVarsInserter:
     updateMemberQuery = "UPDATE xe_member SET student_number = %(student_number)s WHERE member_srl = %(member_srl)s;"
 
     dbController: DBController
-    memberRows: List[Dict[str, str]]
+    memberRows: Table
 
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
@@ -20,13 +20,13 @@ class ExtraVarsInserter:
     def addColumns(self) -> None:
         self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
 
-    def selectMemberRows(self) -> List[Dict[str, str]]:
+    def selectMemberRows(self) -> Table:
         cursor = self.dbController.getCursor()
         cursor.execute(self.selectMemberQuery)
         self.memberRows = cursor.fetchall()
         return self.memberRows
 
-    def appendParsedExtraVars(self) -> List[Dict[str, str]]:
+    def appendParsedExtraVars(self) -> Table:
         for i, row in enumerate(self.memberRows):
             print(f"Member serial : {row['member_srl']}")
             parsedExtraVars = ExtraVarsParser.parseExtraVars(row['extra_vars'])
