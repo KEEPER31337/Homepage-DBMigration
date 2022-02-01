@@ -41,15 +41,15 @@ class JobSeperator(GroupSeperator):
 
         return memberSrlTable
 
-    def getJobSeperateTable(self) -> Table:
-        return self.getGroupTable() + self.getDefaultJobTable()
+    def getEditedJobTable(self) -> Table:
+        return self.getEditedGroupTable() + self.getDefaultJobTable()
 
     def insertJobTable(self) -> None:
         cursor = self.newDBController.getCursor()
 
         cursor.executemany(
             self.getInsertJobQuery(),
-            self.getJobSeperateTable()
+            self.getEditedJobTable()
         )
         self.newDBController.getDB().commit()
 

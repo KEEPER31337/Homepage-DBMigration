@@ -19,7 +19,7 @@ class TypeRankSeperator(GroupSeperator):
         cursor = self.newDBController.getCursor()
         cursor.executemany(
             self.getUpdateTypeRankQuery(),
-            self.getGroupTable()
+            self.getEditedGroupTable()
         )
         self.newDBController.getDB().commit()
 

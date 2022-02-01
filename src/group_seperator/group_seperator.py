@@ -70,7 +70,7 @@ class GroupSeperator:
 
         return newGroupTable
 
-    def getGroupTable(self) -> Table:
+    def getEditedGroupTable(self) -> Table:
         return self.editGroupTable(self.selectGroupTable())
 
     def selectGroupTable(self) -> Table:
