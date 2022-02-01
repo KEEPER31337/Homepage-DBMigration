@@ -1,6 +1,6 @@
 from lxml.html import clean
 from db_controller.db_controller import DBController
-
+from utils.typedef import Table
 
 class HtmlContentCleaner:
     oldDBController: DBController
@@ -27,13 +27,13 @@ class HtmlContentCleaner:
     def addCleanContentColumn(self) -> None:
         self.oldDBController.getCursor().execute(self.addCleanContentColumnQuery)
 
-    def selectDocument(self):
+    def selectDocument(self) -> Table:
         cursor = self.oldDBController.getCursor()
         cursor.execute(self.selectDocumentQuery)
         documentContent = cursor.fetchall()
         return documentContent
 
-    def getCleanContentTable(self):
+    def getCleanContentTable(self) -> Table:
         documentTable = self.selectDocument()
         cleaner = clean.Cleaner(safe_attrs_only=True,
                                 safe_attrs=self.safeAttributeSet)
