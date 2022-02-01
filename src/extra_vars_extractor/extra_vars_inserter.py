@@ -1,4 +1,3 @@
-
 # Add student number columns, parse extra_vars column and update rows.
 
 from db_controller.db_controller import DBController
@@ -7,12 +6,20 @@ from utils.typedef import Table
 
 
 class ExtraVarsInserter:
-    addStudentNumberColumnQuery = "ALTER TABLE xe_member ADD student_number VARCHAR(45) DEFAULT NULL"
-    selectMemberQuery = "SELECT member_srl, extra_vars FROM `xe_member`;"
-    updateMemberQuery = "UPDATE xe_member SET student_number = %(student_number)s WHERE member_srl = %(member_srl)s;"
+    addStudentNumberColumnQuery = (
+        "ALTER TABLE xe_member"
+        " ADD student_number VARCHAR(45) DEFAULT NULL")
+
+    selectMemberQuery = (
+        "SELECT member_srl, extra_vars"
+        " FROM `xe_member`;")
+
+    updateMemberQuery = (
+        "UPDATE xe_member"
+        " SET student_number = %(student_number)s"
+        " WHERE member_srl = %(member_srl)s;")
 
     dbController: DBController
-    memberRows: Table
 
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
@@ -20,28 +27,29 @@ class ExtraVarsInserter:
     def addColumns(self) -> None:
         self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
 
-    def selectMemberRows(self) -> Table:
+    def selectMemberTable(self) -> Table:
         cursor = self.dbController.getCursor()
         cursor.execute(self.selectMemberQuery)
-        self.memberRows = cursor.fetchall()
-        return self.memberRows
+        memberTable = cursor.fetchall()
+        return memberTable
 
-    def appendParsedExtraVars(self) -> Table:
-        for i, row in enumerate(self.memberRows):
+    def appendParsedExtraVars(self, memberTable: Table) -> Table:
+        for i, row in enumerate(memberTable):
             print(f"Member serial : {row['member_srl']}")
             parsedExtraVars = ExtraVarsParser.parseExtraVars(row['extra_vars'])
             print()
-            self.memberRows[i].update(parsedExtraVars)
+            memberTable[i].update(parsedExtraVars)
 
-        return self.memberRows
+        return memberTable
+
+    def getAppendedMemberTable(self) -> Table:
+        return self.appendParsedExtraVars(self.selectMemberTable())
 
     def updateMemberRows(self) -> None:
         self.dbController.getCursor().executemany(
-            self.updateMemberQuery, self.memberRows)
+            self.updateMemberQuery, self.getAppendedMemberTable())
         self.dbController.getDB().commit()
 
     def insertExtraVars(self) -> None:
         self.addColumns()
-        self.selectMemberRows()
-        self.appendParsedExtraVars()
         self.updateMemberRows()
