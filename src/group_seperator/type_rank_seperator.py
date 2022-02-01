@@ -5,9 +5,10 @@ from db_controller.db_controller import DBController
 class TypeRankSeperator(GroupSeperator):
 
     typeRankIdCol: str
-    updateTypeRankQueryFormat = ("UPDATE member"
-                                 " SET {typeRankIdCol} = %({groupSrlCol})s"
-                                 " WHERE id = %({memberSrlCol})s;")
+    updateTypeRankQueryFormat = (
+        "UPDATE member"
+        " SET {typeRankIdCol} = %({groupSrlCol})s"
+        " WHERE id = %({memberSrlCol})s;")
 
     def getUpdateTypeRankQuery(self) -> str:
         return self.updateTypeRankQueryFormat.format(

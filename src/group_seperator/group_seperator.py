@@ -1,6 +1,7 @@
 from typing import Dict, List, Union
-from multipledispatch import dispatch
 from db_controller.db_controller import DBController
+
+Table = List[Dict[str, Union[int, str]]]
 
 
 class GroupSeperator:
@@ -10,31 +11,20 @@ class GroupSeperator:
     oldGroupSrlDict: Dict[str, int]
     newGroupSrlDict: Dict[str, int]
 
+    memberSrlCol: str
+    groupSrlCol: str
+    groupTitleCol: str
+
     selectGroupSrlQueryFormat = (
         "SELECT t1.member_srl AS {memberSrlCol}, t2.group_srl AS {groupSrlCol}, t2.title AS {groupTitleCol}"
         " FROM xe_member_group_member as t1, xe_member_group as t2"
         " WHERE (t1.group_srl = t2.group_srl AND"
-        " t1.group_srl IN("
-    )
+        " t1.group_srl IN(")
 
-    memberSrlCol = "member_id"
-    groupSrlCol = "group_id"
-    groupTitleCol = "group_name"
-
-    @dispatch()
-    def __init__(self) -> None:
-        self.oldGroupSrlDict = dict()
-        self.newGroupSrlDict = dict()
-
-    @dispatch(str)
-    def __init__(self, groupSrlCol: str) -> None:
-        self.oldGroupSrlDict = dict()
-        self.newGroupSrlDict = dict()
-        
-        self.groupSrlCol = groupSrlCol
-
-    @dispatch(str, str, str)
-    def __init__(self, memberSrlCol: str, groupSrlCol: str, groupTitleCol: str) -> None:
+    def __init__(self,
+                 memberSrlCol: str = "member_id",
+                 groupSrlCol: str = "group_id",
+                 groupTitleCol: str = "group_name") -> None:
         self.oldGroupSrlDict = dict()
         self.newGroupSrlDict = dict()
 
@@ -72,8 +62,8 @@ class GroupSeperator:
     def getOldSrlData(self) -> List[int]:
         return list(self.oldGroupSrlDict.values())
 
-    def updateGroupTable(self, 
-        oldGroupTable: List[Dict[str, Union[int, str]]]) -> List[Dict[str, Union[int, str]]]:
+    def updateGroupTable(self,
+                         oldGroupTable: Table) -> Table:
         newGroupTable = oldGroupTable
 
         for i, d in enumerate(newGroupTable):
@@ -81,17 +71,17 @@ class GroupSeperator:
             newGroupTable[i][self.groupSrlCol] = self.newGroupSrlDict[job]
 
         return newGroupTable
-    
-    def getGroupTable(self) -> List[Dict[str, Union[int, str]]]: 
+
+    def getGroupTable(self) -> Table:
         return self.updateGroupTable(self.selectGroupTable(self.oldDBController))
 
-    def selectGroupTable(self, oldDB: DBController) -> List[Dict[str, Union[int, str]]]:
+    def selectGroupTable(self, oldDB: DBController) -> Table:
         cursor = oldDB.getCursor()
         cursor.execute(
             self.getSelectGroupSrlQuery(),
             self.getOldSrlData()
         )
 
-        oldGroupTable:List[Dict[str, Union[int, str]]] = cursor.fetchall()
+        oldGroupTable: Table = cursor.fetchall()
 
         return oldGroupTable

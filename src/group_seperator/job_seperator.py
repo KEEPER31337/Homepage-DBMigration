@@ -1,6 +1,4 @@
-from typing import Dict, List, Union
-
-from group_seperator.group_seperator import GroupSeperator
+from group_seperator.group_seperator import GroupSeperator, Table
 from db_controller.db_controller import DBController
 
 
@@ -9,10 +7,13 @@ class JobSeperator(GroupSeperator):
     groupSrlCol = "member_job_id"
     defaultJobId: int
 
-    insertJobQueryFormat = ("INSERT INTO test"
-                            " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
+    insertJobQueryFormat = (
+        "INSERT INTO test"
+        " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
 
-    selectMemberSrlQuery = "SELECT member_srl AS {memberSrlCol} FROM xe_member;"
+    selectMemberSrlQuery = (
+        "SELECT member_srl AS {memberSrlCol}"
+        " FROM xe_member;")
 
     def getInsertJobQuery(self) -> str:
         return self.insertJobQueryFormat.format(
@@ -24,7 +25,7 @@ class JobSeperator(GroupSeperator):
             memberSrlCol=self.memberSrlCol
         )
 
-    def selectMemberSrlTable(self, oldDB: DBController) -> List[Dict[str, int]]:
+    def selectMemberSrlTable(self, oldDB: DBController) -> Table:
         cursor = oldDB.getCursor()
         cursor.execute(self.getSelectMemberSrlQuery())
 
@@ -34,14 +35,14 @@ class JobSeperator(GroupSeperator):
     def setDefaultJobId(self, id: int) -> None:
         self.defaultJobId = id
 
-    def getDefaultJobTable(self) -> List[Dict[str, int]]:
+    def getDefaultJobTable(self) -> Table:
         memberSrlTable = self.selectMemberSrlTable(self.newDBController)
         for i in enumerate(memberSrlTable):
             memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
 
         return memberSrlTable
 
-    def getJobSeperateTable(self) -> List[Dict[str, Union[int, str]]]:
+    def getJobSeperateTable(self) -> Table:
         return self.getGroupTable() + self.getDefaultJobTable()
 
     def insertJobTable(self, newDB: DBController) -> None:
