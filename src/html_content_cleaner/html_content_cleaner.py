@@ -1,6 +1,6 @@
 from lxml.html import clean
 from db_controller.db_controller import DBController
-from utils.typedef import Table
+from shared.typedef import Table
 
 
 class HtmlContentCleaner:

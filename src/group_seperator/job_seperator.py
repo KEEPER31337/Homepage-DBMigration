@@ -1,5 +1,6 @@
 from group_seperator.group_seperator import GroupSeperator
-from utils.typedef import Table
+from shared.typedef import Table
+
 
 class JobSeperator(GroupSeperator):
 
