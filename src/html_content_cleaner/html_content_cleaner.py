@@ -4,8 +4,8 @@ from utils.typedef import Table
 
 
 class HtmlContentCleaner:
-    oldDBController: DBController
-    newDBController: DBController
+    dbController: DBController
+
     cleanContentCol: str
 
     safeAttributeSet: set
@@ -16,7 +16,7 @@ class HtmlContentCleaner:
 
     addCleanContentColumnQuery = (
         "ALTER TABLE xe_documents"
-        "ADD clean_content TEXT DEFAULT NULL")
+        " ADD clean_content TEXT DEFAULT NULL")
 
     updateDocumentQuery = (
         "UPDATE xe_documents"
@@ -30,14 +30,17 @@ class HtmlContentCleaner:
         self.addSafeAttribute("href")
         self.addSafeAttribute("src")
 
+    def setDBController(self, dbController: DBController):
+        self.dbController = dbController
+
     def addSafeAttribute(self, attributeAdd: str) -> None:
         self.safeAttributeSet.add(attributeAdd)
 
     def addCleanContentColumn(self) -> None:
-        self.oldDBController.getCursor().execute(self.addCleanContentColumnQuery)
+        self.dbController.getCursor().execute(self.addCleanContentColumnQuery)
 
     def selectDocument(self) -> Table:
-        cursor = self.oldDBController.getCursor()
+        cursor = self.dbController.getCursor()
         cursor.execute(self.selectDocumentQuery)
         documentContent = cursor.fetchall()
         return documentContent
@@ -54,10 +57,10 @@ class HtmlContentCleaner:
         return documentTable
 
     def updateDocumentTable(self) -> None:
-        self.newDBController.getCursor().executemany(
+        self.dbController.getCursor().executemany(
             self.updateDocumentQuery, self.getCleanContentTable())
 
-        self.newDBController.getDB().commit()
+        self.dbController.getDB().commit()
 
     def cleanHtmlContent(self) -> None:
         self.addCleanContentColumn()
