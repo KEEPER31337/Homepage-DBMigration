@@ -2,11 +2,13 @@ from lxml.html import clean
 from db_controller.db_controller import DBController
 from utils.typedef import Table
 
+
 class HtmlContentCleaner:
     oldDBController: DBController
     newDBController: DBController
+    cleanContentCol: str
 
-    safeAttributeSet = {'href', 'src'}  # 주요 attribute인 href, src만 남김
+    safeAttributeSet: set
 
     selectDocumentQuery = (
         "SELECT document_srl, content",
@@ -20,6 +22,13 @@ class HtmlContentCleaner:
         "UPDATE xe_documents"
         " SET clean_content = %(clean_content)s"
         " WHERE document_srl = %(document_srl)s;")
+
+    def __init__(self, cleanContentCol: str = "clean_content") -> None:
+        self.cleanContentCol = cleanContentCol
+
+        self.safeAttributeSet = set()
+        self.addSafeAttribute("href")
+        self.addSafeAttribute("src")
 
     def addSafeAttribute(self, attributeAdd: str) -> None:
         self.safeAttributeSet.add(attributeAdd)
@@ -40,7 +49,7 @@ class HtmlContentCleaner:
 
         for i, d in enumerate(documentTable):
             cleanHtml = cleaner.clean_html(d["content"])
-            documentTable[i]["clean_content"] = cleanHtml
+            documentTable[i][self.cleanContentCol] = cleanHtml
 
         return documentTable
 
@@ -50,7 +59,6 @@ class HtmlContentCleaner:
 
         self.newDBController.getDB().commit()
 
-    def cleanHtmlContent(self) -> None :
+    def cleanHtmlContent(self) -> None:
         self.addCleanContentColumn()
         self.updateDocumentTable()
-
