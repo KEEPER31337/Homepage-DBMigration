@@ -2,7 +2,7 @@
 
 from db_controller.db_controller import DBController
 from extra_vars_extractor.extra_vars_parser import ExtraVarsParser
-from typedef.typedef import Table
+from shared.typedef import Table
 
 
 class ExtraVarsInserter:

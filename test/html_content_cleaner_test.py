@@ -2,6 +2,7 @@
 from db_controller.db_controller import DBController
 from html_content_cleaner.html_content_cleaner import HtmlContentCleaner
 
+
 if __name__ == "__main__":
 
     oldDB = DBController()
