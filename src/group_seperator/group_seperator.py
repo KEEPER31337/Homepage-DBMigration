@@ -1,6 +1,6 @@
 from typing import Dict, List
 from db_controller.db_controller import DBController
-from shared.typedef import Table
+from typedef.typedef import Table
 
 
 class GroupSeperator:

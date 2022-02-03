@@ -4,9 +4,9 @@ from html_content_cleaner.html_content_cleaner import HtmlContentCleaner
 
 
 if __name__ == "__main__":
-
     oldDB = DBController()
-    oldDB.setDBName("keeper")
+    oldDB.setDBName("keeper_copy")
+    oldDB.setPasswd("")
     oldDB.setDB()
 
     htmlContentCleaner = HtmlContentCleaner()
