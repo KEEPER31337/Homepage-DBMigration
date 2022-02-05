@@ -1,6 +1,9 @@
 from lxml.html import clean
+from lxml.etree import ParserError
+from markdownify import markdownify as md
 from db_controller.db_controller import DBController
 from typedef.typedef import Table
+
 
 class HtmlContentCleaner:
     dbController: DBController
@@ -10,7 +13,7 @@ class HtmlContentCleaner:
     safeAttributeSet: set
 
     selectDocumentQuery = (
-        "SELECT document_srl, content",
+        "SELECT document_srl, content"
         " FROM xe_documents;")
 
     addCleanContentColumnQuery = (
@@ -44,21 +47,33 @@ class HtmlContentCleaner:
         documentContent = cursor.fetchall()
         return documentContent
 
+    def checkHtmlContentSize(self, htmlContent: str) -> bool:
+        return len(htmlContent) > 65535
+
+    def removeRedundantTag(self, htmlContent: str) -> str:
+        return md(htmlContent)
+
     def getCleanContentTable(self) -> Table:
         documentTable = self.selectDocument()
         cleaner = clean.Cleaner(safe_attrs_only=True,
                                 safe_attrs=self.safeAttributeSet)
 
         for i, d in enumerate(documentTable):
-            cleanHtml = cleaner.clean_html(d["content"])
-            documentTable[i][self.cleanContentCol] = cleanHtml
+            
+            try:
+                cleanHtml = cleaner.clean_html(d["content"])
+                if(self.checkHtmlContentSize(cleanHtml)) : 
+                    cleanHtml = self.removeRedundantTag(cleanHtml)
+            except ParserError as e:
+                cleanHtml = ""
+            finally:    
+                documentTable[i][self.cleanContentCol] = cleanHtml
 
         return documentTable
 
     def updateDocumentTable(self) -> None:
         self.dbController.getCursor().executemany(
             self.updateDocumentQuery, self.getCleanContentTable())
-
         self.dbController.getDB().commit()
 
     def cleanHtmlContent(self) -> None:
