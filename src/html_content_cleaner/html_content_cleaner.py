@@ -9,21 +9,23 @@ class HtmlContentCleaner:
     dbController: DBController
 
     cleanContentCol: str
+    tableClean: str
+    srlCol: str
 
     safeAttributeSet: set
 
-    selectDocumentQuery = (
-        "SELECT document_srl, content"
-        " FROM xe_documents;")
+    selectTableQuery = (
+        "SELECT {srlCol}, content"
+        " FROM {tableClean};")
 
-    addCleanContentColumnQuery = (
-        "ALTER TABLE xe_documents"
-        " ADD clean_content TEXT DEFAULT NULL")
+    addColumnQuery = (
+        "ALTER TABLE {tableClean}"
+        " ADD {cleanContentCol} TEXT DEFAULT NULL")
 
-    updateDocumentQuery = (
-        "UPDATE xe_documents"
-        " SET clean_content = %(clean_content)s"
-        " WHERE document_srl = %(document_srl)s;")
+    updateTableQuery = (
+        "UPDATE {tableClean}"
+        " SET {cleanContentCol} = %({cleanContentCol})s"
+        " WHERE {srlCol} = %({srlCol})s;")
 
     def __init__(self, cleanContentCol: str = "clean_content") -> None:
         self.cleanContentCol = cleanContentCol
@@ -32,29 +34,47 @@ class HtmlContentCleaner:
         self.addSafeAttribute("href")
         self.addSafeAttribute("src")
 
-    def setDBController(self, dbController: DBController):
+    def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
     def addSafeAttribute(self, attributeAdd: str) -> None:
         self.safeAttributeSet.add(attributeAdd)
 
-    def addCleanContentColumn(self) -> None:
-        self.dbController.getCursor().execute(self.addCleanContentColumnQuery)
+    def formatSelectTableQuery(self) -> str:
+        return self.selectTableQuery.format(
+            srlCol = self.srlCol,
+            tableClean = self.tableClean
+        )
 
-    def selectDocument(self) -> Table:
+    def formatAddColumnQuery(self) -> str:
+        return self.addColumnQuery.format(
+            tableClean = self.tableClean,
+            cleanContentCol = self.cleanContentCol
+        )
+
+    def formatUpdateTableQuery(self) -> str:
+        return self.updateTableQuery.format(
+            srlCol = self.srlCol,
+            tableClean = self.tableClean,
+            cleanContentCol = self.cleanContentCol
+        )
+
+    def addCleanContentColumn(self) -> None:
+        self.dbController.getCursor().execute(self.formatAddColumnQuery())
+
+    def selectTable(self) -> Table:
         cursor = self.dbController.getCursor()
-        cursor.execute(self.selectDocumentQuery)
+        cursor.execute(self.formatSelectTableQuery())
         documentContent = cursor.fetchall()
         return documentContent
-
-    def checkHtmlContentSize(self, htmlContent: str) -> bool:
-        return len(htmlContent) > 65535
-
-    def removeRedundantTag(self, htmlContent: str) -> str:
-        return md(htmlContent)
+    
+    def updateDocumentTable(self) -> None:
+        self.dbController.getCursor().executemany(
+            self.formatUpdateTableQuery(), self.getCleanContentTable())
+        self.dbController.getDB().commit()
 
     def getCleanContentTable(self) -> Table:
-        documentTable = self.selectDocument()
+        documentTable = self.selectTable()
         cleaner = clean.Cleaner(safe_attrs_only=True,
                                 safe_attrs=self.safeAttributeSet)
 
@@ -71,10 +91,11 @@ class HtmlContentCleaner:
 
         return documentTable
 
-    def updateDocumentTable(self) -> None:
-        self.dbController.getCursor().executemany(
-            self.updateDocumentQuery, self.getCleanContentTable())
-        self.dbController.getDB().commit()
+    def checkHtmlContentSize(self, htmlContent: str) -> bool:
+        return len(htmlContent) > 65535
+
+    def removeRedundantTag(self, htmlContent: str) -> str:
+        return md(htmlContent)
 
     def cleanHtmlContent(self) -> None:
         self.addCleanContentColumn()
