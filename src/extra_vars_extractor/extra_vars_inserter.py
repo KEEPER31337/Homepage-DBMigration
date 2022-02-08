@@ -2,6 +2,7 @@
 
 from db_controller.db_controller import DBController
 from extra_vars_extractor.extra_vars_parser import ExtraVarsParser
+from pymysql import OperationalError
 from typedef.typedef import Table
 
 
@@ -25,7 +26,11 @@ class ExtraVarsInserter:
         self.dbController = dbController
 
     def addColumns(self) -> None:
-        self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
+        try:
+            self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
+        except OperationalError as oe:
+            print(
+                f"{oe} : There is a column already. From {self.addColumns.__name__}.")
 
     def selectMemberTable(self) -> Table:
         cursor = self.dbController.getCursor()
