@@ -8,7 +8,7 @@ class JobSeperator(GroupSeperator):
     defaultJobId: int
 
     insertJobQueryFormat = (
-        "INSERT INTO test"
+        "INSERT INTO member_has_member_job"
         " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
 
     selectMemberSrlQuery = (
