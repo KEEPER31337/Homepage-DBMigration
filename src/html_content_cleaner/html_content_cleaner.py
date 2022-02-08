@@ -70,31 +70,32 @@ class HtmlContentCleaner:
     def selectTable(self) -> Table:
         cursor = self.dbController.getCursor()
         cursor.execute(self.formatSelectTableQuery())
-        documentContent = cursor.fetchall()
-        return documentContent
+        tableContent = cursor.fetchall()
+        return tableContent
 
-    def updateDocumentTable(self) -> None:
+    def updateTable(self) -> None:
         self.dbController.getCursor().executemany(
             self.formatUpdateTableQuery(), self.getCleanContentTable())
         self.dbController.getDB().commit()
 
     def getCleanContentTable(self) -> Table:
-        documentTable = self.selectTable()
+        originalTable = self.selectTable()
         cleaner = clean.Cleaner(safe_attrs_only=True,
                                 safe_attrs=self.safeAttributeSet)
 
-        for i, d in enumerate(documentTable):
-
+        for i, d in enumerate(originalTable):
             try:
                 cleanHtml = cleaner.clean_html(d["content"])
                 if(self.checkHtmlContentSize(cleanHtml)):
                     cleanHtml = self.removeRedundantTag(cleanHtml)
-            except ParserError as e:
+            except ParserError as pe:
+                print(
+                    f"{pe} : Content will be empty string. From {self.getCleanContentTable.__name__}")
                 cleanHtml = ""
             finally:
-                documentTable[i][self.cleanContentCol] = cleanHtml
+                originalTable[i][self.cleanContentCol] = cleanHtml
 
-        return documentTable
+        return originalTable
 
     def checkHtmlContentSize(self, htmlContent: str) -> bool:
         return len(htmlContent) > 65535
@@ -104,4 +105,4 @@ class HtmlContentCleaner:
 
     def cleanHtmlContent(self) -> None:
         self.addCleanContentColumn()
-        self.updateDocumentTable()
+        self.updateTable()
