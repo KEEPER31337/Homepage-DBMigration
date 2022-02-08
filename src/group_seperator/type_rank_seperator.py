@@ -1,13 +1,13 @@
 from group_seperator.group_seperator import GroupSeperator
-from db_controller.db_controller import DBController
 
 
 class TypeRankSeperator(GroupSeperator):
 
     typeRankIdCol: str
-    updateTypeRankQueryFormat = ("UPDATE member"
-                                 " SET {typeRankIdCol} = %({groupSrlCol})s"
-                                 " WHERE id = %({memberSrlCol})s;")
+    updateTypeRankQueryFormat = (
+        "UPDATE member"
+        " SET {typeRankIdCol} = %({groupSrlCol})s"
+        " WHERE id = %({memberSrlCol})s;")
 
     def getUpdateTypeRankQuery(self) -> str:
         return self.updateTypeRankQueryFormat.format(
@@ -15,14 +15,11 @@ class TypeRankSeperator(GroupSeperator):
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol)
 
-    def updateTypeRankTable(self, newDB: DBController) -> None:
-        cursor = newDB.getCursor()
+    def updateTypeRankTable(self) -> None:
+        cursor = self.newDBController.getCursor()
         cursor.executemany(
             self.getUpdateTypeRankQuery(),
-            self.updateGroupTable()
+            self.getEditedGroupTable()
         )
-        newDB.getDB().commit()
-
-    def seperateTypeRank(self) -> None:
-        self.selectGroupTable(self.oldDBController)
-        self.updateTypeRankTable(self.newDBController)
+        self.newDBController.getDB().commit()
+        

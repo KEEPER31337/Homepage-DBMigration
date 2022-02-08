@@ -1,6 +1,5 @@
 # Input xpress engine database extravars.
 # Output student number as dictionary
-from pickle import LIST
 from typing import Dict, List
 
 class ExtraVarsParser:

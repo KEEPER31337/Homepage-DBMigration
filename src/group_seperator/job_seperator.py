@@ -1,27 +1,58 @@
 from group_seperator.group_seperator import GroupSeperator
-from db_controller.db_controller import DBController
+from typedef.typedef import Table
 
 
 class JobSeperator(GroupSeperator):
 
     groupSrlCol = "member_job_id"
-    insertJobQueryFormat = ("INSERT INTO test"
-                            " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
+    defaultJobId: int
+
+    insertJobQueryFormat = (
+        "INSERT INTO member_has_member_job"
+        " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
+
+    selectMemberSrlQuery = (
+        "SELECT member_srl AS {memberSrlCol}"
+        " FROM xe_member;")
 
     def getInsertJobQuery(self) -> str:
         return self.insertJobQueryFormat.format(
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol)
 
-    def insertJobTable(self, newDB: DBController) -> None:
-        cursor = newDB.getCursor()
+    def getSelectMemberSrlQuery(self) -> str:
+        return self.selectMemberSrlQuery.format(
+            memberSrlCol=self.memberSrlCol
+        )
+
+    def selectMemberSrlTable(self) -> Table:
+        cursor = self.oldDBController.getCursor()
+        cursor.execute(self.getSelectMemberSrlQuery())
+
+        memberSrlTable = cursor.fetchall()
+        return memberSrlTable
+
+    def setDefaultJobId(self, id: int) -> None:
+        self.defaultJobId = id
+
+    def getDefaultJobTable(self) -> Table:
+        memberSrlTable = self.selectMemberSrlTable()
+        for i in enumerate(memberSrlTable):
+            memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
+
+        return memberSrlTable
+
+    def getEditedJobTable(self) -> Table:
+        return self.getEditedGroupTable() + self.getDefaultJobTable()
+
+    def insertJobTable(self) -> None:
+        cursor = self.newDBController.getCursor()
 
         cursor.executemany(
             self.getInsertJobQuery(),
-            self.updateGroupTable()
+            self.getEditedJobTable()
         )
-        newDB.getDB().commit()
+        self.newDBController.getDB().commit()
 
-    def seperateJob(self):
-        self.selectGroupTable(self.oldDBController)
-        self.insertJobTable(self.newDBController)
+    def seperateJob(self) -> None:
+        self.insertJobTable()
