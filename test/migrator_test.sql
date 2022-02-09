@@ -1,28 +1,31 @@
+USE keeper_new;
+
 INSERT INTO
-    `member`(
+    member (
         id,
         login_id,
         email_address,
-        password,
+        /* password, */
         real_name,
         nick_name,
-        birthday, 
+        birthday,
         student_id,
         register_date)
 SELECT
         member_srl,
         user_id,
         email_address,
-        password,
+        /* password, */
         user_name,
         nick_name,
-        birthday,
-        member_srl,
+        IF(birthday<>"" AND birthday<>0 ,birthday,NULL),
+        student_id,
         regdate
 FROM keeper.xe_member;
 
+
 INSERT INTO
-    `posting` (
+    posting (
         id,
         title,
         /* clean_content, */
@@ -61,10 +64,10 @@ SELECT
         /* password, */
         module_srl
     )
-FROM `keeper.xe_documents`;
+FROM keeper.xe_documents;
 
 INSERT INTO
-    `comment` (
+    comment (
         id,
         /* clean_content, */
         register_time,
@@ -89,10 +92,10 @@ SELECT
         member_srl,
         document_srl
     )
-FROM `keeper.xe_comments`;
+FROM keeper.xe_comments;
 
 INSERT INTO
-    `file` (
+    file (
         id,
         file_name,
         file_path,
@@ -111,10 +114,10 @@ SELECT
         ipaddress,
         source_filename
     )
-FROM `keeper.xe_files`;
+FROM keeper.xe_files;
 
 INSERT INTO
-    `category` (
+    category (
         id,
         name,
         parent_id
@@ -125,10 +128,10 @@ SELECT
         browser_title,
         parent_srl
     )
-FROM `keeper.xe_modules`;
+FROM keeper.xe_modules;
 
 INSERT INTO
-    `books` (
+    books (
         id,
         title,
         author
@@ -139,10 +142,10 @@ SELECT
         name,
         author
     )
-FROM `Library.books`;
+FROM Library.books;
 
 INSERT INTO
-    `attendance`(
+    attendance(
         id,
         time,
         member_id,
@@ -163,4 +166,4 @@ SELECT
         greetings,
         a_continuity
     )
-FROM `keeper.attendance`;
+FROM keeper.attendance;
