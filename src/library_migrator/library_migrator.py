@@ -2,7 +2,7 @@ from abc import abstractclassmethod
 from db_controller.db_controller import DBController
 from numpy import insert
 from pymysql import OperationalError
-from typedef.typedef import Table
+from typedef.typedef import Row, Table
 
 
 class LibraryMigrator:
@@ -49,28 +49,29 @@ class LibraryMigrator:
         return tableContent
 
     @abstractclassmethod
-    def getBookEquipmentName(self, bookEquipmentName: str) -> str:
-        pass
+    def getBookEquipmentName(self, name: str) -> str: pass
 
-    def setTotalBookEquipment(self, table: Table) -> Table:
-        tableSetTotal: list = list()
+    @abstractclassmethod
+    def editBookEquipmentRow(self, row: Row) -> Row: pass
+
+    def setNameTotal(self, row: Row) -> Row:
+        row["name"] = self.getBookEquipmentName(row["name"])
+        row["total"] = 1
+        return row
+
+    def getTableEdited(self, table: Table) -> Table:
+        tableEdited: list = list()
 
         for row in table:
             name = self.getBookEquipmentName(row["name"])
-            findResult = self.findBookEquipment(tableSetTotal, name)
+            bookEquipmentIndex = self.findBookEquipment(tableEdited, name)
 
-            if(findResult == -1):
-                row["name"] = name
-                row["total"] = 1
-
-                row["department"] = self.getBookDepartment(row["number"])
-
-                tableSetTotal.append(row)
-
+            if(bookEquipmentIndex == -1):
+                tableEdited.append(self.editBookEquipmentRow(row))
             else:
-                tableSetTotal[findResult]["total"] += 1
+                tableEdited[bookEquipmentIndex]["total"] += 1
 
-        return tableSetTotal
+        return tableEdited
 
     def findBookEquipment(self, table: Table, name: str) -> int:
 
@@ -79,15 +80,15 @@ class LibraryMigrator:
                 return i
         return -1
 
-    def getTotalSetTable(self) -> Table:
-        return self.setTotalBookEquipment(self.selectTable())
+    def getTableInsert(self) -> Table:
+        return self.getTableEdited(self.selectTable())
 
     def insertTable(self) -> None:
         cursor = self.newDBController.getCursor()
 
         cursor.executemany(
             self.formatInsertTableQuery(),
-            self.getTotalSetTable()
+            self.getTableInsert()
         )
         self.newDBController.getDB().commit()
 
