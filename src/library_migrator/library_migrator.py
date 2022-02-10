@@ -55,23 +55,26 @@ class LibraryMigrator:
     def setTotalBookEquipment(self, table: Table) -> Table:
         tableSetTotal: list = list()
 
-        for i, row in enumerate(table):
+        for row in table:
             name = self.getBookEquipmentName(row["name"])
             findResult = self.findBookEquipment(tableSetTotal, name)
 
             if(findResult == -1):
                 row["name"] = name
                 row["total"] = 1
+
+                row["department"] = self.getBookDepartment(row["number"])
+
                 tableSetTotal.append(row)
 
             else:
-                tableSetTotal[i]["total"] += 1
+                tableSetTotal[findResult]["total"] += 1
 
         return tableSetTotal
 
     def findBookEquipment(self, table: Table, name: str) -> int:
 
-        for i in range(len(table), 0, -1):
+        for i in range(len(table)-1, -1, -1):
             if(table[i]["name"] == name):
                 return i
         return -1
