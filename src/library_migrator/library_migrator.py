@@ -1,7 +1,5 @@
 from abc import abstractclassmethod
 from db_controller.db_controller import DBController
-from numpy import insert
-from pymysql import OperationalError
 from typedef.typedef import Row, Table
 
 
@@ -11,9 +9,6 @@ class LibraryMigrator:
 
     oldTableMigrate: str
     newTableMigrate: str
-
-    addTotalColumnQuery = ("ALTER TABLE {oldTableMigrate}"
-                           " ADD total INT NOT NULL DEFAULT 1;")
 
     selectTableQuery = ("SELECT number, name, author"
                         " FROM {oldTableMigrate};")
@@ -29,18 +24,8 @@ class LibraryMigrator:
     def formatSelectTableQuery(self) -> str:
         return self.selectTableQuery.format(oldTableMigrate=self.oldTableMigrate)
 
-    def formatAddTotalColumnQuery(self) -> str:
-        return self.addTotalColumnQuery.format(oldTableMigrate=self.oldTableMigrate)
-
     def formatInsertTableQuery(self) -> str:
         return self.insertTableQuery.format(newTableMigrate=self.newTableMigrate)
-
-    def addTotalColumn(self) -> None:
-        try:
-            self.oldDBController.getCursor().execute(self.formatAddTotalColumnQuery())
-        except OperationalError as oe:
-            print(
-                f"{oe} : There is a column already. From {self.addTotalColumn.__name__}.")
 
     def selectTable(self) -> Table:
         cursor = self.oldDBController.getCursor()
@@ -93,5 +78,4 @@ class LibraryMigrator:
         self.newDBController.getDB().commit()
 
     def migrateBookLibrary(self) -> None:
-        self.addTotalColumn()
         self.insertTable()
