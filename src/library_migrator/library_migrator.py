@@ -61,7 +61,9 @@ class LibraryMigrator:
     def findBookEquipment(self, table: Table, name: str) -> int:
 
         for i in range(len(table)-1, -1, -1):
+            # print(str(len(name)) + " : " + str(len(table[i]["name"])))
             if(table[i]["name"] == name):
+                # print("correct")
                 return i
         return -1
 

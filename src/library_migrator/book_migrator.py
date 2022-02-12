@@ -15,7 +15,7 @@ class BookMigrator(LibraryMigrator):
         return self.getBookName(bookName)
 
     def getBookName(self, bookName: str) -> str:
-        return bookName
+        return bookName.strip()
 
     def addBookDepartment(self, oldDepartmentNumber: int, newDepartmentId: int) -> None:
         self.bookDepartmentDict[oldDepartmentNumber] = newDepartmentId
