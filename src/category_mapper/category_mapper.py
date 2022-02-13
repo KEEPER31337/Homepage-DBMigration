@@ -1,34 +1,44 @@
 from typing import Dict
+from typedef.typedef import Table
 from db_controller.db_controller import DBController
 from pymysql import OperationalError
-from typedef.typedef import Row, Table
 
 
 class CategoryMapper:
 
     dbController: DBController
+    parentIdCol: str
 
     selectCategoryQuery = (
         "SELECT t1.module_srl, t2.menu_item_srl, t2.parent_srl"
         " FROM xe_modules AS t1 JOIN xe_menu_item AS t2"
         " ON t1.mid = t2.url;")
 
-    addParentIdColumnQuery = (
+    addParentIdColumnFormat = (
         "ALTER TABLE xe_modules"
-        " ADD parent_id INT DEFAULT NULL")
+        " ADD {parentIdCol} INT DEFAULT NULL")
 
-    updateMappedParentIdQuery = (
+    updateMappedParentIdFormat = (
         "UPDATE xe_modules"
-        " SET parent_id = %(parent_id)s"
+        " SET {parentIdCol} = %({parentIdCol})s"
         " WHERE module_srl = %(module_srl)s;"
     )
+
+    def __init__(self, parentIdCol: str = "parent_id") -> None:
+        self.parentIdCol = parentIdCol
 
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
+    def formatAddParentIdColumnQuery(self) -> str:
+        return self.addParentIdColumnFormat.format(parentIdCol=self.parentIdCol)
+
+    def formatUpdateMappedParentIdQuery(self) -> str:
+        return self.updateMappedParentIdFormat.format(parentIdCol=self.parentIdCol)
+
     def addParentIdColumn(self) -> None:
         try:
-            self.dbController.getCursor().execute(self.addParentIdColumnQuery)
+            self.dbController.getCursor().execute(self.addParentIdColumnFormat)
         except OperationalError as oe:
             print(
                 f"{oe} : There is a column already. From {self.addParentIdColumn.__name__}.")
@@ -43,7 +53,7 @@ class CategoryMapper:
         moduleMenuItemSrlDict: Dict[int, int] = {0: 0}
         return moduleMenuItemSrlDict
 
-    def getModuleMenuItemSrlDict(self, moduleMenuItemSrlTable: Table):
+    def getModuleMenuItemSrlDict(self, moduleMenuItemSrlTable: Table) -> Dict[int, int]:
         moduleMenuItemSrlDict = self.addRootCategoryDict()
 
         for row in moduleMenuItemSrlTable:
@@ -52,16 +62,17 @@ class CategoryMapper:
 
         return moduleMenuItemSrlDict
 
-    def mapModuleMenuItemSrl(self, moduleMenuItemSrlTable: Table, moduleMenuItemSrlDict: Dict):
+    def mapModuleMenuItemSrl(self, moduleMenuItemSrlTable: Table,
+                             moduleMenuItemSrlDict: Dict[int, int]) -> Table:
 
         for row in moduleMenuItemSrlTable:
-            row["parent_id"] = moduleMenuItemSrlDict[row["parent_srl"]]
+            row[self.parentIdCol] = moduleMenuItemSrlDict[row["parent_srl"]]
 
         return moduleMenuItemSrlTable
 
     def updateCategoryTable(self, categoryTable: Table) -> None:
         self.dbController.getCursor().executemany(
-            self.updateMappedParentIdQuery, categoryTable)
+            self.updateMappedParentIdFormat, categoryTable)
         self.dbController.getDB().commit()
 
     def mapCategory(self) -> None:
