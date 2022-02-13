@@ -5,7 +5,7 @@ from typedef.typedef import Row, Table
 
 
 class CategoryMapper:
-    
+
     dbController: DBController
 
     selectCategoryQuery = (
@@ -23,17 +23,15 @@ class CategoryMapper:
         " WHERE module_srl = %(module_srl)s;"
     )
 
-    def __init__(self) -> None:
-        pass
-
-    def setDBController(self,dbController: DBController) -> None:
+    def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
     def addParentIdColumn(self) -> None:
         try:
             self.dbController.getCursor().execute(self.addParentIdColumnQuery)
         except OperationalError as oe:
-            print(f"{oe} : There is a column already. From {self.addParentIdColumn.__name__}.")
+            print(
+                f"{oe} : There is a column already. From {self.addParentIdColumn.__name__}.")
 
     def selectCategory(self) -> Table:
         cursor = self.dbController.getCursor()
@@ -41,8 +39,12 @@ class CategoryMapper:
         tableContent = cursor.fetchall()
         return tableContent
 
-    def getModuleMenuItemSrlDict(self,moduleMenuItemSrlTable: Table):
-        moduleMenuItemSrlDict = dict()
+    def addRootCategoryDict(self) -> Dict[int, int]:
+        moduleMenuItemSrlDict: Dict[int, int] = {0: 0}
+        return moduleMenuItemSrlDict
+
+    def getModuleMenuItemSrlDict(self, moduleMenuItemSrlTable: Table):
+        moduleMenuItemSrlDict = self.addRootCategoryDict()
 
         for row in moduleMenuItemSrlTable:
             moduleMenuItemSrlDict[
@@ -50,8 +52,7 @@ class CategoryMapper:
 
         return moduleMenuItemSrlDict
 
-
-    def mapModuleMenuItemSrl(self, moduleMenuItemSrlTable: Table, moduleMenuItemSrlDict: Dict) :
+    def mapModuleMenuItemSrl(self, moduleMenuItemSrlTable: Table, moduleMenuItemSrlDict: Dict):
 
         for row in moduleMenuItemSrlTable:
             row["parent_id"] = moduleMenuItemSrlDict[row["parent_srl"]]
@@ -63,11 +64,9 @@ class CategoryMapper:
             self.updateMappedParentIdQuery, categoryTable)
         self.dbController.getDB().commit()
 
-
     def mapCategory(self) -> None:
         self.addParentIdColumn()
         categoryTable = self.selectCategory()
-        categoryTable = self.mapModuleMenuItemSrl(categoryTable, self.getModuleMenuItemSrlDict(categoryTable))
+        categoryTable = self.mapModuleMenuItemSrl(
+            categoryTable, self.getModuleMenuItemSrlDict(categoryTable))
         self.updateCategoryTable(categoryTable)
-
-    
