@@ -29,7 +29,7 @@ class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol)
 
-    def updateTypeRankTable(self, typeRankSrlTable: Table) -> None:
+    def updateTypeRank(self, typeRankSrlTable: Table) -> None:
         cursor = self.newDBController.getCursor()
         cursor.executemany(
             self.formatUpdateTypeRankQuery(),
@@ -37,14 +37,14 @@ class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
         )
         self.newDBController.getDB().commit()
 
-    def selectTypeRankSrlTable(self) -> Table:
-        return self.selectGroupSrlTable()
+    def selectTypeRankSrl(self) -> Table:
+        return self.selectGroupSrl()
 
     def getEditedTypeRankSrlTable(self, typeRankSrlTable: Table) -> Table:
         return self.getEditedGroupSrlTable(typeRankSrlTable)
 
     def seperateTypeRank(self) -> None:
-        typeRankSrlTable = self.selectTypeRankSrlTable()
+        typeRankSrlTable = self.selectTypeRankSrl()
         editedTypeRankSrlTable = self.getEditedTypeRankSrlTable(
             typeRankSrlTable)
-        self.updateTypeRankTable(editedTypeRankSrlTable)
+        self.updateTypeRank(editedTypeRankSrlTable)

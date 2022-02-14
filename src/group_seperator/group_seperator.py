@@ -71,7 +71,7 @@ class GroupSeperator(metaclass=ABCMeta):
 
         return groupSrlTable
 
-    def selectGroupSrlTable(self) -> Table:
+    def selectGroupSrl(self) -> Table:
         cursor = self.oldDBController.getCursor()
         cursor.execute(
             self.getSelectGroupSrlQuery(),

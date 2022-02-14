@@ -18,6 +18,7 @@ class JobSeperator(GroupSeperator):
                  memberSrlCol: str = "member_id",
                  jobSrlCol: str = "member_job_id",
                  jobTitleCol: str = "job_name") -> None:
+                 
         super().__init__(memberSrlCol, jobSrlCol, jobTitleCol)
 
     def formatInsertJobQuery(self) -> str:
@@ -30,7 +31,7 @@ class JobSeperator(GroupSeperator):
             memberSrlCol=self.memberSrlCol
         )
 
-    def selectMemberSrlTable(self) -> Table:
+    def selectMemberSrl(self) -> Table:
         cursor = self.oldDBController.getCursor()
         cursor.execute(self.formatSelectMemberSrlQuery())
 
@@ -46,7 +47,7 @@ class JobSeperator(GroupSeperator):
 
         return memberSrlTable
 
-    def insertJobTable(self, jobTable: Table) -> None:
+    def insertJob(self, jobTable: Table) -> None:
         cursor = self.newDBController.getCursor()
 
         cursor.executemany(
@@ -55,18 +56,18 @@ class JobSeperator(GroupSeperator):
         )
         self.newDBController.getDB().commit()
 
-    def selectJobSrlTable(self) -> Table:
-        return self.selectGroupSrlTable()
+    def selectJobSrl(self) -> Table:
+        return self.selectGroupSrl()
 
     def getEditedJobSrlTable(self, jobSrlTable: Table) -> Table:
         return self.getEditedGroupSrlTable(jobSrlTable)
 
     def seperateJob(self) -> None:
-        jobSrlTable = self.selectJobSrlTable()
+        jobSrlTable = self.selectJobSrl()
         editedJobSrlTable = self.getEditedJobSrlTable(jobSrlTable)
 
-        memberSrlTable = self.selectMemberSrlTable()
+        memberSrlTable = self.selectMemberSrl()
         defaultJobTable = self.getDefaultJobTable(memberSrlTable)
 
         jobTable = editedJobSrlTable + defaultJobTable
-        self.insertJobTable(jobTable)
+        self.insertJob(jobTable)

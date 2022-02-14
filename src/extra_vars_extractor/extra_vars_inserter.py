@@ -32,7 +32,7 @@ class ExtraVarsInserter:
             print(
                 f"{oe} : There is a column already. From {self.addExtraVarsColumns.__name__}.")
 
-    def selectMemberTable(self) -> Table:
+    def selectMember(self) -> Table:
         cursor = self.dbController.getCursor()
         cursor.execute(self.selectMemberQuery)
         memberTable = cursor.fetchall()
@@ -52,6 +52,6 @@ class ExtraVarsInserter:
 
     def insertExtraVars(self) -> None:
         self.addExtraVarsColumns()
-        memberTable = self.selectMemberTable()
+        memberTable = self.selectMember()
         appendedMemberTable = self.appendParsedExtraVars(memberTable)
         self.updateMemberTable(appendedMemberTable)

@@ -1,12 +1,13 @@
+from abc import ABCMeta, abstractclassmethod
+from typedef.typedef import Table
+from pymysql import OperationalError
 from lxml.html import clean
 from lxml.etree import ParserError
-from pymysql import OperationalError
 from markdownify import markdownify as md
 from db_controller.db_controller import DBController
-from typedef.typedef import Table
 
 
-class HtmlContentCleaner:
+class HtmlContentCleaner(metaclass=ABCMeta):
     dbController: DBController
 
     cleanContentCol: str
@@ -15,21 +16,27 @@ class HtmlContentCleaner:
 
     safeAttributeSet: set
 
-    selectTableQuery = (
+    selectContentFormat = (
         "SELECT {srlCol}, content"
         " FROM {tableClean};")
 
-    addColumnQuery = (
+    addCleanContentColumnFormat = (
         "ALTER TABLE {tableClean}"
         " ADD {cleanContentCol} TEXT DEFAULT NULL")
 
-    updateTableQuery = (
+    updateCleanContentFormat = (
         "UPDATE {tableClean}"
         " SET {cleanContentCol} = %({cleanContentCol})s"
         " WHERE {srlCol} = %({srlCol})s;")
 
-    def __init__(self, cleanContentCol: str = "clean_content") -> None:
+    @abstractclassmethod
+    def __init__(self, cleanContentCol: str,
+                 tableClean: str,
+                 srlCol: str) -> None:
+        
         self.cleanContentCol = cleanContentCol
+        self.tableClean = tableClean
+        self.srlCol = srlCol
 
         self.safeAttributeSet = set()
         self.addSafeAttribute("href")
@@ -41,20 +48,20 @@ class HtmlContentCleaner:
     def addSafeAttribute(self, attributeAdd: str) -> None:
         self.safeAttributeSet.add(attributeAdd)
 
-    def formatSelectTableQuery(self) -> str:
-        return self.selectTableQuery.format(
+    def formatSelectContentQuery(self) -> str:
+        return self.selectContentFormat.format(
             srlCol=self.srlCol,
             tableClean=self.tableClean
         )
 
-    def formatAddColumnQuery(self) -> str:
-        return self.addColumnQuery.format(
+    def formatAddCleanContentColumnQuery(self) -> str:
+        return self.addCleanContentColumnFormat.format(
             tableClean=self.tableClean,
             cleanContentCol=self.cleanContentCol
         )
 
-    def formatUpdateTableQuery(self) -> str:
-        return self.updateTableQuery.format(
+    def formatUpdateCleanContentQuery(self) -> str:
+        return self.updateCleanContentFormat.format(
             srlCol=self.srlCol,
             tableClean=self.tableClean,
             cleanContentCol=self.cleanContentCol
@@ -62,30 +69,28 @@ class HtmlContentCleaner:
 
     def addCleanContentColumn(self) -> None:
         try:
-            self.dbController.getCursor().execute(self.formatAddColumnQuery())
+            self.dbController.getCursor().execute(self.formatAddCleanContentColumnQuery())
         except OperationalError as oe:
             print(
                 f"{oe} : There is a column already. From {self.addCleanContentColumn.__name__}.")
 
-    def selectTable(self) -> Table:
+    def selectContent(self) -> Table:
         cursor = self.dbController.getCursor()
-        cursor.execute(self.formatSelectTableQuery())
+        cursor.execute(self.formatSelectContentQuery())
         tableContent = cursor.fetchall()
         return tableContent
 
-    def updateTable(self) -> None:
+    def updateCleanContent(self, cleanContentTable: Table) -> None:
         self.dbController.getCursor().executemany(
-            self.formatUpdateTableQuery(), self.getCleanContentTable())
+            self.formatUpdateCleanContentQuery(), cleanContentTable)
         self.dbController.getDB().commit()
 
-    def getCleanContentTable(self) -> Table:
-        originalTable = self.selectTable()
-        cleaner = clean.Cleaner(safe_attrs_only=True,
-                                safe_attrs=self.safeAttributeSet)
+    def getCleanContentTable(self, contentTable: Table) -> Table:
+        cleaner = self.getHtmlCleaner()
 
-        for i, d in enumerate(originalTable):
+        for i, row in enumerate(contentTable):
             try:
-                cleanHtml = cleaner.clean_html(d["content"])
+                cleanHtml = cleaner.clean_html(row["content"])
                 if(self.checkHtmlContentSize(cleanHtml)):
                     cleanHtml = self.removeRedundantTag(cleanHtml)
             except ParserError as pe:
@@ -93,9 +98,12 @@ class HtmlContentCleaner:
                     f"{pe} : Content will be empty string. From {self.getCleanContentTable.__name__}")
                 cleanHtml = ""
             finally:
-                originalTable[i][self.cleanContentCol] = cleanHtml
+                contentTable[i][self.cleanContentCol] = cleanHtml
 
-        return originalTable
+        return contentTable
+
+    def getHtmlCleaner(self) -> clean.Cleaner:
+        return clean.Cleaner(safe_attrs_only=True, safe_attrs=self.safeAttributeSet)
 
     def checkHtmlContentSize(self, htmlContent: str) -> bool:
         return len(htmlContent) > 65535
@@ -105,4 +113,7 @@ class HtmlContentCleaner:
 
     def cleanHtmlContent(self) -> None:
         self.addCleanContentColumn()
-        self.updateTable()
+
+        contentTable = self.selectContent()
+        cleanContentTable = self.getCleanContentTable(contentTable)
+        self.updateCleanContent(cleanContentTable)
