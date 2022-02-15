@@ -10,19 +10,22 @@ INSERT INTO
         nick_name,
         birthday,
         student_id,
-        register_date)
+        register_date,
+        point)
 SELECT
-        member_srl,
-        user_id,
-        email_address,
-        password,
-        user_name,
-        nick_name,
-        IF(birthday<>"" AND birthday<>0 ,birthday,NULL),
-        student_id,
-        regdate
-FROM keeper.xe_member;
-
+        m.member_srl,
+        m.user_id,
+        m.email_address,
+        m.password,
+        m.user_name,
+        m.nick_name,
+        IF(m.birthday<>"" AND m.birthday<>0 ,m.birthday,NULL),
+        m.student_id,
+        m.regdate,
+        p.point
+FROM keeper.xe_member AS m
+LEFT JOIN keeper.xe_point AS p
+ON m.member_srl = p.member_srl;
 
 INSERT INTO
     posting (
@@ -57,8 +60,8 @@ SELECT
         regdate,
         last_update,
         ipaddress,
-        IF(comment_status="ALLOW",),
-        is_notice,
+        IF(comment_status="ALLOW",TRUE,FALSE),
+        IF(is_notice="Y",TRUE,FALSE),
         IF(status="SECRET",TRUE,FALSE),
         IF(status="TEMP",TRUE,FALSE),
         password,
@@ -131,20 +134,6 @@ SELECT
 FROM keeper.new_category;
 
 INSERT INTO
-    books (
-        id,
-        title,
-        author
-    )
-SELECT
-    (
-        number,
-        name,
-        author
-    )
-FROM Library.books;
-
-INSERT INTO
     attendance(
         id,
         time,
@@ -161,7 +150,7 @@ SELECT
         regdate,
         member_srl,
         today_point,
-        random_point,
+        today_random,
         ipaddress,
         greetings,
         a_continuity
