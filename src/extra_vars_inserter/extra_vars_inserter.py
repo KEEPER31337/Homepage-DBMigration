@@ -3,7 +3,7 @@
 from typedef.typedef import Table
 from pymysql import OperationalError
 from db_controller.db_controller import DBController
-from extra_vars_extractor.extra_vars_parser import ExtraVarsParser
+from extra_vars_inserter.extra_vars_parser import ExtraVarsParser
 
 
 class ExtraVarsInserter:

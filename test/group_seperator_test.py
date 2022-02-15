@@ -1,5 +1,4 @@
 from db_controller.db_controller import DBController
-from extra_vars_extractor.extra_vars_inserter import ExtraVarsInserter
 from group_seperator.job_seperator import JobSeperator
 from group_seperator.rank_seperator import RankSeperator
 from group_seperator.type_seperator import TypeSeperator
@@ -13,12 +12,6 @@ if __name__ == "__main__":
     newDB = DBController()
     newDB.setDBName("keeper_new")
     newDB.setDB()
-
-    # --------------------------------------
-
-    extraVarsInserter = ExtraVarsInserter()
-    extraVarsInserter.setDBController(oldDB)
-    extraVarsInserter.insertExtraVars()
 
     # --------------------------------------
 
