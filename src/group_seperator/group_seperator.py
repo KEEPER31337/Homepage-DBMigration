@@ -1,35 +1,38 @@
-from typing import Dict, List
+from abc import ABCMeta, abstractclassmethod
+from typing import List
+from typedef.typedef import Row, Table
 from db_controller.db_controller import DBController
-from typedef.typedef import Table
 
 
-class GroupSeperator:
+class GroupSeperator(metaclass=ABCMeta):
     oldDBController: DBController
     newDBController: DBController
 
-    oldGroupSrlDict: Dict[str, int]
-    newGroupSrlDict: Dict[str, int]
+    oldGroupSrlDict: Row
+    newGroupSrlDict: Row
 
     memberSrlCol: str
     groupSrlCol: str
     groupTitleCol: str
 
-    selectGroupSrlQueryFormat = (
+    selectGroupSrlFormat = (
         "SELECT t1.member_srl AS {memberSrlCol}, t2.group_srl AS {groupSrlCol}, t2.title AS {groupTitleCol}"
         " FROM xe_member_group_member as t1, xe_member_group as t2"
         " WHERE (t1.group_srl = t2.group_srl AND"
         " t1.group_srl IN(")
 
+    @abstractclassmethod
     def __init__(self,
-                 memberSrlCol: str = "member_id",
-                 groupSrlCol: str = "group_id",
-                 groupTitleCol: str = "group_name") -> None:
-        self.oldGroupSrlDict = dict()
-        self.newGroupSrlDict = dict()
+                 memberSrlCol: str,
+                 groupSrlCol: str,
+                 groupTitleCol: str) -> None:
 
         self.memberSrlCol = memberSrlCol
         self.groupSrlCol = groupSrlCol
         self.groupTitleCol = groupTitleCol
+
+        self.oldGroupSrlDict = dict()
+        self.newGroupSrlDict = dict()
 
     def setOldDBController(self, dbController: DBController) -> None:
         self.oldDBController = dbController
@@ -37,17 +40,17 @@ class GroupSeperator:
     def setNewDBController(self, dbController: DBController) -> None:
         self.newDBController = dbController
 
-    def addGroupSrl(self, groupName: str, oldSrl: int, newSrl: int) -> None:
+    def addGroupSrlDict(self, groupName: str, oldSrl: int, newSrl: int) -> None:
         self.oldGroupSrlDict[groupName] = oldSrl
         self.newGroupSrlDict[groupName] = newSrl
 
-    def formatSelectGroupQuery(self) -> str:
-        return self.selectGroupSrlQueryFormat.format(
+    def formatSelectGroupSrlQuery(self) -> str:
+        return self.selectGroupSrlFormat.format(
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol,
             groupTitleCol=self.groupTitleCol)
 
-    def getSelectGroupConditionFormat(self) -> str:
+    def getGroupConditionFormat(self) -> str:
         conditionFormat = "%s"
         for i in range(len(self.oldGroupSrlDict)-1):
             conditionFormat += ",%s"
@@ -56,24 +59,19 @@ class GroupSeperator:
         return conditionFormat
 
     def getSelectGroupSrlQuery(self) -> str:
-        return self.formatSelectGroupQuery() + self.getSelectGroupConditionFormat()
+        return self.formatSelectGroupSrlQuery() + self.getGroupConditionFormat()
 
     def getOldSrlData(self) -> List[int]:
         return list(self.oldGroupSrlDict.values())
 
-    def editGroupTable(self, oldGroupTable: Table) -> Table:
-        newGroupTable = oldGroupTable
+    def getEditedGroupSrlTable(self, groupSrlTable: Table) -> Table:
+        for i, row in enumerate(groupSrlTable):
+            job = row[self.groupTitleCol]
+            groupSrlTable[i][self.groupSrlCol] = self.newGroupSrlDict[job]
 
-        for i, d in enumerate(newGroupTable):
-            job = d[self.groupTitleCol]
-            newGroupTable[i][self.groupSrlCol] = self.newGroupSrlDict[job]
+        return groupSrlTable
 
-        return newGroupTable
-
-    def getEditedGroupTable(self) -> Table:
-        return self.editGroupTable(self.selectGroupTable())
-
-    def selectGroupTable(self) -> Table:
+    def selectGroupSrl(self) -> Table:
         cursor = self.oldDBController.getCursor()
         cursor.execute(
             self.getSelectGroupSrlQuery(),

@@ -1,17 +1,23 @@
-from library_migrator.library_migrator import LibraryMigrator
 from typedef.typedef import Row
+from library_migrator.library_migrator import LibraryMigrator
 
 
 class BookMigrator(LibraryMigrator):
-    oldTableMigrate = "books"
-    newTableMigrate = "book"
 
-    insertTableQuery = ("INSERT INTO {newTableMigrate}(title,author,total,department)"
+    bookDepartmentDict: dict
+
+    insertBookFormat = ("INSERT INTO {newTableMigrate}(title,author,total,department)"
                         " VALUES(%(name)s,%(author)s,%(total)s,%(department)s);")
 
-    bookDepartmentDict: dict = dict()
+    def __init__(self,
+                 oldTableMigrate: str = "books",
+                 newTableMigrate: str = "book") -> None:
+        
+        self.insertLibraryFormat = self.insertBookFormat
+        self.bookDepartmentDict = dict()
+        super().__init__(oldTableMigrate, newTableMigrate)
 
-    def getBookEquipmentName(self, bookName: str) -> str:
+    def getLibraryName(self, bookName: str) -> str:
         return self.getBookName(bookName)
 
     def getBookName(self, bookName: str) -> str:
@@ -29,12 +35,12 @@ class BookMigrator(LibraryMigrator):
         return row
 
     def editBookRow(self, row: Row) -> Row:
-        row = self.setNameTotal(row)
+        row = self.setNameTotalOnRow(row)
         row = self.setBookDepartment(row)
         return row
 
-    def editBookEquipmentRow(self, row: Row) -> Row:
+    def editLibraryRow(self, row: Row) -> Row:
         return self.editBookRow(row)
 
     def migrateBook(self) -> None:
-        self.migrateBookLibrary()
+        self.migrateLibrary()

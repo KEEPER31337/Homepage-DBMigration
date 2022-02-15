@@ -5,7 +5,7 @@ INSERT INTO
         id,
         login_id,
         email_address,
-        /* password, */
+        password,
         real_name,
         nick_name,
         birthday,
@@ -15,7 +15,7 @@ SELECT
         member_srl,
         user_id,
         email_address,
-        /* password, */
+        password,
         user_name,
         nick_name,
         IF(birthday<>"" AND birthday<>0 ,birthday,NULL),
@@ -28,7 +28,7 @@ INSERT INTO
     posting (
         id,
         title,
-        /* clean_content, */
+        clean_content,
         member_id,
         visit_count,
         like_count,
@@ -41,14 +41,14 @@ INSERT INTO
         is_notice,
         is_secret,
         is_temp,
-        /* password, */
+        password,
         category_id
     )
 SELECT
     (
         document_srl,
         title,
-        /* content, */
+        content,
         member_srl,
         readed_count,
         voted_count,
@@ -57,11 +57,11 @@ SELECT
         regdate,
         last_update,
         ipaddress,
-        comment_status,
+        IF(comment_status="ALLOW",),
         is_notice,
-        status,
-        status,
-        /* password, */
+        IF(status="SECRET",TRUE,FALSE),
+        IF(status="TEMP",TRUE,FALSE),
+        password,
         module_srl
     )
 FROM keeper.xe_documents;
@@ -69,7 +69,7 @@ FROM keeper.xe_documents;
 INSERT INTO
     comment (
         id,
-        /* clean_content, */
+        clean_content,
         register_time,
         update_time,
         ip_address,
@@ -82,7 +82,7 @@ INSERT INTO
 SELECT
     (
         comment_srl,
-        /* content, */
+        content,
         regdate,
         last_update,
         ipaddress,
@@ -112,7 +112,7 @@ SELECT
         file_size,
         regdate,
         ipaddress,
-        source_filename
+        upload_target_srl
     )
 FROM keeper.xe_files;
 
@@ -126,9 +126,9 @@ SELECT
     (
         module_srl,
         browser_title,
-        parent_srl
+        module_parent_srl
     )
-FROM keeper.xe_modules;
+FROM keeper.new_category;
 
 INSERT INTO
     books (

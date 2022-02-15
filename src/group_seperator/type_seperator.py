@@ -3,7 +3,13 @@ from group_seperator.type_rank_seperator import TypeRankSeperator
 
 class TypeSeperator(TypeRankSeperator):
 
-    typeRankIdCol = "member_type_id"
+    def __init__(self,
+                 memberSrlCol: str = "member_id",
+                 groupSrlCol: str = "member_type_id",
+                 groupTitleCol: str = "type_name",
+                 typeIdCol: str = "member_type_id") -> None:
+
+        super().__init__(memberSrlCol, groupSrlCol, groupTitleCol, typeIdCol)
 
     def seperateType(self) -> None:
-        self.updateTypeRankTable()
+        self.seperateTypeRank()

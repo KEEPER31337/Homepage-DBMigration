@@ -4,30 +4,36 @@ from typedef.typedef import Table
 
 class JobSeperator(GroupSeperator):
 
-    groupSrlCol = "member_job_id"
     defaultJobId: int
 
-    insertJobQueryFormat = (
+    insertJobFormat = (
         "INSERT INTO member_has_member_job(member_id, member_job_id)"
         " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
 
-    selectMemberSrlQuery = (
+    selectMemberSrlFormat = (
         "SELECT member_srl AS {memberSrlCol}"
         " FROM xe_member;")
 
-    def getInsertJobQuery(self) -> str:
-        return self.insertJobQueryFormat.format(
+    def __init__(self,
+                 memberSrlCol: str = "member_id",
+                 jobSrlCol: str = "member_job_id",
+                 jobTitleCol: str = "job_name") -> None:
+                 
+        super().__init__(memberSrlCol, jobSrlCol, jobTitleCol)
+
+    def formatInsertJobQuery(self) -> str:
+        return self.insertJobFormat.format(
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol)
 
-    def getSelectMemberSrlQuery(self) -> str:
-        return self.selectMemberSrlQuery.format(
+    def formatSelectMemberSrlQuery(self) -> str:
+        return self.selectMemberSrlFormat.format(
             memberSrlCol=self.memberSrlCol
         )
 
-    def selectMemberSrlTable(self) -> Table:
+    def selectMemberSrl(self) -> Table:
         cursor = self.oldDBController.getCursor()
-        cursor.execute(self.getSelectMemberSrlQuery())
+        cursor.execute(self.formatSelectMemberSrlQuery())
 
         memberSrlTable = cursor.fetchall()
         return memberSrlTable
@@ -35,24 +41,33 @@ class JobSeperator(GroupSeperator):
     def setDefaultJobId(self, id: int) -> None:
         self.defaultJobId = id
 
-    def getDefaultJobTable(self) -> Table:
-        memberSrlTable = self.selectMemberSrlTable()
+    def getDefaultJobTable(self, memberSrlTable: Table) -> Table:
         for i in enumerate(memberSrlTable):
             memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
 
         return memberSrlTable
 
-    def getEditedJobTable(self) -> Table:
-        return self.getEditedGroupTable() + self.getDefaultJobTable()
-
-    def insertJobTable(self) -> None:
+    def insertJob(self, jobTable: Table) -> None:
         cursor = self.newDBController.getCursor()
 
         cursor.executemany(
-            self.getInsertJobQuery(),
-            self.getEditedJobTable()
+            self.formatInsertJobQuery(),
+            jobTable
         )
         self.newDBController.getDB().commit()
 
+    def selectJobSrl(self) -> Table:
+        return self.selectGroupSrl()
+
+    def getEditedJobSrlTable(self, jobSrlTable: Table) -> Table:
+        return self.getEditedGroupSrlTable(jobSrlTable)
+
     def seperateJob(self) -> None:
-        self.insertJobTable()
+        jobSrlTable = self.selectJobSrl()
+        editedJobSrlTable = self.getEditedJobSrlTable(jobSrlTable)
+
+        memberSrlTable = self.selectMemberSrl()
+        defaultJobTable = self.getDefaultJobTable(memberSrlTable)
+
+        jobTable = editedJobSrlTable + defaultJobTable
+        self.insertJob(jobTable)
