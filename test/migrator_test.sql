@@ -126,9 +126,9 @@ SELECT
     (
         module_srl,
         browser_title,
-        new_parent_srl
+        module_parent_srl
     )
-FROM keeper.xe_modules;
+FROM keeper.new_category;
 
 INSERT INTO
     books (
