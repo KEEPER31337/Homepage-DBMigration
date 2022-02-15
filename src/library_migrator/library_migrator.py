@@ -78,6 +78,7 @@ class LibraryMigrator(metaclass=ABCMeta):
 
         cursor.executemany(
             self.formatInsertLibraryQuery(),
+            editedLibraryTable
         )
         self.newDBController.getDB().commit()
 
