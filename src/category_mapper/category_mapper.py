@@ -1,13 +1,14 @@
 from typing import Dict
 from typedef.typedef import Table
-from db_controller.db_controller import DBController
 from pymysql import OperationalError
+from db_controller.db_controller import DBController
 
 
 class CategoryMapper:
 
     dbController: DBController
     parentIdCol: str
+    newCategoryTable: str
 
     selectCategoryQuery = (
         "SELECT t1.module_srl, t2.menu_item_srl, t2.parent_srl"
@@ -21,11 +22,19 @@ class CategoryMapper:
     updateMappedParentIdFormat = (
         "UPDATE xe_modules"
         " SET {parentIdCol} = %({parentIdCol})s"
-        " WHERE module_srl = %(module_srl)s;"
-    )
+        " WHERE module_srl = %(module_srl)s;")
 
-    def __init__(self, parentIdCol: str = "parent_id") -> None:
+    createNewCategoryFormat = (
+        "CREATE TABLE {newCategoryTable} ("
+        "SELECT t1.module_srl, t2.name, t1.{parentIdCol}"
+        " FROM xe_modules AS t1 JOIN xe_menu_item AS t2"
+        " ON t1.mid = t2.url);")
+
+    def __init__(self,
+                 parentIdCol: str = "module_parent_srl",
+                 newCategoryTable: str = "new_category") -> None:
         self.parentIdCol = parentIdCol
+        self.newCategoryTable = newCategoryTable
 
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
@@ -35,6 +44,11 @@ class CategoryMapper:
 
     def formatUpdateMappedParentIdQuery(self) -> str:
         return self.updateMappedParentIdFormat.format(parentIdCol=self.parentIdCol)
+
+    def formatCreateNewCategoryQuery(self) -> str:
+        return self.createNewCategoryFormat.format(
+            parentIdCol=self.parentIdCol,
+            newCategoryTable=self.newCategoryTable)
 
     def addParentIdColumn(self) -> None:
         try:
@@ -75,9 +89,17 @@ class CategoryMapper:
             self.updateMappedParentIdFormat, categoryTable)
         self.dbController.getDB().commit()
 
+    def createNewCategoryTable(self) -> None:
+        cursor = self.dbController.getCursor()
+        cursor.execute(self.formatCreateNewCategoryQuery())
+        self.dbController.getDB().commit()
+
     def mapCategory(self) -> None:
         self.addParentIdColumn()
+
         categoryTable = self.selectCategory()
         categoryTable = self.mapModuleMenuItemSrl(
             categoryTable, self.getModuleMenuItemSrlDict(categoryTable))
         self.updateCategoryTable(categoryTable)
+
+        self.createNewCategoryTable()
