@@ -4,16 +4,14 @@ from group_seperator.rank_seperator import RankSeperator
 from group_seperator.type_seperator import TypeSeperator
 
 
-if __name__ == "__main__":
-    oldDB = DBController()
-    oldDB.setDBName("keeper")
-    oldDB.setDB()
+def testGroupSeperator(oldDB: DBController, newDB: DBController) -> None:
 
-    newDB = DBController()
-    newDB.setDBName("keeper_new")
-    newDB.setDB()
+    testJobSeperator(oldDB, newDB)
+    testTypeSeperator(oldDB, newDB)
+    testRankSeperator(oldDB, newDB)
 
-    # --------------------------------------
+
+def testJobSeperator(oldDB: DBController, newDB: DBController) -> None:
 
     jobSeperator = JobSeperator()
     jobSeperator.setOldDBController(oldDB)
@@ -31,7 +29,8 @@ if __name__ == "__main__":
 
     jobSeperator.seperateJob()
 
-    # --------------------------------------
+
+def testTypeSeperator(oldDB: DBController, newDB: DBController) -> None:
 
     typeSeperator = TypeSeperator()
     typeSeperator.setOldDBController(oldDB)
@@ -45,7 +44,8 @@ if __name__ == "__main__":
 
     typeSeperator.seperateTypeRank()
 
-    # --------------------------------------
+
+def testRankSeperator(oldDB: DBController, newDB: DBController) -> None:
 
     rankSeperator = RankSeperator()
     rankSeperator.setOldDBController(oldDB)
@@ -56,3 +56,15 @@ if __name__ == "__main__":
     rankSeperator.addGroupSrlDict("특별회원", 52603, 3)
 
     rankSeperator.seperateTypeRank()
+
+
+if __name__ == "__main__":
+    oldDB = DBController()
+    oldDB.setDBName("keeper")
+    oldDB.setDB()
+
+    newDB = DBController()
+    newDB.setDBName("keeper_new")
+    newDB.setDB()
+
+    testGroupSeperator(oldDB, newDB)
