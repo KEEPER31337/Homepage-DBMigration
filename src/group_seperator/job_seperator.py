@@ -18,7 +18,7 @@ class JobSeperator(GroupSeperator):
                  memberSrlCol: str = "member_id",
                  jobSrlCol: str = "member_job_id",
                  jobTitleCol: str = "job_name") -> None:
-                 
+
         super().__init__(memberSrlCol, jobSrlCol, jobTitleCol)
 
     def formatInsertJobQuery(self) -> str:
@@ -42,7 +42,7 @@ class JobSeperator(GroupSeperator):
         self.defaultJobId = id
 
     def getDefaultJobTable(self, memberSrlTable: Table) -> Table:
-        for i in enumerate(memberSrlTable):
+        for i, row in enumerate(memberSrlTable):
             memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
 
         return memberSrlTable
@@ -50,6 +50,7 @@ class JobSeperator(GroupSeperator):
     def insertJob(self, jobTable: Table) -> None:
         cursor = self.newDBController.getCursor()
 
+        # TODO : pymysql.err.IntegrityError FK 비일치 예외처리 할것
         cursor.executemany(
             self.formatInsertJobQuery(),
             jobTable
