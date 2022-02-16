@@ -31,7 +31,7 @@ INSERT INTO
     posting (
         id,
         title,
-        clean_content,
+        content,
         member_id,
         visit_count,
         like_count,
@@ -48,7 +48,6 @@ INSERT INTO
         category_id
     )
 SELECT
-    (
         document_srl,
         title,
         content,
@@ -66,7 +65,6 @@ SELECT
         IF(status="TEMP",TRUE,FALSE),
         password,
         module_srl
-    )
 FROM keeper.xe_documents;
 
 INSERT INTO
@@ -83,7 +81,6 @@ INSERT INTO
         posting_id
     )
 SELECT
-    (
         comment_srl,
         content,
         regdate,
@@ -94,7 +91,6 @@ SELECT
         parent_srl,
         member_srl,
         document_srl
-    )
 FROM keeper.xe_comments;
 
 INSERT INTO
@@ -108,7 +104,6 @@ INSERT INTO
         posting_id
     )
 SELECT
-    (
         file_srl,
         source_filename,
         uploaded_filename,
@@ -116,7 +111,6 @@ SELECT
         regdate,
         ipaddress,
         upload_target_srl
-    )
 FROM keeper.xe_files;
 
 INSERT INTO
@@ -126,11 +120,9 @@ INSERT INTO
         parent_id
     )
 SELECT
-    (
         module_srl,
         browser_title,
         module_parent_srl
-    )
 FROM keeper.new_category;
 
 INSERT INTO
@@ -145,7 +137,6 @@ INSERT INTO
         continous_day
     )
 SELECT
-    (
         attendance_srl,
         regdate,
         member_srl,
@@ -154,5 +145,4 @@ SELECT
         ipaddress,
         greetings,
         a_continuity
-    )
 FROM keeper.attendance;
