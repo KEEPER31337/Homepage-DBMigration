@@ -10,25 +10,28 @@ INSERT INTO
         nick_name,
         birthday,
         student_id,
-        register_date)
+        register_date,
+        point)
 SELECT
-        member_srl,
-        user_id,
-        email_address,
-        password,
-        user_name,
-        nick_name,
-        IF(birthday<>"" AND birthday<>0 ,birthday,NULL),
-        student_id,
-        regdate
-FROM keeper.xe_member;
-
+        m.member_srl,
+        m.user_id,
+        m.email_address,
+        m.password,
+        m.user_name,
+        m.nick_name,
+        IF(m.birthday<>"" AND m.birthday<>0 ,m.birthday,NULL),
+        m.student_id,
+        m.regdate,
+        p.point
+FROM keeper.xe_member AS m
+LEFT JOIN keeper.xe_point AS p
+ON m.member_srl = p.member_srl;
 
 INSERT INTO
     posting (
         id,
         title,
-        clean_content,
+        content,
         member_id,
         visit_count,
         like_count,
@@ -45,7 +48,6 @@ INSERT INTO
         category_id
     )
 SELECT
-    (
         document_srl,
         title,
         content,
@@ -57,13 +59,12 @@ SELECT
         regdate,
         last_update,
         ipaddress,
-        IF(comment_status="ALLOW",),
-        is_notice,
+        IF(comment_status="ALLOW",TRUE,FALSE),
+        IF(is_notice="Y",TRUE,FALSE),
         IF(status="SECRET",TRUE,FALSE),
         IF(status="TEMP",TRUE,FALSE),
         password,
         module_srl
-    )
 FROM keeper.xe_documents;
 
 INSERT INTO
@@ -80,7 +81,6 @@ INSERT INTO
         posting_id
     )
 SELECT
-    (
         comment_srl,
         content,
         regdate,
@@ -91,7 +91,6 @@ SELECT
         parent_srl,
         member_srl,
         document_srl
-    )
 FROM keeper.xe_comments;
 
 INSERT INTO
@@ -105,7 +104,6 @@ INSERT INTO
         posting_id
     )
 SELECT
-    (
         file_srl,
         source_filename,
         uploaded_filename,
@@ -113,7 +111,6 @@ SELECT
         regdate,
         ipaddress,
         upload_target_srl
-    )
 FROM keeper.xe_files;
 
 INSERT INTO
@@ -123,26 +120,10 @@ INSERT INTO
         parent_id
     )
 SELECT
-    (
         module_srl,
         browser_title,
         module_parent_srl
-    )
 FROM keeper.new_category;
-
-INSERT INTO
-    books (
-        id,
-        title,
-        author
-    )
-SELECT
-    (
-        number,
-        name,
-        author
-    )
-FROM Library.books;
 
 INSERT INTO
     attendance(
@@ -156,14 +137,12 @@ INSERT INTO
         continous_day
     )
 SELECT
-    (
         attendance_srl,
         regdate,
         member_srl,
         today_point,
-        random_point,
+        today_random,
         ipaddress,
         greetings,
         a_continuity
-    )
 FROM keeper.attendance;
