@@ -15,7 +15,6 @@ class LibraryMigrator(metaclass=ABCMeta):
 
     insertLibraryFormat: str
 
-    @abstractclassmethod
     def __init__(self,
                  oldTableMigrate: str,
                  newTableMigrate: str) -> None:
