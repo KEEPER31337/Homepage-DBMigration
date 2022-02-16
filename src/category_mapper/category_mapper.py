@@ -52,7 +52,7 @@ class CategoryMapper:
 
     def addParentIdColumn(self) -> None:
         try:
-            self.dbController.getCursor().execute(self.addParentIdColumnFormat)
+            self.dbController.getCursor().execute(self.formatAddParentIdColumnQuery())
         except OperationalError as oe:
             print(
                 f"{oe} : There is a column already. From {self.addParentIdColumn.__name__}.")
@@ -86,7 +86,7 @@ class CategoryMapper:
 
     def updateCategoryTable(self, categoryTable: Table) -> None:
         self.dbController.getCursor().executemany(
-            self.updateMappedParentIdFormat, categoryTable)
+            self.formatUpdateMappedParentIdQuery(), categoryTable)
         self.dbController.getDB().commit()
 
     def createNewCategoryTable(self) -> None:
