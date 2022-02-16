@@ -1,10 +1,10 @@
 from db_controller.db_controller import DBController
-from test.category_mapper_test import testCategoryMapper
-from test.extra_vars_inserter_test import testExtraVarsInserter
-from test.html_content_cleaner_test import testHtmlContentCleaner
-from test.migrator_sql_test import testMigratorSql
-from test.group_seperator_test import testGroupSeperator
-from test.library_migrator_test import testLibraryMigrator
+from category_mapper_test import testCategoryMapper
+from extra_vars_inserter_test import testExtraVarsInserter
+from html_content_cleaner_test import testHtmlContentCleaner
+from migrator_sql_test import testMigratorSql
+from group_seperator_test import testGroupSeperator
+from library_migrator_test import testLibraryMigrator
 
 oldDB = DBController()
 oldDB.setDBName("keeper_copy")

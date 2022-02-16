@@ -1,5 +1,3 @@
-USE keeper_new;
-
 INSERT INTO
     member (
         id,
@@ -28,6 +26,19 @@ LEFT JOIN keeper.xe_point AS p
 ON m.member_srl = p.member_srl;
 
 INSERT INTO
+    category (
+        id,
+        name,
+        parent_id
+    )
+SELECT
+        module_srl,
+        name,
+        module_parent_srl
+FROM keeper.new_category;
+
+
+INSERT INTO
     posting (
         id,
         title,
@@ -50,7 +61,7 @@ INSERT INTO
 SELECT
         document_srl,
         title,
-        content,
+        IFNULL(clean_content,"."),
         member_srl,
         readed_count,
         voted_count,
@@ -70,7 +81,7 @@ FROM keeper.xe_documents;
 INSERT INTO
     comment (
         id,
-        clean_content,
+        content,
         register_time,
         update_time,
         ip_address,
@@ -82,7 +93,7 @@ INSERT INTO
     )
 SELECT
         comment_srl,
-        content,
+        IFNULL(clean_content,"."),
         regdate,
         last_update,
         ipaddress,
@@ -113,17 +124,6 @@ SELECT
         upload_target_srl
 FROM keeper.xe_files;
 
-INSERT INTO
-    category (
-        id,
-        name,
-        parent_id
-    )
-SELECT
-        module_srl,
-        browser_title,
-        module_parent_srl
-FROM keeper.new_category;
 
 INSERT INTO
     attendance(
@@ -144,5 +144,5 @@ SELECT
         today_random,
         ipaddress,
         greetings,
-        a_continuity
-FROM keeper.attendance;
+        IFNULL(a_continuity,0)
+FROM keeper.xe_attendance;
