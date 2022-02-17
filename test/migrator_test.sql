@@ -1,3 +1,5 @@
+USE keeper_new;
+
 INSERT INTO
     member (
         id,

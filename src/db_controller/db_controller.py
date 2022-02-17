@@ -1,5 +1,6 @@
 from pymysql import connect, cursors
 from pymysql.connections import Connection
+from pymysql.constants import CLIENT
 
 
 class DBController:
@@ -9,6 +10,7 @@ class DBController:
     host = '127.0.0.1'
     dbName = ''
     charset = 'utf8'
+    clientFlag = CLIENT.MULTI_STATEMENTS
 
     def setUser(self, user: str): self.user = user
     def setDBName(self, dbName: str): self.dbName = dbName
@@ -19,7 +21,8 @@ class DBController:
                           passwd=self.passwd,
                           host=self.host,
                           db=self.dbName,
-                          charset=self.charset
+                          charset=self.charset,
+                          client_flag=self.clientFlag
                           )
 
     def getDB(self) -> Connection: return self.db
