@@ -3,12 +3,12 @@ from library_migrator.book_migrator import BookMigrator
 from library_migrator.equipment_migrator import EquipmentMigrator
 
 
-def testLibraryMigrator(bookDB: DBController, equipmentDB: DBController, newDB: DBController) -> None:
-    testBookMigrator(bookDB, newDB)
-    testEquipmentMigrator(equipmentDB, newDB)
+def migrateLibrary(bookDB: DBController, equipmentDB: DBController, newDB: DBController) -> None:
+    migrateBook(bookDB, newDB)
+    migrateEquipment(equipmentDB, newDB)
 
 
-def testBookMigrator(bookDB: DBController, newDB: DBController) -> None:
+def migrateBook(bookDB: DBController, newDB: DBController) -> None:
     bookMigrator = BookMigrator()
     bookMigrator.setOldDBController(bookDB)
     bookMigrator.setNewDBController(newDB)
@@ -23,7 +23,7 @@ def testBookMigrator(bookDB: DBController, newDB: DBController) -> None:
     bookMigrator.migrateBook()
 
 
-def testEquipmentMigrator(equipmentDB: DBController, newDB: DBController) -> None:
+def migrateEquipment(equipmentDB: DBController, newDB: DBController) -> None:
 
     equipmentMigrator = EquipmentMigrator()
     equipmentMigrator.setOldDBController(equipmentDB)
@@ -45,4 +45,4 @@ if __name__ == "__main__":
     newDB.setDBName("keeper_new")
     newDB.setDB()
 
-    testLibraryMigrator(bookDB, equipmentDB, newDB)
+    migrateLibrary(bookDB, equipmentDB, newDB)

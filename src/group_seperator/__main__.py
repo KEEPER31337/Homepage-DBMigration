@@ -4,14 +4,14 @@ from group_seperator.rank_seperator import RankSeperator
 from group_seperator.type_seperator import TypeSeperator
 
 
-def testGroupSeperator(oldDB: DBController, newDB: DBController) -> None:
+def seperateGroup(oldDB: DBController, newDB: DBController) -> None:
 
-    testJobSeperator(oldDB, newDB)
-    testTypeSeperator(oldDB, newDB)
-    testRankSeperator(oldDB, newDB)
+    seperateJob(oldDB, newDB)
+    seperateType(oldDB, newDB)
+    seperateRank(oldDB, newDB)
 
 
-def testJobSeperator(oldDB: DBController, newDB: DBController) -> None:
+def seperateJob(oldDB: DBController, newDB: DBController) -> None:
 
     jobSeperator = JobSeperator()
     jobSeperator.setOldDBController(oldDB)
@@ -30,7 +30,7 @@ def testJobSeperator(oldDB: DBController, newDB: DBController) -> None:
     jobSeperator.seperateJob()
 
 
-def testTypeSeperator(oldDB: DBController, newDB: DBController) -> None:
+def seperateType(oldDB: DBController, newDB: DBController) -> None:
 
     typeSeperator = TypeSeperator()
     typeSeperator.setOldDBController(oldDB)
@@ -45,7 +45,7 @@ def testTypeSeperator(oldDB: DBController, newDB: DBController) -> None:
     typeSeperator.seperateTypeRank()
 
 
-def testRankSeperator(oldDB: DBController, newDB: DBController) -> None:
+def seperateRank(oldDB: DBController, newDB: DBController) -> None:
 
     rankSeperator = RankSeperator()
     rankSeperator.setOldDBController(oldDB)
@@ -67,4 +67,4 @@ if __name__ == "__main__":
     newDB.setDBName("keeper_new")
     newDB.setDB()
 
-    testGroupSeperator(oldDB, newDB)
+    seperateGroup(oldDB, newDB)
