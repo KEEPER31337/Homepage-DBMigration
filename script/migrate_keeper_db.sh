@@ -5,4 +5,3 @@ mysql -u root -p < script/keeper_copy_setter.sql
 # Remove category default values
 python db_migration
 # Category matching
-
