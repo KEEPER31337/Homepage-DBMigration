@@ -3,6 +3,8 @@ from db_controller.db_controller import DBController
 
 
 def mapCategory(oldDB: DBController) -> None:
+    print(f"Mapping posting category on {oldDB.getDBName()}...")
+
     categoryMapper = CategoryMapper()
     categoryMapper.setDBController(oldDB)
     categoryMapper.mapCategory()

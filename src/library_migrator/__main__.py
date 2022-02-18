@@ -4,7 +4,12 @@ from library_migrator.equipment_migrator import EquipmentMigrator
 
 
 def migrateLibrary(bookDB: DBController, equipmentDB: DBController, newDB: DBController) -> None:
+    print(
+        f"Migrating book data from {bookDB.getDBName()} to {newDB.getDBName()}...")
     migrateBook(bookDB, newDB)
+
+    print(
+        f"Migrating equipment data from {equipmentDB.getDBName()} to {newDB.getDBName()}...")
     migrateEquipment(equipmentDB, newDB)
 
 

@@ -5,9 +5,16 @@ from group_seperator.type_seperator import TypeSeperator
 
 
 def seperateGroup(oldDB: DBController, newDB: DBController) -> None:
-
+    print(
+        f"Seperating and update member job information from {oldDB.getDBName()} to {newDB.getDBName()}...")
     seperateJob(oldDB, newDB)
+
+    print(
+        f"Seperating and update member type information from {oldDB.getDBName()} to {newDB.getDBName()}...")
     seperateType(oldDB, newDB)
+
+    print(
+        f"Seperating and update member rank information from {oldDB.getDBName()} to {newDB.getDBName()}...")
     seperateRank(oldDB, newDB)
 
 
@@ -42,7 +49,7 @@ def seperateType(oldDB: DBController, newDB: DBController) -> None:
     typeSeperator.addGroupSrlDict("졸업", 6236, 4)
     typeSeperator.addGroupSrlDict("탈퇴", 51938, 5)
 
-    typeSeperator.seperateTypeRank()
+    typeSeperator.seperateType()
 
 
 def seperateRank(oldDB: DBController, newDB: DBController) -> None:
@@ -53,9 +60,8 @@ def seperateRank(oldDB: DBController, newDB: DBController) -> None:
 
     rankSeperator.addGroupSrlDict("신입회원", 21359, 1)
     rankSeperator.addGroupSrlDict("우수회원", 28004, 2)
-    rankSeperator.addGroupSrlDict("특별회원", 52603, 3)
 
-    rankSeperator.seperateTypeRank()
+    rankSeperator.seperateRank()
 
 
 if __name__ == "__main__":

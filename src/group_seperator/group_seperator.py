@@ -65,8 +65,8 @@ class GroupSeperator(metaclass=ABCMeta):
 
     def getEditedGroupSrlTable(self, groupSrlTable: Table) -> Table:
         for i, row in enumerate(groupSrlTable):
-            job = row[self.groupTitleCol]
-            groupSrlTable[i][self.groupSrlCol] = self.newGroupSrlDict[job]
+            group = row[self.groupTitleCol]
+            groupSrlTable[i][self.groupSrlCol] = self.newGroupSrlDict[group]
 
         return groupSrlTable
 

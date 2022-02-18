@@ -4,7 +4,12 @@ from html_content_cleaner.document_html_content_cleaner import DocumentHtmlConte
 
 
 def cleanHtmlContent(oldDB: DBController) -> None:
+    print(
+        f"Cleaning and inserting document html contents on {oldDB.getDBName()}...")
     cleanDocumentHtmlContent(oldDB)
+
+    print(
+        f"Cleaning and inserting comment html contents on {oldDB.getDBName()}...")
     cleanCommentHtmlContent(oldDB)
 
 

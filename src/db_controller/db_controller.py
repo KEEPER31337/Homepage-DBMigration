@@ -30,6 +30,8 @@ class DBController:
     def getCursor(
         self) -> cursors.DictCursor: return self.db.cursor(cursors.DictCursor)
 
+    def getDBName(self) -> Connection: return self.dbName
+
     def selectTable(self, selctQuery: str, data: list) -> list:
         cursor = self.getCursor()
         cursor.execute(selctQuery, data)
