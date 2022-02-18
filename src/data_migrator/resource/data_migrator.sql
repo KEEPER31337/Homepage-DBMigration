@@ -20,11 +20,12 @@ SELECT
         m.user_name,
         m.nick_name,
         IF(m.birthday<>"" AND m.birthday<>0 ,m.birthday,NULL),
-        m.student_id,
+        m.student_number,
         m.regdate,
         p.point
-FROM keeper.xe_member AS m
-LEFT JOIN keeper.xe_point AS p
+FROM keeper_copy.xe_member AS m
+
+LEFT JOIN keeper_copy.xe_point AS p
 ON m.member_srl = p.member_srl;
 
 INSERT INTO
@@ -37,8 +38,7 @@ SELECT
         module_srl,
         name,
         module_parent_srl
-FROM keeper.new_category;
-
+FROM keeper_copy.new_category;
 
 INSERT INTO
     posting (
@@ -61,24 +61,30 @@ INSERT INTO
         category_id
     )
 SELECT
-        document_srl,
-        title,
-        IFNULL(clean_content,"."),
-        member_srl,
-        readed_count,
-        voted_count,
-        blamed_count,
-        comment_count,
-        regdate,
-        last_update,
-        ipaddress,
-        IF(comment_status="ALLOW",TRUE,FALSE),
-        IF(is_notice="Y",TRUE,FALSE),
-        IF(status="SECRET",TRUE,FALSE),
-        IF(status="TEMP",TRUE,FALSE),
-        password,
-        module_srl
-FROM keeper.xe_documents;
+        d.document_srl,
+        d.title,
+        IFNULL(d.clean_content,"."),
+        IFNULL(m.member_srl,1),
+        d.readed_count,
+        d.voted_count,
+        d.blamed_count,
+        d.comment_count,
+        d.regdate,
+        d.last_update,
+        d.ipaddress,
+        IF(d.comment_status="ALLOW",TRUE,FALSE),
+        IF(d.is_notice="Y",TRUE,FALSE),
+        IF(d.status="SECRET",TRUE,FALSE),
+        IF(d.status="TEMP",TRUE,FALSE),
+        d.password,
+        d.module_srl
+FROM keeper_copy.xe_documents AS d
+
+LEFT JOIN keeper_copy.xe_member AS m
+ON d.member_srl = m.member_srl
+
+INNER JOIN keeper_copy.new_category AS n
+ON d.module_srl = n.module_srl;
 
 INSERT INTO
     comment (
@@ -94,17 +100,23 @@ INSERT INTO
         posting_id
     )
 SELECT
-        comment_srl,
-        IFNULL(clean_content,"."),
-        regdate,
-        last_update,
-        ipaddress,
-        voted_count,
-        blamed_count,
-        parent_srl,
-        member_srl,
-        document_srl
-FROM keeper.xe_comments;
+        c.comment_srl,
+        IFNULL(c.clean_content,"."),
+        c.regdate,
+        c.last_update,
+        c.ipaddress,
+        c.voted_count,
+        c.blamed_count,
+        c.parent_srl,
+        IFNULL(m.member_srl,1),
+        c.document_srl
+FROM keeper_copy.xe_comments AS c
+
+LEFT JOIN keeper_copy.xe_member AS m
+ON c.member_srl = m.member_srl
+
+INNER JOIN keeper_copy.xe_documents AS d
+ON c.document_srl = d.document_srl;
 
 INSERT INTO
     file (
@@ -117,14 +129,17 @@ INSERT INTO
         posting_id
     )
 SELECT
-        file_srl,
-        source_filename,
-        uploaded_filename,
-        file_size,
-        regdate,
-        ipaddress,
-        upload_target_srl
-FROM keeper.xe_files;
+        f.file_srl,
+        f.source_filename,
+        f.uploaded_filename,
+        f.file_size,
+        f.regdate,
+        f.ipaddress,
+		d.document_srl
+FROM keeper_copy.xe_files AS f
+
+LEFT JOIN keeper_copy.xe_documents AS d
+ON f.upload_target_srl = d.document_srl;
 
 
 INSERT INTO
@@ -136,7 +151,7 @@ INSERT INTO
         random_point,
         ip_address,
         greetings,
-        continous_day
+        continuous_day
     )
 SELECT
         attendance_srl,
@@ -147,4 +162,4 @@ SELECT
         ipaddress,
         greetings,
         IFNULL(a_continuity,0)
-FROM keeper.xe_attendance;
+FROM keeper_copy.xe_attendance;
