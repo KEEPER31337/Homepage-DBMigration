@@ -25,6 +25,7 @@ class CategoryMapper:
         " WHERE module_srl = %(module_srl)s;")
 
     createNewCategoryFormat = (
+        "DROP TABLE IF EXISTS {newCategoryTable};"
         "CREATE TABLE {newCategoryTable} ("
         "SELECT t1.module_srl, t2.name, t1.{parentIdCol}"
         " FROM xe_modules AS t1 JOIN xe_menu_item AS t2"
