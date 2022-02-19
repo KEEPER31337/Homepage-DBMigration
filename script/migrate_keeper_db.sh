@@ -1,7 +1,8 @@
 #!/bin/bash
 
-mysql -u root -p < script/keeper_copy_setter.sql
-# mysql -u root -p < script/init.sql
+mysql -u root -p < resource/keeper_copy_setter.sql
+# mysql -u root -p < resource/init.sql
 # Remove category default values
 python db_migration
 # Category matching
+# Duplicated equipment merging
