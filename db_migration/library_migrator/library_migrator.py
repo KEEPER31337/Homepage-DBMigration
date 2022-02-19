@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractclassmethod
+from abc import ABCMeta, abstractmethod
 from typedef.typedef import Row, Table
 from db_controller.db_controller import DBController
 
@@ -15,6 +15,7 @@ class LibraryMigrator(metaclass=ABCMeta):
 
     insertLibraryFormat: str
 
+    @abstractmethod
     def __init__(self,
                  oldTableMigrate: str,
                  newTableMigrate: str) -> None:
@@ -40,10 +41,10 @@ class LibraryMigrator(metaclass=ABCMeta):
         libraryTable = cursor.fetchall()
         return libraryTable
 
-    @abstractclassmethod
+    @abstractmethod
     def getLibraryName(self, name: str) -> str: pass
 
-    @abstractclassmethod
+    @abstractmethod
     def editLibraryRow(self, row: Row) -> Row: pass
 
     def setNameTotalOnRow(self, row: Row) -> Row:

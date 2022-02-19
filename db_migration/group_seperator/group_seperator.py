@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractclassmethod
+from abc import ABCMeta, abstractmethod
 from typing import List
 from typedef.typedef import Row, Table
 from db_controller.db_controller import DBController
@@ -21,6 +21,7 @@ class GroupSeperator(metaclass=ABCMeta):
         " WHERE (t1.group_srl = t2.group_srl AND"
         " t1.group_srl IN(")
 
+    @abstractmethod
     def __init__(self,
                  memberSrlCol: str,
                  groupSrlCol: str,
