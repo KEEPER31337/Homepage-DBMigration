@@ -160,6 +160,6 @@ SELECT
         today_point,
         today_random,
         ipaddress,
-        greetings,
+        IF(greetings="^auto^","자동 출석입니다.",greetings),
         IFNULL(a_continuity,0)
 FROM keeper_copy.xe_attendance;
