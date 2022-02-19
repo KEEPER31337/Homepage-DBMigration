@@ -29,11 +29,10 @@ class HtmlContentCleaner(metaclass=ABCMeta):
         " SET {cleanContentCol} = %({cleanContentCol})s"
         " WHERE {srlCol} = %({srlCol})s;")
 
-    @abstractclassmethod
     def __init__(self, cleanContentCol: str,
                  tableClean: str,
                  srlCol: str) -> None:
-        
+
         self.cleanContentCol = cleanContentCol
         self.tableClean = tableClean
         self.srlCol = srlCol

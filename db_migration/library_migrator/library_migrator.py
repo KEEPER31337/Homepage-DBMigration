@@ -15,7 +15,6 @@ class LibraryMigrator(metaclass=ABCMeta):
 
     insertLibraryFormat: str
 
-    @abstractclassmethod
     def __init__(self,
                  oldTableMigrate: str,
                  newTableMigrate: str) -> None:
@@ -78,6 +77,7 @@ class LibraryMigrator(metaclass=ABCMeta):
 
         cursor.executemany(
             self.formatInsertLibraryQuery(),
+            editedLibraryTable
         )
         self.newDBController.getDB().commit()
 

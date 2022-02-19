@@ -12,7 +12,6 @@ class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
         " SET {typeRankIdCol} = %({groupSrlCol})s"
         " WHERE id = %({memberSrlCol})s;")
 
-    @abstractclassmethod
     def __init__(self,
                  memberSrlCol: str,
                  groupSrlCol: str,
@@ -28,6 +27,8 @@ class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
             typeRankIdCol=self.typeRankIdCol,
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol)
+
+    # TODO : pymysql.err.IntegrityError FK 비일치 예외처리 할것
 
     def updateTypeRank(self, typeRankSrlTable: Table) -> None:
         cursor = self.newDBController.getCursor()

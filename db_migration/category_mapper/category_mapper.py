@@ -25,6 +25,7 @@ class CategoryMapper:
         " WHERE module_srl = %(module_srl)s;")
 
     createNewCategoryFormat = (
+        "DROP TABLE IF EXISTS {newCategoryTable};"
         "CREATE TABLE {newCategoryTable} ("
         "SELECT t1.module_srl, t2.name, t1.{parentIdCol}"
         " FROM xe_modules AS t1 JOIN xe_menu_item AS t2"
@@ -52,7 +53,7 @@ class CategoryMapper:
 
     def addParentIdColumn(self) -> None:
         try:
-            self.dbController.getCursor().execute(self.addParentIdColumnFormat)
+            self.dbController.getCursor().execute(self.formatAddParentIdColumnQuery())
         except OperationalError as oe:
             print(
                 f"{oe} : There is a column already. From {self.addParentIdColumn.__name__}.")
@@ -86,7 +87,7 @@ class CategoryMapper:
 
     def updateCategoryTable(self, categoryTable: Table) -> None:
         self.dbController.getCursor().executemany(
-            self.updateMappedParentIdFormat, categoryTable)
+            self.formatUpdateMappedParentIdQuery(), categoryTable)
         self.dbController.getDB().commit()
 
     def createNewCategoryTable(self) -> None:
