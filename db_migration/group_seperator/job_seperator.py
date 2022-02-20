@@ -1,5 +1,5 @@
-from group_seperator.group_seperator import GroupSeperator
 from typedef.typedef import Table
+from group_seperator.group_seperator import GroupSeperator
 
 
 class JobSeperator(GroupSeperator):
@@ -50,7 +50,7 @@ class JobSeperator(GroupSeperator):
     def insertJob(self, jobTable: Table) -> None:
         cursor = self.newDBController.getCursor()
 
-        # TODO : pymysql.err.IntegrityError FK 비일치 예외처리 할것
+        # pymysql.err.IntegrityError : FK 비일치
         cursor.executemany(
             self.formatInsertJobQuery(),
             jobTable

@@ -5,8 +5,8 @@ from typing import Dict, List
 
 class ExtraVarsParser:
 
-    @staticmethod
-    def parseValue(rawValue: str) -> str:
+    @classmethod
+    def parseValue(cls,rawValue: str) -> str:
         return rawValue.split(':')[-1].strip('\"')
 
     @classmethod
@@ -39,7 +39,8 @@ class ExtraVarsParser:
         }
         return valueParsed
 
-    def checkStudentNumber(studentNumber: str) -> bool:
+    @classmethod
+    def checkStudentNumber(cls,studentNumber: str) -> bool:
         if (not studentNumber) or len(studentNumber) == 2:
             return False
         return True

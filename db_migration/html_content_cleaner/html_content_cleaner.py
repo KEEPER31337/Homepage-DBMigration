@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractclassmethod
+from abc import ABCMeta, abstractmethod
 from typedef.typedef import Table
 from pymysql import OperationalError
 from lxml.html import clean
@@ -29,12 +29,13 @@ class HtmlContentCleaner(metaclass=ABCMeta):
         " SET {cleanContentCol} = %({cleanContentCol})s"
         " WHERE {srlCol} = %({srlCol})s;")
 
+    @abstractmethod
     def __init__(self, cleanContentCol: str,
                  tableClean: str,
                  srlCol: str) -> None:
 
         self.cleanContentCol = cleanContentCol
-        self.tableClean = tableClean
+        self.tableClean = tableClean 
         self.srlCol = srlCol
 
         self.safeAttributeSet = set()
