@@ -9,7 +9,5 @@ git clone https://github.com/KEEPER31337/Homepage-DBMigration.git
 
 cd Homepage-DBMigration
 
-python3 setup.py develop
-
-./script/run.sh
+./script/migrate_keeper_db.sh
 ```
