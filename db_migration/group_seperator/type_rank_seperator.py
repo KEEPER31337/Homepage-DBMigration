@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractclassmethod
+from abc import ABCMeta, abstractmethod
 from typedef.typedef import Table
 from group_seperator.group_seperator import GroupSeperator
 
@@ -12,6 +12,7 @@ class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
         " SET {typeRankIdCol} = %({groupSrlCol})s"
         " WHERE id = %({memberSrlCol})s;")
 
+    @abstractmethod
     def __init__(self,
                  memberSrlCol: str,
                  groupSrlCol: str,
@@ -28,7 +29,7 @@ class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
             memberSrlCol=self.memberSrlCol,
             groupSrlCol=self.groupSrlCol)
 
-    # TODO : pymysql.err.IntegrityError FK 비일치 예외처리 할것
+    # pymysql.err.IntegrityError : FK 비일치
 
     def updateTypeRank(self, typeRankSrlTable: Table) -> None:
         cursor = self.newDBController.getCursor()

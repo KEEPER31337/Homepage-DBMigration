@@ -15,6 +15,7 @@ class DBController:
     def setUser(self, user: str): self.user = user
     def setDBName(self, dbName: str): self.dbName = dbName
     def setPasswd(self, passwd: str): self.passwd = passwd
+    def setHost(self, host: str): self.host = host
 
     def setDB(self):
         self.db = connect(user=self.user,
@@ -22,8 +23,7 @@ class DBController:
                           host=self.host,
                           db=self.dbName,
                           charset=self.charset,
-                          client_flag=self.clientFlag
-                          )
+                          client_flag=self.clientFlag)
 
     def getDB(self) -> Connection: return self.db
 

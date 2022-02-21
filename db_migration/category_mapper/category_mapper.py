@@ -37,9 +37,6 @@ class CategoryMapper:
         self.parentIdCol = parentIdCol
         self.newCategoryTable = newCategoryTable
 
-    def setDBController(self, dbController: DBController) -> None:
-        self.dbController = dbController
-
     def formatAddParentIdColumnQuery(self) -> str:
         return self.addParentIdColumnFormat.format(parentIdCol=self.parentIdCol)
 
@@ -50,6 +47,19 @@ class CategoryMapper:
         return self.createNewCategoryFormat.format(
             parentIdCol=self.parentIdCol,
             newCategoryTable=self.newCategoryTable)
+
+    def setDBController(self, dbController: DBController) -> None:
+        self.dbController = dbController
+
+    def mapCategory(self) -> None:
+        self.addParentIdColumn()
+
+        categoryTable = self.selectCategory()
+        categoryTable = self.mapModuleMenuItemSrl(
+            categoryTable, self.getModuleMenuItemSrlDict(categoryTable))
+        self.updateCategoryTable(categoryTable)
+
+        self.createNewCategoryTable()
 
     def addParentIdColumn(self) -> None:
         try:
@@ -64,9 +74,13 @@ class CategoryMapper:
         tableContent = cursor.fetchall()
         return tableContent
 
-    def addRootCategoryDict(self) -> Dict[int, int]:
-        moduleMenuItemSrlDict: Dict[int, int] = {0: 0}
-        return moduleMenuItemSrlDict
+    def mapModuleMenuItemSrl(self, moduleMenuItemSrlTable: Table,
+                             moduleMenuItemSrlDict: Dict[int, int]) -> Table:
+
+        for row in moduleMenuItemSrlTable:
+            row[self.parentIdCol] = moduleMenuItemSrlDict[row["parent_srl"]]
+
+        return moduleMenuItemSrlTable
 
     def getModuleMenuItemSrlDict(self, moduleMenuItemSrlTable: Table) -> Dict[int, int]:
         moduleMenuItemSrlDict = self.addRootCategoryDict()
@@ -77,13 +91,9 @@ class CategoryMapper:
 
         return moduleMenuItemSrlDict
 
-    def mapModuleMenuItemSrl(self, moduleMenuItemSrlTable: Table,
-                             moduleMenuItemSrlDict: Dict[int, int]) -> Table:
-
-        for row in moduleMenuItemSrlTable:
-            row[self.parentIdCol] = moduleMenuItemSrlDict[row["parent_srl"]]
-
-        return moduleMenuItemSrlTable
+    def addRootCategoryDict(self) -> Dict[int, int]:
+        moduleMenuItemSrlDict: Dict[int, int] = {0: 0}
+        return moduleMenuItemSrlDict
 
     def updateCategoryTable(self, categoryTable: Table) -> None:
         self.dbController.getCursor().executemany(
@@ -94,13 +104,3 @@ class CategoryMapper:
         cursor = self.dbController.getCursor()
         cursor.execute(self.formatCreateNewCategoryQuery())
         self.dbController.getDB().commit()
-
-    def mapCategory(self) -> None:
-        self.addParentIdColumn()
-
-        categoryTable = self.selectCategory()
-        categoryTable = self.mapModuleMenuItemSrl(
-            categoryTable, self.getModuleMenuItemSrlDict(categoryTable))
-        self.updateCategoryTable(categoryTable)
-
-        self.createNewCategoryTable()
