@@ -1,5 +1,6 @@
 from db_controller.db_controller import DBController
 from category_mapper.__main__ import mapCategory
+from category_controller.__main__ import controlCategory
 from extra_vars_inserter.__main__ import insertExtraVars
 from html_content_cleaner.__main__ import cleanHtmlContent
 from data_migrator.__main__ import migrateData
@@ -32,3 +33,4 @@ if __name__ == "__main__":
 
     seperateGroup(oldDB, newDB)
     migrateLibrary(bookDB, equipmentDB, newDB)
+    controlCategory(newDB)
