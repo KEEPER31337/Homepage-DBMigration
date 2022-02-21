@@ -107,7 +107,7 @@ SELECT
         c.ipaddress,
         c.voted_count,
         c.blamed_count,
-        c.parent_srl,
+        0,
         IFNULL(m.member_srl,1),
         c.document_srl
 FROM keeper_copy.xe_comments AS c
@@ -146,6 +146,7 @@ INSERT INTO
     attendance(
         id,
         time,
+        date,
         member_id,
         point,
         random_point,
@@ -156,6 +157,7 @@ INSERT INTO
 SELECT
         attendance_srl,
         regdate,
+        date_format(regdate,'%Y-%m-%d'),
         member_srl,
         today_point,
         today_random,
