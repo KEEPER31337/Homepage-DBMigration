@@ -50,6 +50,7 @@ class LibraryMigrator(metaclass=ABCMeta):
     def setNameTotalOnRow(self, row: Row) -> Row:
         row["name"] = self.getLibraryName(row["name"])
         row["total"] = 1
+        row["enable"] = 1
         return row
 
     def getEditedLibraryTable(self, libraryTable: Table) -> Table:
@@ -63,6 +64,7 @@ class LibraryMigrator(metaclass=ABCMeta):
                 editedLibraryTable.append(self.editLibraryRow(row))
             else:
                 editedLibraryTable[bookEquipmentIndex]["total"] += 1
+                editedLibraryTable[bookEquipmentIndex]["enable"] += 1
 
         return editedLibraryTable
 

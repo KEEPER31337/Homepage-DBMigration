@@ -1,3 +1,5 @@
+# Not used on main project.
+
 from pymysql import OperationalError
 from typing import Tuple
 from typedef.typedef import Table

@@ -32,9 +32,9 @@ class DBController:
 
     def getDBName(self) -> Connection: return self.dbName
 
-    def selectTable(self, selctQuery: str, data: list) -> list:
+    def selectTable(self, selectQuery: str, data: list) -> list:
         cursor = self.getCursor()
-        cursor.execute(selctQuery, data)
+        cursor.execute(selectQuery, data)
         return cursor.fetchall()
 
     def insertUpdateTable(self, insertUpdateQuery: str, data: list) -> None:

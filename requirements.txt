@@ -1,3 +1,4 @@
+setuptools
 PyMySQL
 lxml
 markdownify
