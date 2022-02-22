@@ -35,6 +35,10 @@ class CategoryController:
                  "parent_id": i[2],
                  "href": i[3]})
 
+    def controlCategory(self) -> None:
+        self.insertNewCategory(self.newCategoryTable)
+        self.updateCategory(self.categoryTable)
+
     def insertNewCategory(self, newCategoryTable: Table) -> None:
         print(newCategoryTable)
         self.dbController.getCursor().executemany(
@@ -45,7 +49,3 @@ class CategoryController:
         self.dbController.getCursor().executemany(
             self.updateCategoryQuery, categoryTable)
         self.dbController.getDB().commit()
-
-    def controlCategory(self) -> None:
-        # self.insertNewCategory(self.newCategoryTable)
-        self.updateCategory(self.categoryTable)

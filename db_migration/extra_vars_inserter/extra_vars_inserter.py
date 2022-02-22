@@ -25,6 +25,12 @@ class ExtraVarsInserter:
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
+    def insertExtraVars(self) -> None:
+        self.addExtraVarsColumns()
+        memberTable = self.selectMember()
+        appendedMemberTable = self.appendParsedExtraVars(memberTable)
+        self.updateMemberTable(appendedMemberTable)
+
     def addExtraVarsColumns(self) -> None:
         try:
             self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
@@ -49,9 +55,3 @@ class ExtraVarsInserter:
         self.dbController.getCursor().executemany(
             self.updateMemberQuery, appendedMemberTable)
         self.dbController.getDB().commit()
-
-    def insertExtraVars(self) -> None:
-        self.addExtraVarsColumns()
-        memberTable = self.selectMember()
-        appendedMemberTable = self.appendParsedExtraVars(memberTable)
-        self.updateMemberTable(appendedMemberTable)

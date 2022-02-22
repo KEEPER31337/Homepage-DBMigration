@@ -31,16 +31,22 @@ class ParentPuller:
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
-    def formatSelectParentPulledQuery(self) -> str:
-        return self.selectParentPulledFormat.format(
-            tableNameParentPull=self.tableNameParentPull,
-            tableSrlCol=self.tableSrlCol,
-            parentSrlCol=self.parentSrlCol)
+    def pullParent(self) -> None:
+        self.parentPulledTable = self.selectParentPulled()
+        self.initVisited()
+        pulledTable = self.travelParentPulledTable()
+        self.updateParentPulled(pulledTable)
 
     def selectParentPulled(self) -> Table:
         cursor = self.dbController.getCursor()
         cursor.execute(self.formatSelectParentPulledQuery())
         return cursor.fetchall()
+
+    def formatSelectParentPulledQuery(self) -> str:
+        return self.selectParentPulledFormat.format(
+            tableNameParentPull=self.tableNameParentPull,
+            tableSrlCol=self.tableSrlCol,
+            parentSrlCol=self.parentSrlCol)
 
     def initVisited(self):
         for i in range(len(self.parentPulledTable)):
@@ -95,20 +101,14 @@ class ParentPuller:
                 return i
         return -1
 
-    def formatUpdateParentPulledQuery(self) -> str:
-        return self.updateParentPulledFormat.format(
-            tableNameParentPull=self.tableNameParentPull,
-            tableSrlCol=self.tableSrlCol,
-            parentSrlCol=self.parentSrlCol)
-
     def updateParentPulled(self, pulledTable: Table) -> None:
         print(len(pulledTable))
         self.dbController.getCursor().executemany(
             self.formatUpdateParentPulledQuery(), pulledTable)
         self.dbController.getDB().commit()
 
-    def pullParent(self) -> None:
-        self.parentPulledTable = self.selectParentPulled()
-        self.initVisited()
-        pulledTable = self.travelParentPulledTable()
-        self.updateParentPulled(pulledTable)
+    def formatUpdateParentPulledQuery(self) -> str:
+        return self.updateParentPulledFormat.format(
+            tableNameParentPull=self.tableNameParentPull,
+            tableSrlCol=self.tableSrlCol,
+            parentSrlCol=self.parentSrlCol)

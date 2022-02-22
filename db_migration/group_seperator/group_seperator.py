@@ -44,33 +44,6 @@ class GroupSeperator(metaclass=ABCMeta):
         self.oldGroupSrlDict[groupName] = oldSrl
         self.newGroupSrlDict[groupName] = newSrl
 
-    def formatSelectGroupSrlQuery(self) -> str:
-        return self.selectGroupSrlFormat.format(
-            memberSrlCol=self.memberSrlCol,
-            groupSrlCol=self.groupSrlCol,
-            groupTitleCol=self.groupTitleCol)
-
-    def getGroupConditionFormat(self) -> str:
-        conditionFormat = "%s"
-        for i in range(len(self.oldGroupSrlDict)-1):
-            conditionFormat += ",%s"
-        conditionFormat += "));"
-
-        return conditionFormat
-
-    def getSelectGroupSrlQuery(self) -> str:
-        return self.formatSelectGroupSrlQuery() + self.getGroupConditionFormat()
-
-    def getOldSrlData(self) -> List[int]:
-        return list(self.oldGroupSrlDict.values())
-
-    def getEditedGroupSrlTable(self, groupSrlTable: Table) -> Table:
-        for i, row in enumerate(groupSrlTable):
-            group = row[self.groupTitleCol]
-            groupSrlTable[i][self.groupSrlCol] = self.newGroupSrlDict[group]
-
-        return groupSrlTable
-
     def selectGroupSrl(self) -> Table:
         cursor = self.oldDBController.getCursor()
         cursor.execute(
@@ -81,3 +54,30 @@ class GroupSeperator(metaclass=ABCMeta):
         oldGroupTable: Table = cursor.fetchall()
 
         return oldGroupTable
+
+    def getSelectGroupSrlQuery(self) -> str:
+        return self.formatSelectGroupSrlQuery() + self.getGroupConditionFormat()
+
+    def formatSelectGroupSrlQuery(self) -> str:
+        return self.selectGroupSrlFormat.format(
+            memberSrlCol=self.memberSrlCol,
+            groupSrlCol=self.groupSrlCol,
+            groupTitleCol=self.groupTitleCol)
+
+    def getGroupConditionFormat(self) -> str:
+        conditionFormat = "%s"
+        for _ in range(len(self.oldGroupSrlDict)-1):
+            conditionFormat += ",%s"
+        conditionFormat += "));"
+
+        return conditionFormat
+
+    def getOldSrlData(self) -> List[int]:
+        return list(self.oldGroupSrlDict.values())
+
+    def getEditedGroupSrlTable(self, groupSrlTable: Table) -> Table:
+        for i, row in enumerate(groupSrlTable):
+            group = row[self.groupTitleCol]
+            groupSrlTable[i][self.groupSrlCol] = self.newGroupSrlDict[group]
+
+        return groupSrlTable

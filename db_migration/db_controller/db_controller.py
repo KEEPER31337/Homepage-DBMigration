@@ -27,8 +27,8 @@ class DBController:
 
     def getDB(self) -> Connection: return self.db
 
-    def getCursor(
-        self) -> cursors.DictCursor: return self.db.cursor(cursors.DictCursor)
+    def getCursor(self) -> cursors.DictCursor:
+        return self.db.cursor(cursors.DictCursor)
 
     def getDBName(self) -> Connection: return self.dbName
 

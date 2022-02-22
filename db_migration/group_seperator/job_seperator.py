@@ -21,15 +21,24 @@ class JobSeperator(GroupSeperator):
 
         super().__init__(memberSrlCol, jobSrlCol, jobTitleCol)
 
-    def formatInsertJobQuery(self) -> str:
-        return self.insertJobFormat.format(
-            memberSrlCol=self.memberSrlCol,
-            groupSrlCol=self.groupSrlCol)
+    def setDefaultJobId(self, id: int) -> None:
+        self.defaultJobId = id
 
-    def formatSelectMemberSrlQuery(self) -> str:
-        return self.selectMemberSrlFormat.format(
-            memberSrlCol=self.memberSrlCol
-        )
+    def seperateJob(self) -> None:
+        jobSrlTable = self.selectJobSrl()
+        editedJobSrlTable = self.getEditedJobSrlTable(jobSrlTable)
+
+        memberSrlTable = self.selectMemberSrl()
+        defaultJobTable = self.getDefaultJobTable(memberSrlTable)
+
+        jobTable = editedJobSrlTable + defaultJobTable
+        self.insertJob(jobTable)
+
+    def selectJobSrl(self) -> Table:
+        return self.selectGroupSrl()
+
+    def getEditedJobSrlTable(self, jobSrlTable: Table) -> Table:
+        return self.getEditedGroupSrlTable(jobSrlTable)
 
     def selectMemberSrl(self) -> Table:
         cursor = self.oldDBController.getCursor()
@@ -38,11 +47,12 @@ class JobSeperator(GroupSeperator):
         memberSrlTable = cursor.fetchall()
         return memberSrlTable
 
-    def setDefaultJobId(self, id: int) -> None:
-        self.defaultJobId = id
+    def formatSelectMemberSrlQuery(self) -> str:
+        return self.selectMemberSrlFormat.format(
+            memberSrlCol=self.memberSrlCol)
 
     def getDefaultJobTable(self, memberSrlTable: Table) -> Table:
-        for i, row in enumerate(memberSrlTable):
+        for i in range(len(memberSrlTable)):
             memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
 
         return memberSrlTable
@@ -57,18 +67,7 @@ class JobSeperator(GroupSeperator):
         )
         self.newDBController.getDB().commit()
 
-    def selectJobSrl(self) -> Table:
-        return self.selectGroupSrl()
-
-    def getEditedJobSrlTable(self, jobSrlTable: Table) -> Table:
-        return self.getEditedGroupSrlTable(jobSrlTable)
-
-    def seperateJob(self) -> None:
-        jobSrlTable = self.selectJobSrl()
-        editedJobSrlTable = self.getEditedJobSrlTable(jobSrlTable)
-
-        memberSrlTable = self.selectMemberSrl()
-        defaultJobTable = self.getDefaultJobTable(memberSrlTable)
-
-        jobTable = editedJobSrlTable + defaultJobTable
-        self.insertJob(jobTable)
+    def formatInsertJobQuery(self) -> str:
+        return self.insertJobFormat.format(
+            memberSrlCol=self.memberSrlCol,
+            groupSrlCol=self.groupSrlCol)
