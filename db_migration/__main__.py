@@ -3,6 +3,7 @@ from category_mapper.__main__ import mapCategory
 from category_controller.__main__ import controlCategory
 from extra_vars_inserter.__main__ import insertExtraVars
 from html_content_cleaner.__main__ import cleanHtmlContent
+from parent_puller.__main__ import pullParent
 from data_migrator.__main__ import migrateData
 from group_seperator.__main__ import seperateGroup
 from library_migrator.__main__ import migrateLibrary
@@ -28,6 +29,7 @@ if __name__ == "__main__":
     insertExtraVars(oldDB)
     cleanHtmlContent(oldDB)
     mapCategory(oldDB)
+    pullParent(oldDB)
 
     migrateData(newDB)
 
