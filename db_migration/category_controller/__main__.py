@@ -4,7 +4,7 @@ from category_controller.category_controller import CategoryController
 
 
 def controlCategory(newDB: DBController):
-    print("Controlling posting categories...")
+    print(f"Controlling posting categories on {newDB.getDBName()}...")
 
     categoryList = [
         (219, 'KEEPER', 0, None),
