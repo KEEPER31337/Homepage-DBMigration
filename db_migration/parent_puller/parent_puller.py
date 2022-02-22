@@ -1,69 +1,114 @@
-from db_controller.db_controller import DBController
 from typedef.typedef import Table
+from db_controller.db_controller import DBController
 
 
 class ParentPuller:
     dbController: DBController
 
-    tableReset: Table
+    parentPulledTable: Table
 
-    selectCommentQuery = (
-        "SELECT comment_srl, parent_srl"
-        " FROM xe_comments;")
+    tableNameParentPull: str
+    tableSrlCol: str
+    parentSrlCol: str
 
-    updateCommentQuery = (
-        "UPDATE xe_comments"
-        " SET parent_srl=%(parent_srl)s"
-        " WHERE comment_srl=%(comments_srl)s;")
+    selectParentPulledFormat = (
+        "SELECT {tableSrlCol}, {parentSrlCol}"
+        " FROM {tableNameParentPull};")
+
+    updateParentPulledFormat = (
+        "UPDATE {tableNameParentPull}"
+        " SET {parentSrlCol}=%({parentSrlCol})s"
+        " WHERE {tableSrlCol}=%({tableSrlCol})s;")
+
+    def __init__(self,
+                 tableNameParentPull: str = "xe_comments",
+                 tableSrlCol: str = "comment_srl",
+                 parentSrlCol: str = "parent_srl") -> None:
+        self.tableNameParentPull = tableNameParentPull
+        self.parentSrlCol = parentSrlCol
+        self.tableSrlCol = tableSrlCol
 
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
-    def selectComment(self) -> Table:
+    def formatSelectParentPulledQuery(self) -> str:
+        return self.selectParentPulledFormat.format(
+            tableNameParentPull=self.tableNameParentPull,
+            tableSrlCol=self.tableSrlCol,
+            parentSrlCol=self.parentSrlCol)
+
+    def selectParentPulled(self) -> Table:
         cursor = self.dbController.getCursor()
-        cursor.execute(self.selectCommentQuery)
+        cursor.execute(self.formatSelectParentPulledQuery())
         return cursor.fetchall()
 
     def initVisited(self):
-        for i in range(len(self.tableReset)):
-            self.tableReset[i]["visited"] = False
+        for i in range(len(self.parentPulledTable)):
+            self.parentPulledTable[i]["visited"] = False
 
-    def pullUpParentSrl(self) -> Table:
-        for i, row in enumerate(self.tableReset):
-            rowParentSrl = row["parent_srl"]
+    def travelParentPulledTable(self) -> Table:
+
+        for i, row in enumerate(self.parentPulledTable):
+            rowParentSrl = row[self.parentSrlCol]
             if rowParentSrl != 0 and (not row["visited"]):
-                self.parentDepthFirstSearch(i)
+                print(row[self.tableSrlCol])
+                self.searchPullParent(i)
 
-    def parentDepthFirstSearch(self, rowIndex: int) -> int:
-        self.tableReset[rowIndex]["visited"] = True
+        return self.parentPulledTable
 
-        parentSrl = self.tableReset[rowIndex]["parent_srl"]
-        parentIndex = self.getIndexBySrl(parentSrl)
-        if parentIndex == -1 :
-            print(f"Parent srl {parentSrl} not found... Return 0. From {self.parentDepthFirstSearch.__name__}.")
+    def searchPullParent(self, rowIndex: int) -> int:
+        self.parentPulledTable[rowIndex]["visited"] = True
+
+        parentSrl = self.parentPulledTable[rowIndex][self.parentSrlCol]
+        rowSrl = self.parentPulledTable[rowIndex][self.tableSrlCol]
+        # TODO : raise 화
+        if parentSrl == rowSrl:
+            print(
+                f"Parent srl {parentSrl} and this row srl {rowSrl} is equal!"
+                f" To avoid inf loop, return and set parent srl 0."
+                f" From {self.searchPullParent.__name__}.")
+            self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
             return 0
 
-        parentRow = self.tableReset[parentIndex]
+        parentIndex = self.getIndexBySrl(parentSrl)
+        # TODO : raise 화
+        if parentIndex == -1:
+            print(
+                f"Parent srl {parentSrl} not found..."
+                f" Return and set parent srl 0."
+                f" From {self.searchPullParent.__name__}.")
+            self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
+            return 0
 
-        if parentRow["parent_srl"] != 0:
-            searchedParentSrl = self.parentDepthFirstSearch(parentIndex)
-            self.tableReset[rowIndex]["parent_srl"] = searchedParentSrl
+        parentRow = self.parentPulledTable[parentIndex]
+
+        if parentRow[self.parentSrlCol] != 0:
+            searchedParentSrl = self.searchPullParent(parentIndex)
+            self.parentPulledTable[rowIndex][self.parentSrlCol] = searchedParentSrl
             return searchedParentSrl
         else:
-            return parentRow["comment_srl"]
+            return parentRow[self.tableSrlCol]
 
     def getIndexBySrl(self, srl: int) -> int:
-        for i, row in enumerate(self.tableReset):
-            if row["comment_srl"] == srl:
+        for i, row in enumerate(self.parentPulledTable):
+            if row[self.tableSrlCol] == srl:
                 return i
         return -1
 
-    def updateComment(self, pulledCommentTable: Table) -> None:
+    def formatUpdateParentPulledQuery(self) -> str:
+        return self.updateParentPulledFormat.format(
+            tableNameParentPull=self.tableNameParentPull,
+            tableSrlCol=self.tableSrlCol,
+            parentSrlCol=self.parentSrlCol)
+
+    def updateParentPulled(self, pulledTable: Table) -> None:
+        print(len(pulledTable))
         self.dbController.getCursor().executemany(
-            self.updateCommentQuery, pulledCommentTable)
+            self.formatUpdateParentPulledQuery(), pulledTable)
         self.dbController.getDB().commit()
 
     def pullParent(self) -> None:
-        self.tableReset = self.selectComment()
-        pulledCommentTable = self.pullUpParentSrl()
-        self.updateComment(pulledCommentTable)
+        self.parentPulledTable = self.selectParentPulled()
+        self.initVisited()
+        pulledTable = self.travelParentPulledTable()
+        self.updateParentPulled(pulledTable)
