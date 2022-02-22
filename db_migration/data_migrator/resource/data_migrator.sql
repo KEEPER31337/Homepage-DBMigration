@@ -1,4 +1,4 @@
-USE keeper_new;
+USE {dstDB};
 
 INSERT INTO
     member (
@@ -23,9 +23,9 @@ SELECT
         m.student_number,
         m.regdate,
         p.point
-FROM keeper_copy.xe_member AS m
+FROM {srcDB}.xe_member AS m
 
-LEFT JOIN keeper_copy.xe_point AS p
+LEFT JOIN {srcDB}.xe_point AS p
 ON m.member_srl = p.member_srl;
 
 INSERT INTO
@@ -38,7 +38,7 @@ SELECT
         module_srl,
         name,
         module_parent_srl
-FROM keeper_copy.new_category;
+FROM {srcDB}.new_category;
 
 INSERT INTO
     posting (
@@ -78,12 +78,12 @@ SELECT
         IF(d.status="TEMP",TRUE,FALSE),
         d.password,
         d.module_srl
-FROM keeper_copy.xe_documents AS d
+FROM {srcDB}.xe_documents AS d
 
-LEFT JOIN keeper_copy.xe_member AS m
+LEFT JOIN {srcDB}.xe_member AS m
 ON d.member_srl = m.member_srl
 
-INNER JOIN keeper_copy.new_category AS n
+INNER JOIN {srcDB}.new_category AS n
 ON d.module_srl = n.module_srl;
 
 INSERT INTO
@@ -110,12 +110,12 @@ SELECT
         0,
         IFNULL(m.member_srl,1),
         c.document_srl
-FROM keeper_copy.xe_comments AS c
+FROM {srcDB}.xe_comments AS c
 
-LEFT JOIN keeper_copy.xe_member AS m
+LEFT JOIN {srcDB}.xe_member AS m
 ON c.member_srl = m.member_srl
 
-INNER JOIN keeper_copy.xe_documents AS d
+INNER JOIN {srcDB}.xe_documents AS d
 ON c.document_srl = d.document_srl;
 
 INSERT INTO
@@ -136,9 +136,9 @@ SELECT
         f.regdate,
         f.ipaddress,
 		d.document_srl
-FROM keeper_copy.xe_files AS f
+FROM {srcDB}.xe_files AS f
 
-LEFT JOIN keeper_copy.xe_documents AS d
+LEFT JOIN {srcDB}.xe_documents AS d
 ON f.upload_target_srl = d.document_srl;
 
 
@@ -164,4 +164,4 @@ SELECT
         ipaddress,
         IF(greetings="^auto^","자동 출석입니다.",greetings),
         IFNULL(a_continuity,0)
-FROM keeper_copy.xe_attendance;
+FROM {srcDB}.xe_attendance;

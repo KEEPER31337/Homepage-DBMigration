@@ -3,20 +3,26 @@ from os.path import dirname
 from db_controller.db_controller import DBController
 
 
-def migrateData(newDB: DBController) -> None:
+def migrateData(oldDB: DBController, newDB: DBController) -> None:
     print(f"Migrating general data to {newDB.getDBName()}...")
 
     modulePath = dirname(data_migrator.__file__)
     sqlFilePath = "resource/data_migrator.sql"
-    migratorTestSql = open(modulePath + "/" + sqlFilePath, 'r')
+    dataMigratorSql = open(modulePath + "/" + sqlFilePath, 'r')
+    dataMigratorSqlQuery = dataMigratorSql.read().format(
+        srcDB=oldDB.getDBName(),
+        dstDB=newDB.getDBName())
 
-    newDB.getCursor().execute(migratorTestSql.read())
+    newDB.getCursor().execute(dataMigratorSqlQuery)
     newDB.getDB().commit()
 
 
 if __name__ == "__main__":
+    oldDB = DBController()
+    oldDB.setDBName("keeper_copy")
+
     newDB = DBController()
     newDB.setDBName("keeper_new")
     newDB.setDB()
 
-    migrateData(newDB)
+    migrateData(oldDB, newDB)
