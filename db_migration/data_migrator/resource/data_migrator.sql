@@ -107,7 +107,7 @@ SELECT
         c.ipaddress,
         c.voted_count,
         c.blamed_count,
-        0,
+        c.parent_id,
         IFNULL(m.member_srl,1),
         c.document_srl
 FROM keeper_copy.xe_comments AS c
