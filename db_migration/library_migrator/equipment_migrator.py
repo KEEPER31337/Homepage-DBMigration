@@ -1,4 +1,4 @@
-from typedef.typedef import Row
+from util.typedef import Row
 from library_migrator.library_migrator import LibraryMigrator
 
 

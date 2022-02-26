@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typedef.typedef import Table
+from util.typedef import Table
 from group_seperator.group_seperator import GroupSeperator
 
 

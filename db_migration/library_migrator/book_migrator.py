@@ -1,4 +1,4 @@
-from typedef.typedef import Row
+from util.typedef import Row
 from library_migrator.library_migrator import LibraryMigrator
 
 
@@ -12,7 +12,7 @@ class BookMigrator(LibraryMigrator):
     def __init__(self,
                  oldTableMigrate: str = "books",
                  newTableMigrate: str = "book") -> None:
-        
+
         self.insertLibraryFormat = self.insertBookFormat
         self.bookDepartmentDict = dict()
         super().__init__(oldTableMigrate, newTableMigrate)

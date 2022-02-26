@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from typedef.typedef import Table
+from util.typedef import Table
 from db_controller.db_controller import DBController
 
 

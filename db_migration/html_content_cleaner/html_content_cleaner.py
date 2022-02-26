@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typedef.typedef import Table
+from util.typedef import Table
 from pymysql import OperationalError
 from lxml.html import clean
 from lxml.etree import ParserError

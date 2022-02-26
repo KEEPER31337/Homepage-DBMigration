@@ -1,5 +1,5 @@
 from typing import Dict
-from typedef.typedef import Table
+from util.typedef import Table
 from pymysql import OperationalError
 from db_controller.db_controller import DBController
 

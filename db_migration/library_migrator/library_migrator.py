@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typedef.typedef import Row, Table
+from util.typedef import Row, Table
 from db_controller.db_controller import DBController
 
 
