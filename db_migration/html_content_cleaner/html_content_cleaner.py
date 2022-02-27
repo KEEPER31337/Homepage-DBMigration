@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from util.err import logDuplicatedColumnAdded
 from util.typedef import Table
 from pymysql import OperationalError
 from lxml.html import clean
@@ -59,9 +60,7 @@ class HtmlContentCleaner(metaclass=ABCMeta):
         try:
             self.dbController.getCursor().execute(self.formatAddCleanContentColumnQuery())
         except OperationalError as oe:
-            print(
-                f"{oe} : There is a column already."
-                f" From {self.addCleanContentColumn.__name__}.")
+            logDuplicatedColumnAdded(oe,self.__class__.__name__,self.addCleanContentColumn.__name__)
 
     def formatAddCleanContentColumnQuery(self) -> str:
         return self.addCleanContentColumnFormat.format(
