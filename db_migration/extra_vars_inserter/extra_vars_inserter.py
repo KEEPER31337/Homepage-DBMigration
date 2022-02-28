@@ -1,6 +1,7 @@
 # Add student number columns, parse extra_vars column and update rows.
 
-from typedef.typedef import Table
+from util.err import logDuplicatedColumnAdded
+from util.typedef import Table
 from pymysql import OperationalError
 from db_controller.db_controller import DBController
 from extra_vars_inserter.extra_vars_parser import ExtraVarsParser
@@ -25,12 +26,17 @@ class ExtraVarsInserter:
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
+    def insertExtraVars(self) -> None:
+        self.addExtraVarsColumns()
+        memberTable = self.selectMember()
+        appendedMemberTable = self.appendParsedExtraVars(memberTable)
+        self.updateMemberTable(appendedMemberTable)
+
     def addExtraVarsColumns(self) -> None:
         try:
             self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
         except OperationalError as oe:
-            print(
-                f"{oe} : There is a column already. From {self.addExtraVarsColumns.__name__}.")
+            logDuplicatedColumnAdded(oe,self.__class__.__name__,self.addExtraVarsColumns.__name__)
 
     def selectMember(self) -> Table:
         cursor = self.dbController.getCursor()
@@ -49,9 +55,3 @@ class ExtraVarsInserter:
         self.dbController.getCursor().executemany(
             self.updateMemberQuery, appendedMemberTable)
         self.dbController.getDB().commit()
-
-    def insertExtraVars(self) -> None:
-        self.addExtraVarsColumns()
-        memberTable = self.selectMember()
-        appendedMemberTable = self.appendParsedExtraVars(memberTable)
-        self.updateMemberTable(appendedMemberTable)

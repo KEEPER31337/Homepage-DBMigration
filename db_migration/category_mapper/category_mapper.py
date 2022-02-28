@@ -1,5 +1,6 @@
 from typing import Dict
-from typedef.typedef import Table
+from util.err import logDuplicatedColumnAdded
+from util.typedef import Table
 from pymysql import OperationalError
 from db_controller.db_controller import DBController
 
@@ -65,8 +66,7 @@ class CategoryMapper:
         try:
             self.dbController.getCursor().execute(self.formatAddParentIdColumnQuery())
         except OperationalError as oe:
-            print(
-                f"{oe} : There is a column already. From {self.addParentIdColumn.__name__}.")
+            logDuplicatedColumnAdded(oe,self.__class__.__name__,self.addParentIdColumn.__name__)
 
     def selectCategory(self) -> Table:
         cursor = self.dbController.getCursor()

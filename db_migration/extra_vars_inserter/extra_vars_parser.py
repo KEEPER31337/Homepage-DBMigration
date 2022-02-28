@@ -6,8 +6,18 @@ from typing import Dict, List
 class ExtraVarsParser:
 
     @classmethod
-    def parseValue(cls,rawValue: str) -> str:
-        return rawValue.split(':')[-1].strip('\"')
+    def parseExtraVars(cls, extraVars: str) -> Dict[str, str]:
+        splitedExtraVars = extraVars.split(';')
+        splitedExtraVars = [x.strip('}').strip('{') for x in splitedExtraVars]
+
+        studentNumber = cls.parseStudentNumber(splitedExtraVars)
+        studentNumber = studentNumber if cls.checkStudentNumber(
+            studentNumber) else None
+
+        valueParsed = {
+            "student_number": studentNumber
+        }
+        return valueParsed
 
     @classmethod
     def parseStudentNumber(cls, splitedExtraVars: List[str]) -> str:
@@ -26,21 +36,11 @@ class ExtraVarsParser:
         return studentNumber
 
     @classmethod
-    def parseExtraVars(cls, extraVars: str) -> Dict[str, str]:
-        splitedExtraVars = extraVars.split(';')
-        splitedExtraVars = [x.strip('}').strip('{') for x in splitedExtraVars]
-
-        studentNumber = cls.parseStudentNumber(splitedExtraVars)
-        studentNumber = studentNumber if cls.checkStudentNumber(
-            studentNumber) else None
-
-        valueParsed = {
-            "student_number": studentNumber
-        }
-        return valueParsed
+    def parseValue(cls, rawValue: str) -> str:
+        return rawValue.split(':')[-1].strip('\"')
 
     @classmethod
-    def checkStudentNumber(cls,studentNumber: str) -> bool:
+    def checkStudentNumber(cls, studentNumber: str) -> bool:
         if (not studentNumber) or len(studentNumber) == 2:
             return False
         return True
