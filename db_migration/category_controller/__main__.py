@@ -36,7 +36,7 @@ def controlCategory(newDB: DBController):
         (8, '이벤트', 219, 'event'),
         (9, '동아리 일정', 219, 'schedule'),
         (2, '게시판', 0, None),
-        (3, '동아리활동', None, None),
+        (3, '동아리활동', 0, None),
         (5, '서비스', 0, None),
         (27, '기자재 신청', 5, 'library'),
         (6, '포인트', 0, None)
