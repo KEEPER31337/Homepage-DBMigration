@@ -3,7 +3,7 @@ from util.typedef import Row, Table
 from category_transferer.category_transferer import CategoryTransferer
 
 
-class LeafCategoryTransfer(CategoryTransferer):
+class LeafCategoryTransferer(CategoryTransferer):
 
     leafDepth: int = 1
 
@@ -33,8 +33,12 @@ class LeafCategoryTransfer(CategoryTransferer):
 
         self.categoryTransferTable.append(categoryTransferDict)
 
+    def transferCategory(self) -> None:
+        self.transferLeafCategory()
+
     def transferLeafCategory(self) -> None:
         unifiedLeafCategoryTable = self.getUnifiedLeafCategoryTable()
+        self.updatePostingCategory(unifiedLeafCategoryTable)
 
     def getUnifiedLeafCategoryTable(self) -> None:
         unifiedLeafCategoryTable: Table = list()
@@ -51,7 +55,7 @@ class LeafCategoryTransfer(CategoryTransferer):
 
         return unifiedLeafCategoryTable
 
-    def getRootLeafChildCategory(self, rootCategoryId: int):
+    def getRootLeafChildCategory(self, rootCategoryId: int) -> Table:
         return self.findChildCategory(rootCategoryId, self.leafDepth)
 
     def findChildCategory(self, parentCategoryId: int, depth: int) -> Table:
@@ -86,7 +90,7 @@ class LeafCategoryTransfer(CategoryTransferer):
 
         return unifiedChildCategoryTable
 
-    def getLeafCategoryTable(self, childCategoryTable: Table, newCategoryId: int):
+    def getLeafCategoryTable(self, childCategoryTable: Table, newCategoryId: int) -> Table:
         leafCategoryTable: Table = list()
 
         for childCategoryRow in childCategoryTable:

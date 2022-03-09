@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from db_controller.db_controller import DBController
-from util.typedef import Row, Table
+from util.typedef import Table
 
 
 class CategoryTransferer(metaclass=ABCMeta):
@@ -8,7 +8,7 @@ class CategoryTransferer(metaclass=ABCMeta):
 
     categoryTransferTable: Table
 
-    updateCategoryQuery = (
+    updatePostingCategoryQuery = (
         "UPDATE posting"
         " SET category_id = %(new_category_id)s,"
         " title = CONCAT(%(old_category_name)s, title)"
@@ -20,18 +20,15 @@ class CategoryTransferer(metaclass=ABCMeta):
     def setDBController(self, dbController: DBController) -> None:
         self.dbController = dbController
 
-    def transferCategory(self) -> None:
-        # 1:1 transfer
-        # 1:n find child
-        # 1:m:n find grand child
-        pass
+    @abstractmethod
+    def transferCategory(self) -> None: pass
 
     @abstractmethod
     def appendCategoryTransferList(self) -> None: pass
 
-    def updateCategory(self, updateCategoryDict: Table) -> None:
+    def updatePostingCategory(self, updatePostingCategoryTable: Table) -> None:
         self.dbController.getCursor().executemany(
-            self.updateCategoryQuery, updateCategoryDict)
+            self.updatePostingCategoryQuery, updatePostingCategoryTable)
         self.dbController.getDB().commit()
 
     def coverName(self, categoryName: str) -> str:

@@ -1,3 +1,4 @@
+from category_transferer.__main__ import transferCategory
 from db_controller.db_controller import DBController
 from category_mapper.__main__ import mapCategory
 from category_controller.__main__ import controlCategory
@@ -36,3 +37,4 @@ if __name__ == "__main__":
     seperateGroup(oldDB, newDB)
     migrateLibrary(bookDB, equipmentDB, newDB)
     controlCategory(newDB)
+    transferCategory(newDB)

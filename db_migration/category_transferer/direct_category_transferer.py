@@ -1,4 +1,4 @@
-from util.typedef import Row, Table
+from util.typedef import Row
 from category_transferer.category_transferer import CategoryTransferer
 
 
@@ -16,9 +16,12 @@ class DirectCategoryTransferer(CategoryTransferer):
 
         self.categoryTransferTable.append(categoryTransferDict)
 
+    def transferCategory(self) -> None:
+        self.transferDirectCategory()
+
     def transferDirectCategory(self) -> None:
         namedCategoryTransferTable = self.getNamedTransferTable()
-        self.updateCategory(namedCategoryTransferTable)
+        self.updatePostingCategory(namedCategoryTransferTable)
 
     def getNamedTransferTable(self) -> None:
         namedTransferTable = self.categoryTransferTable
