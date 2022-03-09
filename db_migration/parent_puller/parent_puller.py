@@ -1,3 +1,4 @@
+from util.err import ParentSrlEqualError
 from util.typedef import Table
 from db_controller.db_controller import DBController
 
@@ -67,12 +68,16 @@ class ParentPuller:
 
         parentSrl = self.parentPulledTable[rowIndex][self.parentSrlCol]
         rowSrl = self.parentPulledTable[rowIndex][self.tableSrlCol]
-        # TODO : raise 화
-        if parentSrl == rowSrl:
-            print(
-                f"Parent srl {parentSrl} and this row srl {rowSrl} is equal!"
-                f" To avoid inf loop, return and set parent srl 0."
-                f" From {self.searchPullParent.__name__}.")
+
+        try:
+            if parentSrl == rowSrl:
+                raise ParentSrlEqualError(
+                    self.__class__.__name__,
+                    self.searchPullParent.__name__,
+                    parentSrl,
+                    rowSrl)
+        except ParentSrlEqualError as pe:
+            print(pe)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
             return 0
 
@@ -81,7 +86,7 @@ class ParentPuller:
         if parentIndex == -1:
             print(
                 f"Parent srl {parentSrl} not found..."
-                f" Return and set parent srl 0."
+                " Return and set parent srl 0."
                 f" From {self.searchPullParent.__name__}.")
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
             return 0
