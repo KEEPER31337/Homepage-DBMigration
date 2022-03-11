@@ -13,6 +13,9 @@ class UtilException(Exception):
         self.className = className
         self.methodName = methodName
 
+    def getSourceClassMethodName(self):
+        return f"{self.className}.{self.methodName}"
+
 
 class ParentSrlEqualError(UtilException):
     parentSrl: int
@@ -23,8 +26,7 @@ class ParentSrlEqualError(UtilException):
                  methodName: str,
                  parentSrl: int,
                  rowSrl: int) -> None:
-        self.className = className
-        self.methodName = methodName
+        super().__init__(className,methodName)
         self.parentSrl = parentSrl
         self.rowSrl = rowSrl
 
@@ -32,7 +34,7 @@ class ParentSrlEqualError(UtilException):
         return(
             f"Parent srl {self.parentSrl} and this row srl {self.rowSrl} is equal!"
             " To avoid infinite loop, return and set parent srl 0."
-            f" From {self.className}.{self.methodName}.")
+            f" From {self.getSourceClassMethodName()}.")
 
 
 class ParentSrlNotFoundError(UtilException):
@@ -42,11 +44,10 @@ class ParentSrlNotFoundError(UtilException):
                  className: str,
                  methodName: str,
                  parentSrl: int) -> None:
-        self.className = className
-        self.methodName = methodName
+        super().__init__(className,methodName)
         self.parentSrl = parentSrl
 
     def __str__(self) -> str:
         return (f"Parent srl {self.parentSrl} not found..."
                 " Return and set parent srl 0."
-                f" From {self.className}.{self.methodName}.")
+                f" From {self.getSourceClassMethodName()}.")
