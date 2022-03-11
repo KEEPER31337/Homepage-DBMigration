@@ -25,7 +25,6 @@ def controlCategory(newDB: DBController):
         (647, 'Tools', 5125, 'board'),
         (662, '외부문서&강의', 5125, 'board'),
         (81570, '취업&면접', 5125, 'board'),
-        (34608, 'KUCIS', 5125, 'board'),
         (1377, '시험', 4, 'board'),
         (106402, '도서 신청', 5, 'library'),
         (60024, '도서 대여', 5, 'library'),

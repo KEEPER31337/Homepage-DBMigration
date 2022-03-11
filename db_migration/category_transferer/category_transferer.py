@@ -24,7 +24,7 @@ class CategoryTransferer(metaclass=ABCMeta):
     def transferCategory(self) -> None: pass
 
     @abstractmethod
-    def appendCategoryTransferList(self) -> None: pass
+    def appendCategoryTransferDict(self) -> None: pass
 
     def updatePostingCategory(self, updatePostingCategoryTable: Table) -> None:
         self.dbController.getCursor().executemany(
