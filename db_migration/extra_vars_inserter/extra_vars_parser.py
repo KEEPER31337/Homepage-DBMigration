@@ -2,6 +2,8 @@
 # Output student number as dictionary
 from typing import Dict, List
 
+from util.err import StringNotFoundErrorLog
+
 
 class ExtraVarsParser:
 
@@ -26,7 +28,12 @@ class ExtraVarsParser:
         try:
             studentNumberKeyIndex = splitedExtraVars.index(studentNumberKey)
         except ValueError as ve:
-            print(f"{ve} : Student number key not found in extra_vars.")
+            print(StringNotFoundErrorLog(
+                err=ve,
+                className=cls.__class__.__name__,
+                methodName=cls.parseStudentNumber.__name__,
+                stringFound=studentNumberKey,
+                msg="Return empty string."))
             return ""
 
         studentNumberIndex = studentNumberKeyIndex + 1

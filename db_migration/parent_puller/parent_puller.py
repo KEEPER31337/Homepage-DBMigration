@@ -71,10 +71,10 @@ class ParentPuller:
         try:
             if parentSrl == rowSrl:
                 raise ParentSrlEqualError(
-                    self.__class__.__name__,
-                    self.searchPullParent.__name__,
-                    parentSrl,
-                    rowSrl)
+                    className=self.__class__.__name__,
+                    methodName=self.searchPullParent.__name__,
+                    parentSrl=parentSrl,
+                    rowSrl=rowSrl)
         except ParentSrlEqualError as ee:
             print(ee)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
@@ -85,9 +85,9 @@ class ParentPuller:
         try:
             if parentIndex == -1:
                 raise ParentSrlNotFoundError(
-                    self.__class__.__name__,
-                    self.searchPullParent.__name__,
-                    parentSrl)
+                    className=self.__class__.__name__,
+                    methodName=self.searchPullParent.__name__,
+                    parentSrl=parentSrl)
         except ParentSrlNotFoundError as nfe:
             print(nfe)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
