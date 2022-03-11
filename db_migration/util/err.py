@@ -1,10 +1,4 @@
 
-def logDuplicatedColumnAdded(err: Exception,
-                             className: str,
-                             methodName: str) -> None:
-    print(f"{err} : This column is already added. From {className}.{methodName}.")
-
-
 class UtilError(Exception):
     className: str
     methodName: str
@@ -18,8 +12,8 @@ class UtilError(Exception):
         self.methodName = methodName
         self.msg = f" {msg}"
 
-    def getSourceClassMethodName(self):
-        return f"{self.className}.{self.methodName}"
+    def getSourceClassMethod(self):
+        return f" From {self.className}.{self.methodName}."
 
 
 class UtilErrorLog(UtilError):
@@ -29,9 +23,9 @@ class UtilErrorLog(UtilError):
                  err: Exception,
                  className: str,
                  methodName: str,
-                 msg:str) -> None:
+                 msg: str) -> None:
         self.err = err
-        super().__init__(className, methodName,msg)
+        super().__init__(className, methodName, msg)
 
 
 class StringNotFoundErrorLog(UtilErrorLog):
@@ -52,7 +46,26 @@ class StringNotFoundErrorLog(UtilErrorLog):
     def __str__(self) -> str:
         return (f"{self.err} : {self.stringFound} string is not found."
                 f"{self.msg}"
-                f" From {self.getSourceClassMethodName()}.")
+                f"{self.getSourceClassMethod()}.")
+
+
+class DuplicatedColumnExistErrorLog(UtilErrorLog):
+    columnName: str
+
+    def __init__(self,
+                 err: Exception,
+                 className: str,
+                 methodName: str,
+                 columnName: str = "",
+                 msg: str = "") -> None:
+    
+        self.columnName = columnName
+    
+        super().__init__(err, className, methodName, msg)
+
+    def __str__(self) -> str:
+        return (f"{self.err} : Column {self.columnName} is already exist."
+                f"{self.getSourceClassMethod()}")
 
 
 class ParentSrlEqualError(UtilError):
@@ -65,15 +78,17 @@ class ParentSrlEqualError(UtilError):
                  parentSrl: int,
                  rowSrl: int,
                  msg: str = "") -> None:
-        super().__init__(className, methodName,msg)
+
         self.parentSrl = parentSrl
         self.rowSrl = rowSrl
+
+        super().__init__(className, methodName, msg)
 
     def __str__(self) -> str:
         return(
             f"Parent srl {self.parentSrl} and this row srl {self.rowSrl} is equal!"
             f"{self.msg}"
-            f" From {self.getSourceClassMethodName()}.")
+            f"{self.getSourceClassMethod()}.")
 
 
 class ParentSrlNotFoundError(UtilError):
@@ -84,11 +99,11 @@ class ParentSrlNotFoundError(UtilError):
                  methodName: str,
                  parentSrl: int,
                  msg: str = "") -> None:
-        super().__init__(className, methodName,msg)
+        super().__init__(className, methodName, msg)
         self.parentSrl = parentSrl
 
     def __str__(self) -> str:
         return (
             f"Parent srl {self.parentSrl} not found..."
             f"{self.msg}"
-            f" From {self.getSourceClassMethodName()}.")
+            f"{self.getSourceClassMethod()}.")

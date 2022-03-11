@@ -1,6 +1,6 @@
 # Add student number columns, parse extra_vars column and update rows.
 
-from util.err import logDuplicatedColumnAdded
+from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
 from pymysql import OperationalError
 from db_controller.db_controller import DBController
@@ -36,7 +36,11 @@ class ExtraVarsInserter:
         try:
             self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
         except OperationalError as oe:
-            logDuplicatedColumnAdded(oe,self.__class__.__name__,self.addExtraVarsColumns.__name__)
+            print(DuplicatedColumnExistErrorLog(
+                err=oe,
+                className=self.__class__.__name__,
+                methodName=self.addExtraVarsColumns.__name__,
+                columnName="student_number"))
 
     def selectMember(self) -> Table:
         cursor = self.dbController.getCursor()

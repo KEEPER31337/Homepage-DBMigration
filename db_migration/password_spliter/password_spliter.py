@@ -2,7 +2,7 @@
 
 from pymysql import OperationalError
 from typing import Tuple
-from util.err import logDuplicatedColumnAdded
+from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
 from db_controller.db_controller import DBController
 
@@ -36,7 +36,11 @@ class PasswordSpliter:
         try:
             self.dbController.getCursor().execute(self.formatAddNewPasswordColumnQuery())
         except OperationalError as oe:
-            logDuplicatedColumnAdded(oe,self.__class__.__name__,self.addNewPasswordColumn.__name__)
+            print(DuplicatedColumnExistErrorLog(
+                err=oe,
+                className=self.__class__.__name__,
+                methodName=self.addNewPasswordColumn.__name__,
+                columnName=self.newPasswordCol))
 
     def formatAddNewPasswordColumnQuery(self) -> str:
         return self.addNewPasswordColumnFormat.format(newPasswordCol=self.newPasswordCol)
