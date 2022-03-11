@@ -32,4 +32,21 @@ class ParentSrlEqualError(UtilException):
         return(
             f"Parent srl {self.parentSrl} and this row srl {self.rowSrl} is equal!"
             " To avoid infinite loop, return and set parent srl 0."
-            f" From {self.methodName}.")
+            f" From {self.className}.{self.methodName}.")
+
+
+class ParentSrlNotFoundError(UtilException):
+    parentSrl: int
+
+    def __init__(self,
+                 className: str,
+                 methodName: str,
+                 parentSrl: int) -> None:
+        self.className = className
+        self.methodName = methodName
+        self.parentSrl = parentSrl
+
+    def __str__(self) -> str:
+        return (f"Parent srl {self.parentSrl} not found..."
+                " Return and set parent srl 0."
+                f" From {self.className}.{self.methodName}.")

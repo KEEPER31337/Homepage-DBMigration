@@ -1,5 +1,5 @@
-from util.err import ParentSrlEqualError
 from util.typedef import Table
+from util.err import ParentSrlEqualError, ParentSrlNotFoundError
 from db_controller.db_controller import DBController
 
 
@@ -57,8 +57,7 @@ class ParentPuller:
 
         for i, row in enumerate(self.parentPulledTable):
             rowParentSrl = row[self.parentSrlCol]
-            if rowParentSrl != 0 and (not row["visited"]):
-                print(row[self.tableSrlCol])
+            if rowParentSrl != 0 and not row["visited"]:
                 self.searchPullParent(i)
 
         return self.parentPulledTable
@@ -76,18 +75,21 @@ class ParentPuller:
                     self.searchPullParent.__name__,
                     parentSrl,
                     rowSrl)
-        except ParentSrlEqualError as pe:
-            print(pe)
+        except ParentSrlEqualError as ee:
+            print(ee)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
             return 0
 
         parentIndex = self.getIndexBySrl(parentSrl)
-        # TODO : raise 화
-        if parentIndex == -1:
-            print(
-                f"Parent srl {parentSrl} not found..."
-                " Return and set parent srl 0."
-                f" From {self.searchPullParent.__name__}.")
+
+        try:
+            if parentIndex == -1:
+                raise ParentSrlNotFoundError(
+                    self.__class__.__name__,
+                    self.searchPullParent.__name__,
+                    parentSrl)
+        except ParentSrlNotFoundError as nfe:
+            print(nfe)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
             return 0
 
@@ -107,7 +109,6 @@ class ParentPuller:
         return -1
 
     def updateParentPulled(self, pulledTable: Table) -> None:
-        print(len(pulledTable))
         self.dbController.getCursor().executemany(
             self.formatUpdateParentPulledQuery(), pulledTable)
         self.dbController.getDB().commit()
