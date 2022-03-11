@@ -1,12 +1,17 @@
 from abc import ABCMeta, abstractmethod
 from db_controller.db_controller import DBController
-from util.typedef import Table
+from util.typedef import Row, Table
 
 
 class CategoryTransferer(metaclass=ABCMeta):
     dbController: DBController
 
     categoryTransferTable: Table
+
+    selectCategoryNameQuery = (
+        "SELECT name"
+        " FROM category"
+        " WHERE id = %(category_id)s;")
 
     updatePostingCategoryQuery = (
         "UPDATE posting"
@@ -30,6 +35,18 @@ class CategoryTransferer(metaclass=ABCMeta):
         self.dbController.getCursor().executemany(
             self.updatePostingCategoryQuery, updatePostingCategoryTable)
         self.dbController.getDB().commit()
+
+    def getCategoryNameById(self, categoryId: int) -> str:
+        categoryIdData = {"category_id": categoryId}
+        categoryNameRow = self.selectCategoryName(categoryIdData)
+        categoryName = self.coverName(categoryNameRow["name"])
+
+        return categoryName
+
+    def selectCategoryName(self, categoryIdData: Row) -> Row:
+        cursor = self.dbController.getCursor()
+        cursor.execute(self.selectCategoryNameQuery, categoryIdData)
+        return cursor.fetchone()
 
     def coverName(self, categoryName: str) -> str:
         return f"[{categoryName}]"

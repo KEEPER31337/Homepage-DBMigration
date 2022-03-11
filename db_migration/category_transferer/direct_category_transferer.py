@@ -28,19 +28,7 @@ class DirectCategoryTransferer(CategoryTransferer):
 
         for row in namedTransferTable:
             oldCategoryName = self.getOldCategoryName(row["old_category_id"])
-            namedTransferTable["old_category_name"] = oldCategoryName
+            row["old_category_name"] = oldCategoryName
 
         return namedTransferTable
-
-    def getOldCategoryName(self, oldCategoryId: int) -> str:
-        oldCategoryData = {"old_category_id": oldCategoryId}
-        categoryNameRow = self.selectCategoryNameQuery(oldCategoryData)
-
-        oldCategoryName = self.coverName(categoryNameRow["name"])
-
-        return oldCategoryName
-
-    def selectCategoryName(self, oldCategoryData: Row) -> Row:
-        cursor = self.dbController.getCursor()
-        cursor.execute(self.selectCategoryNameQuery, oldCategoryData)
-        return cursor.fetchone()
+    
