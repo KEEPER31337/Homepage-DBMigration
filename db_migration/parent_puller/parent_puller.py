@@ -74,7 +74,8 @@ class ParentPuller:
                     className=self.__class__.__name__,
                     methodName=self.searchPullParent.__name__,
                     parentSrl=parentSrl,
-                    rowSrl=rowSrl)
+                    rowSrl=rowSrl,
+                    msg="To avoid infinite loop, return and set parent srl 0.")
         except ParentSrlEqualError as ee:
             print(ee)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
@@ -87,7 +88,8 @@ class ParentPuller:
                 raise ParentSrlNotFoundError(
                     className=self.__class__.__name__,
                     methodName=self.searchPullParent.__name__,
-                    parentSrl=parentSrl)
+                    parentSrl=parentSrl,
+                    msg="Return and set parent srl 0.")
         except ParentSrlNotFoundError as nfe:
             print(nfe)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
