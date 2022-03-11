@@ -1,4 +1,3 @@
-from typing import overload
 from util.typedef import Row, Table
 from category_transferer.category_transferer import CategoryTransferer
 
@@ -15,21 +14,17 @@ class LeafCategoryTransferer(CategoryTransferer):
     def setLeafDepth(self, leafDepth: int) -> None:
         self.leafDepth = leafDepth
 
-    @overload
-    def appendCategoryTransferDict(self, rootCategoryId: int) -> None:
-        categoryTransferDict = {
-            "old_category_id": rootCategoryId,
-            "new_category_id": rootCategoryId,
-            "new_transferred": False}
+    # simillar overloading
+    def appendCategoryTransferDict(self, rootCategoryId: int, newCategoryId: int = None) -> None:
+        
+        isNewTransferred = not newCategoryId
+        if isNewTransferred:
+            newCategoryId = rootCategoryId
 
-        self.categoryTransferTable.append(categoryTransferDict)
-
-    @overload
-    def appendCategoryTransferDict(self, rootCategoryId: int, newCategoryId: int) -> None:
         categoryTransferDict = {
             "old_category_id": rootCategoryId,
             "new_category_id": newCategoryId,
-            "new_transferred": True}
+            "new_transferred": isNewTransferred}
 
         self.categoryTransferTable.append(categoryTransferDict)
 
