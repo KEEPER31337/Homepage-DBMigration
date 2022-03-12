@@ -40,7 +40,6 @@ class CategoryController:
         self.updateCategory(self.categoryTable)
 
     def insertNewCategory(self, newCategoryTable: Table) -> None:
-        print(newCategoryTable)
         self.dbController.getCursor().executemany(
             self.insertNewCategoryQuery, newCategoryTable)
         self.dbController.getDB().commit()
