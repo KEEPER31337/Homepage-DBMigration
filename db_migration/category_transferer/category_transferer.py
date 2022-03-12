@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from db_controller.db_controller import DBController
 from util.typedef import Row, Table
+from util.err import RowNotFoundError
+from db_controller.db_controller import DBController
 
 
 class CategoryTransferer(metaclass=ABCMeta):
@@ -37,20 +38,25 @@ class CategoryTransferer(metaclass=ABCMeta):
         self.dbController.getDB().commit()
 
     def getCategoryNameById(self, categoryId: int) -> str:
-        categoryIdData = {"category_id": categoryId}
+        categoryIdCol = "category_id"
+        categoryIdData = {categoryIdCol: categoryId}
+        selectCategoryNameCondition = f"{categoryIdCol}={categoryId}"
+
         categoryNameRow = self.selectCategoryName(categoryIdData)
 
-        # TODO : raise 화
         try:
-            categoryName = categoryNameRow["name"]
+            if not categoryNameRow:
+                raise RowNotFoundError(
+                    className=self.__class__.__name__,
+                    methodName=self.getCategoryNameById.__name__,
+                    selectCondition=selectCategoryNameCondition,
+                    msg="Return empty string.")
 
-        except TypeError as te:
-            print(f"{te} : There is no category id {categoryId}."
-                  "Return empty string."
-                  f"From {self.__class__.__name__}.{self.getCategoryNameById.__name__}.")
+        except RowNotFoundError as re:
+            print(re)
             return ""
 
-        categoryName = self.coverName(categoryName)
+        categoryName = self.coverName(categoryNameRow["name"])
 
         return categoryName
 

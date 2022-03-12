@@ -68,6 +68,24 @@ class DataLenOverError(UtilError):
             f"{self.getSourceClassMethod()}.")
 
 
+class RowNotFoundError(UtilError):
+    selectCondition: str
+
+    def __init__(self,
+                 className: str,
+                 methodName: str,
+                 selectCondition: str,
+                 msg: str) -> None:
+        self.selectCondition = selectCondition
+        super().__init__(className, methodName, msg)
+
+    def __str__(self) -> str:
+        return (
+            f"{self.getErrorName()} : There is no row where {self.selectCondition}."
+            f"{self.msg}"
+            f"{self.getSourceClassMethod()}.")
+
+
 class UtilErrorLog(UtilError):
     err: Exception
 
