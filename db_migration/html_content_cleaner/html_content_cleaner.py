@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from util.err import DuplicatedColumnExistErrorLog
-from util.typedef import Table
+from util.err import DataLenOverError, DuplicatedColumnExistErrorLog, LxmlCleanerParseErrorLog
+from util.typedef import Row, Table
 from pymysql import OperationalError
 from lxml.html import clean
 from lxml.etree import ParserError
@@ -83,21 +83,40 @@ class HtmlContentCleaner(metaclass=ABCMeta):
             tableClean=self.tableClean)
 
     def getCleanContentTable(self, contentTable: Table) -> Table:
-        cleaner = self.getHtmlCleaner()
 
         for i, row in enumerate(contentTable):
-            try:
-                cleanHtml = cleaner.clean_html(row["content"])
-                if(self.checkHtmlContentSize(cleanHtml)):
-                    cleanHtml = self.removeRedundantTag(cleanHtml)
-            except ParserError as pe:
-                print(
-                    f"{pe} : Content will be empty string. From {self.getCleanContentTable.__name__}")
-                cleanHtml = ""
-            finally:
-                contentTable[i][self.cleanContentCol] = cleanHtml
+            cleanContent = self.getCleanContent(row)
+            contentTable[i][self.cleanContentCol] = cleanContent
 
         return contentTable
+
+    def getCleanContent(self, contentRow: Row) -> str:
+        cleanContent: str
+        cleaner = self.getHtmlCleaner()
+
+        try:
+            cleanContent = cleaner.clean_html(contentRow["content"])
+
+        except ParserError as pe:
+            print(LxmlCleanerParseErrorLog(
+                err=pe,
+                className=self.__class__.__name__,
+                methodName=self.getCleanContent.__name__,
+                msg="Return empty string."))
+            return ""
+
+        try:
+            if(self.checkHtmlContentSize(cleanContent)):
+                raise DataLenOverError(
+                    className=self.__class__.__name__,
+                    methodName=self.getCleanContent.__name__,
+                    msg="Redundant tags will be removed.")
+
+        except DataLenOverError as de:
+            print(de)
+            cleanContent = self.removeRedundantTag(cleanContent)
+
+        return cleanContent
 
     def getHtmlCleaner(self) -> clean.Cleaner:
         return clean.Cleaner(
