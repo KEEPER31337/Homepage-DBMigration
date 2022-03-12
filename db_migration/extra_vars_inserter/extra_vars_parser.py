@@ -39,7 +39,6 @@ class ExtraVarsParser:
         studentNumberIndex = studentNumberKeyIndex + 1
         studentNumber = cls.parseValue(splitedExtraVars[studentNumberIndex])
 
-        print(f"Student number : {studentNumber}")
         return studentNumber
 
     @classmethod

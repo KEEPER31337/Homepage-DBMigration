@@ -90,6 +90,7 @@ class ParentPuller:
                     methodName=self.searchPullParent.__name__,
                     parentSrl=parentSrl,
                     msg="Return and set parent srl 0.")
+                    
         except ParentSrlNotFoundError as nfe:
             print(nfe)
             self.parentPulledTable[rowIndex][self.parentSrlCol] = 0
