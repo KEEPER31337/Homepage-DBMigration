@@ -17,8 +17,8 @@ class LeafCategoryTransferer(CategoryTransferer):
     # simillar overloading
     def appendCategoryTransferDict(self, rootCategoryId: int, newCategoryId: int = None) -> None:
 
-        isNewTransferred = not newCategoryId
-        if isNewTransferred:
+        isNewTransferred = bool(newCategoryId)
+        if not isNewTransferred:
             newCategoryId = rootCategoryId
 
         categoryTransferDict = {
@@ -52,7 +52,7 @@ class LeafCategoryTransferer(CategoryTransferer):
     def getRootLeafChildCategory(self, categoryTransfer: Row) -> Table:
         rootCategoryId = categoryTransfer["old_category_id"]
         newTransferred = categoryTransfer["new_transferred"]
-        
+
         leafChildCategoryTable = self.findChildCategory(
             rootCategoryId, self.leafDepth)
 
@@ -60,7 +60,7 @@ class LeafCategoryTransferer(CategoryTransferer):
             rootCategoryName = self.getCategoryNameById(rootCategoryId)
 
             for i, row in enumerate(leafChildCategoryTable):
-                leafChildCategoryTable[i]["name"] = f"{self.coverName(rootCategoryName)}{row['name']}"
+                leafChildCategoryTable[i]["name"] = f"{rootCategoryName}{row['name']}"
 
         return leafChildCategoryTable
 

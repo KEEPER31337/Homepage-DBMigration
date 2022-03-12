@@ -39,7 +39,18 @@ class CategoryTransferer(metaclass=ABCMeta):
     def getCategoryNameById(self, categoryId: int) -> str:
         categoryIdData = {"category_id": categoryId}
         categoryNameRow = self.selectCategoryName(categoryIdData)
-        categoryName = self.coverName(categoryNameRow["name"])
+
+        # TODO : raise 화
+        try:
+            categoryName = categoryNameRow["name"]
+
+        except TypeError as te:
+            print(f"{te} : There is no category id {categoryId}."
+                  "Return empty string."
+                  f"From {self.__class__.__name__}.{self.getCategoryNameById.__name__}.")
+            return ""
+
+        categoryName = self.coverName(categoryName)
 
         return categoryName
 

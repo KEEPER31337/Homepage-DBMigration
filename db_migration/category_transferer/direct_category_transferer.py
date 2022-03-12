@@ -1,13 +1,7 @@
-from util.typedef import Row
 from category_transferer.category_transferer import CategoryTransferer
 
 
 class DirectCategoryTransferer(CategoryTransferer):
-
-    selectCategoryNameQuery = (
-        "SELECT name"
-        " FROM category"
-        " WHERE id = %(old_category_id)s;")
 
     def appendCategoryTransferDict(self, oldCategoryId: int, newCategoryId: int) -> None:
         categoryTransferDict = {
@@ -25,10 +19,7 @@ class DirectCategoryTransferer(CategoryTransferer):
 
     def getNamedTransferTable(self) -> None:
         namedTransferTable = self.categoryTransferTable
-
         for row in namedTransferTable:
-            oldCategoryName = self.getOldCategoryName(row["old_category_id"])
+            oldCategoryName = self.getCategoryNameById(row["old_category_id"])
             row["old_category_name"] = oldCategoryName
-
         return namedTransferTable
-    
