@@ -11,20 +11,25 @@ from library_migrator.__main__ import migrateLibrary
 
 
 if __name__ == "__main__":
+    passwd = ""
     oldDB = DBController()
     oldDB.setDBName("keeper_copy")
+    oldDB.setPasswd(passwd)
     oldDB.setDB()
 
     bookDB = DBController()
     bookDB.setDBName("Library2")
+    bookDB.setPasswd(passwd)
     bookDB.setDB()
 
     equipmentDB = DBController()
     equipmentDB.setDBName("Library")
+    equipmentDB.setPasswd(passwd)
     equipmentDB.setDB()
 
     newDB = DBController()
     newDB.setDBName("keeper_new")
+    newDB.setPasswd(passwd)
     newDB.setDB()
 
     insertExtraVars(oldDB)
@@ -32,9 +37,11 @@ if __name__ == "__main__":
     mapCategory(oldDB)
     pullParent(oldDB)
 
-    migrateData(newDB)
+    migrateData(oldDB, newDB)
 
     seperateGroup(oldDB, newDB)
     migrateLibrary(bookDB, equipmentDB, newDB)
     controlCategory(newDB)
     transferCategory(newDB)
+
+    print("DBMigration complete.")
