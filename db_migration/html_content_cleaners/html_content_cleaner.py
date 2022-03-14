@@ -7,6 +7,8 @@ from lxml.etree import ParserError
 from markdownify import markdownify as md
 from db_controllers.db_controller import DBController
 
+CONTENT_MAX_LENGTH = 65535
+
 
 class HtmlContentCleaner(metaclass=ABCMeta):
     dbController: DBController
@@ -116,6 +118,18 @@ class HtmlContentCleaner(metaclass=ABCMeta):
             print(de)
             cleanContent = self.removeRedundantTag(cleanContent)
 
+        try:
+            if(self.checkHtmlContentSize(cleanContent)):
+                raise DataLenOverError(
+                    className=self.__class__.__name__,
+                    methodName=self.getCleanContent.__name__,
+                    msg=("Content is over the limit length even redundant tags removed..."
+                         "Content will be empty string."))
+
+        except DataLenOverError as de:
+            print(de)
+            cleanContent = ""
+
         return cleanContent
 
     def getHtmlCleaner(self) -> clean.Cleaner:
@@ -124,7 +138,7 @@ class HtmlContentCleaner(metaclass=ABCMeta):
             safe_attrs=self.safeAttributeSet)
 
     def checkHtmlContentSize(self, htmlContent: str) -> bool:
-        return len(htmlContent) > 65535
+        return len(htmlContent) > CONTENT_MAX_LENGTH
 
     def removeRedundantTag(self, htmlContent: str) -> str:
         return md(htmlContent)

@@ -1,7 +1,6 @@
 # Input xpress engine database extravars.
 # Output student number as dictionary
 from typing import Dict, List
-
 from util.err import StringNotFoundErrorLog
 
 
@@ -16,9 +15,7 @@ class ExtraVarsParser:
         studentNumber = studentNumber if cls.checkStudentNumber(
             studentNumber) else None
 
-        valueParsed = {
-            "student_number": studentNumber
-        }
+        valueParsed = {"student_number": studentNumber}
         return valueParsed
 
     @classmethod
