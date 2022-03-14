@@ -60,7 +60,8 @@ class HtmlContentCleaner(metaclass=ABCMeta):
         try:
             self.dbController.getCursor().execute(self.formatAddCleanContentColumnQuery())
         except OperationalError as oe:
-            logDuplicatedColumnAdded(oe,self.__class__.__name__,self.addCleanContentColumn.__name__)
+            logDuplicatedColumnAdded(
+                oe, self.__class__.__name__, self.addCleanContentColumn.__name__)
 
     def formatAddCleanContentColumnQuery(self) -> str:
         return self.addCleanContentColumnFormat.format(
@@ -86,6 +87,8 @@ class HtmlContentCleaner(metaclass=ABCMeta):
                 cleanHtml = cleaner.clean_html(row["content"])
                 if(self.checkHtmlContentSize(cleanHtml)):
                     cleanHtml = self.removeRedundantTag(cleanHtml)
+                if(self.checkHtmlContentSize(cleanHtml)):
+                    cleanHtml = ""
             except ParserError as pe:
                 print(
                     f"{pe} : Content will be empty string. From {self.getCleanContentTable.__name__}")
