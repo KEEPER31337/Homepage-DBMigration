@@ -30,7 +30,7 @@ class ExtraVarsParser:
         except ValueError as ve:
             print(StringNotFoundErrorLog(
                 err=ve,
-                className=cls.__class__.__name__,
+                className=cls.__name__,
                 methodName=cls.parseStudentNumber.__name__,
                 stringFound=studentNumberKey,
                 msg="Return empty string."))
