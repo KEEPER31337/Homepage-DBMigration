@@ -1,5 +1,5 @@
 from util.typedef import Row
-from library_migrators.library_migrator import LibraryMigrator
+from module.library_migrators.library_migrator import LibraryMigrator
 
 
 class BookMigrator(LibraryMigrator):

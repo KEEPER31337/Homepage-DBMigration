@@ -1,5 +1,5 @@
 from util.typedef import Row, Table
-from category_transferers.category_transferer import CategoryTransferer
+from module.category_transferers.category_transferer import CategoryTransferer
 
 
 class LeafCategoryTransferer(CategoryTransferer):

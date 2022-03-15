@@ -1,6 +1,6 @@
 
 from db_controllers.db_controller import DBController
-from category_controllers.category_controller import CategoryController
+from module.category_controllers.category_controller import CategoryController
 
 
 def controlCategory(newDB: DBController):

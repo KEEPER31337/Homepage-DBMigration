@@ -1,5 +1,5 @@
 from db_controllers.db_controller import DBController
-from extra_vars_inserters.extra_vars_inserter import ExtraVarsInserter
+from module.extra_vars_inserters.extra_vars_inserter import ExtraVarsInserter
 
 
 def insertExtraVars(oldDB: DBController) -> None:

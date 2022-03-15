@@ -1,4 +1,4 @@
-from html_content_cleaners.html_content_cleaner import HtmlContentCleaner
+from module.html_content_cleaners.html_content_cleaner import HtmlContentCleaner
 
 
 class DocumentHtmlContentCleaner(HtmlContentCleaner):

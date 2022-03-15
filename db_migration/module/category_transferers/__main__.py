@@ -1,6 +1,6 @@
 from db_controllers.db_controller import DBController
-from category_transferers.direct_category_transferer import DirectCategoryTransferer
-from category_transferers.leaf_category_transferer import LeafCategoryTransferer
+from module.category_transferers.direct_category_transferer import DirectCategoryTransferer
+from module.category_transferers.leaf_category_transferer import LeafCategoryTransferer
 
 
 def transferCategory(newDB: DBController):

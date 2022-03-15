@@ -1,7 +1,7 @@
 from db_controllers.db_controller import DBController
-from group_seperators.job_seperator import JobSeperator
-from group_seperators.rank_seperator import RankSeperator
-from group_seperators.type_seperator import TypeSeperator
+from module.group_seperators.job_seperator import JobSeperator
+from module.group_seperators.rank_seperator import RankSeperator
+from module.group_seperators.type_seperator import TypeSeperator
 
 
 def seperateGroup(oldDB: DBController, newDB: DBController) -> None:

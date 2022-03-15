@@ -1,4 +1,4 @@
-from category_mappers.category_mapper import CategoryMapper
+from module.category_mappers.category_mapper import CategoryMapper
 from db_controllers.db_controller import DBController
 
 

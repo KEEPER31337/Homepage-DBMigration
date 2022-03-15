@@ -1,6 +1,6 @@
 from db_controllers.db_controller import DBController
-from library_migrators.book_migrator import BookMigrator
-from library_migrators.equipment_migrator import EquipmentMigrator
+from module.library_migrators.book_migrator import BookMigrator
+from module.library_migrators.equipment_migrator import EquipmentMigrator
 
 
 def migrateLibrary(bookDB: DBController, equipmentDB: DBController, newDB: DBController) -> None:

@@ -1,5 +1,5 @@
 from db_controllers.db_controller import DBController
-from parent_pullers.parent_puller import ParentPuller
+from module.parent_pullers.parent_puller import ParentPuller
 from pprint import pprint as pp
 
 oldDB = DBController()

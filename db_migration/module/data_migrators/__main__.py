@@ -1,6 +1,6 @@
-import data_migrators
 from os.path import dirname
 from db_controllers.db_controller import DBController
+from module import data_migrators
 
 
 def migrateData(oldDB: DBController, newDB: DBController) -> None:

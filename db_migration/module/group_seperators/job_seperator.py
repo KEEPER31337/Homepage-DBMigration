@@ -1,5 +1,5 @@
 from util.typedef import Table
-from group_seperators.group_seperator import GroupSeperator
+from module.group_seperators.group_seperator import GroupSeperator
 
 
 class JobSeperator(GroupSeperator):

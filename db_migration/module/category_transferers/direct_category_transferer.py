@@ -1,4 +1,4 @@
-from category_transferers.category_transferer import CategoryTransferer
+from module.category_transferers.category_transferer import CategoryTransferer
 
 
 class DirectCategoryTransferer(CategoryTransferer):
