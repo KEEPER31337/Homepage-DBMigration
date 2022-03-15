@@ -1,5 +1,5 @@
 from category_transferers.__main__ import transferCategory
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 from category_mappers.__main__ import mapCategory
 from category_controllers.__main__ import controlCategory
 from extra_vars_inserters.__main__ import insertExtraVars

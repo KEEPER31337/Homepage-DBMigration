@@ -1,5 +1,5 @@
 from module.category_mappers.category_mapper import CategoryMapper
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 
 
 def mapCategory(oldDB: DBController) -> None:

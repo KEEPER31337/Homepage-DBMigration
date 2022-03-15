@@ -5,7 +5,7 @@ from pymysql import OperationalError
 from lxml.html import clean
 from lxml.etree import ParserError
 from markdownify import markdownify as md
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 
 CONTENT_MAX_LENGTH = 65535
 

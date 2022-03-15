@@ -1,5 +1,5 @@
 
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 from module.category_controllers.category_controller import CategoryController
 
 

@@ -3,7 +3,7 @@
 from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
 from pymysql import OperationalError
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 from module.extra_vars_inserters.extra_vars_parser import ExtraVarsParser
 
 

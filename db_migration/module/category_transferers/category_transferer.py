@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from util.typedef import Row, Table
 from util.err import RowNotFoundError
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 
 
 class CategoryTransferer(metaclass=ABCMeta):

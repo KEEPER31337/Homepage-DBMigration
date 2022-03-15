@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from util.typedef import Row, Table
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 
 
 class LibraryMigrator(metaclass=ABCMeta):

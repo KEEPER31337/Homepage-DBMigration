@@ -1,4 +1,4 @@
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 from module.html_content_cleaners.comment_html_content_cleaner import CommentHtmlContentCleaner
 from module.html_content_cleaners.document_html_content_cleaner import DocumentHtmlContentCleaner
 

@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from util.typedef import Table
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 
 
 class CategoryController:

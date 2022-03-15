@@ -1,4 +1,4 @@
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 from module.group_seperators.job_seperator import JobSeperator
 from module.group_seperators.rank_seperator import RankSeperator
 from module.group_seperators.type_seperator import TypeSeperator

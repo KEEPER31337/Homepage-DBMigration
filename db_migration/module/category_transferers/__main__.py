@@ -1,4 +1,4 @@
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 from module.category_transferers.direct_category_transferer import DirectCategoryTransferer
 from module.category_transferers.leaf_category_transferer import LeafCategoryTransferer
 

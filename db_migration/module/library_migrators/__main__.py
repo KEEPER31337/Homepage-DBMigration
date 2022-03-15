@@ -1,4 +1,4 @@
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 from module.library_migrators.book_migrator import BookMigrator
 from module.library_migrators.equipment_migrator import EquipmentMigrator
 

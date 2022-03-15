@@ -4,7 +4,7 @@ from pymysql import OperationalError
 from typing import Tuple
 from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
-from db_controllers.db_controller import DBController
+from util.db_controller import DBController
 
 
 class PasswordSpliter:
