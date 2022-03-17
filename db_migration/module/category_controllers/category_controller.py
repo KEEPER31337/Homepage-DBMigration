@@ -1,11 +1,10 @@
 from typing import List, Tuple
+from module.db_controll_interface import DBControllInterface
 from util.typedef import Table
 from util.db_controller import DBController
 
 
-class CategoryController:
-    __dbController: DBController
-
+class CategoryController(DBControllInterface):
     __categoryTable: Table
     __newCategoryTable: Table
 
@@ -22,9 +21,6 @@ class CategoryController:
         self.__categoryTable = list()
         self.__newCategoryTable = list()
 
-    def setDBController(self, dbController: DBController) -> None:
-        self.__dbController = dbController
-
     def appendCategoryByList(self,
                              categoryListAppend: List[Tuple[int, str, int, str]],
                              categoryTable: Table) -> None:
@@ -40,11 +36,11 @@ class CategoryController:
         self.__updateCategory(self.__categoryTable)
 
     def __insertNewCategory(self, newCategoryTable: Table) -> None:
-        self.__dbController.getCursor().executemany(
+        self._dbController.getCursor().executemany(
             self.__insertNewCategoryQuery, newCategoryTable)
-        self.__dbController.getDB().commit()
+        self._dbController.getDB().commit()
 
     def __updateCategory(self, categoryTable: Table) -> None:
-        self.__dbController.getCursor().executemany(
+        self._dbController.getCursor().executemany(
             self.__updateCategoryQuery, categoryTable)
-        self.__dbController.getDB().commit()
+        self._dbController.getDB().commit()

@@ -4,7 +4,6 @@ from util.db_controller import DBController
 
 
 class ParentPuller:
-    __dbController: DBController
 
     __parentPulledTable: Table
 
@@ -29,9 +28,6 @@ class ParentPuller:
         self.__parentSrlCol = parentSrlCol
         self.__tableSrlCol = tableSrlCol
 
-    def setDBController(self, dbController: DBController) -> None:
-        self.__dbController = dbController
-
     def pullParent(self) -> None:
         self.__parentPulledTable = self.__selectParentPulled()
         self.__initVisited()
@@ -39,7 +35,7 @@ class ParentPuller:
         self.__updateParentPulled(pulledTable)
 
     def __selectParentPulled(self) -> Table:
-        cursor = self.__dbController.getCursor()
+        cursor = self._dbController.getCursor()
         cursor.execute(self.__formatSelectParentPulledQuery())
         return cursor.fetchall()
 
@@ -112,9 +108,9 @@ class ParentPuller:
         return -1
 
     def __updateParentPulled(self, pulledTable: Table) -> None:
-        self.__dbController.getCursor().executemany(
+        self._dbController.getCursor().executemany(
             self.__formatUpdateParentPulledQuery(), pulledTable)
-        self.__dbController.getDB().commit()
+        self._dbController.getDB().commit()
 
     def __formatUpdateParentPulledQuery(self) -> str:
         return self.__updateParentPulledFormat.format(

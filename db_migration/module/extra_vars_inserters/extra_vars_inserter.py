@@ -1,5 +1,6 @@
 # Add student number columns, parse extra_vars column and update rows.
 
+from module.db_controll_interface import DBControllInterface
 from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
 from pymysql import OperationalError
@@ -7,8 +8,7 @@ from util.db_controller import DBController
 from module.extra_vars_inserters.extra_vars_parser import ExtraVarsParser
 
 
-class ExtraVarsInserter:
-    dbController: DBController
+class ExtraVarsInserter(DBControllInterface):
 
     __addStudentNumberColumnQuery = (
         "ALTER TABLE xe_member"
@@ -23,9 +23,6 @@ class ExtraVarsInserter:
         " SET student_number = %(student_number)s"
         " WHERE member_srl = %(member_srl)s;")
 
-    def setDBController(self, dbController: DBController) -> None:
-        self.dbController = dbController
-
     def insertExtraVars(self) -> None:
         self.__addExtraVarsColumns()
         memberTable = self.__selectMember()
@@ -34,7 +31,7 @@ class ExtraVarsInserter:
 
     def __addExtraVarsColumns(self) -> None:
         try:
-            self.dbController.getCursor().execute(self.__addStudentNumberColumnQuery)
+            self._dbController.getCursor().execute(self.__addStudentNumberColumnQuery)
         except OperationalError as oe:
             print(DuplicatedColumnExistErrorLog(
                 err=oe,
@@ -43,7 +40,7 @@ class ExtraVarsInserter:
                 columnName="student_number"))
 
     def __selectMember(self) -> Table:
-        cursor = self.dbController.getCursor()
+        cursor = self._dbController.getCursor()
         cursor.execute(self.__selectMemberQuery)
         memberTable = cursor.fetchall()
         return memberTable
@@ -56,6 +53,6 @@ class ExtraVarsInserter:
         return memberTable
 
     def __updateMemberTable(self, appendedMemberTable: Table) -> None:
-        self.dbController.getCursor().executemany(
+        self._dbController.getCursor().executemany(
             self.__updateMemberQuery, appendedMemberTable)
-        self.dbController.getDB().commit()
+        self._dbController.getDB().commit()

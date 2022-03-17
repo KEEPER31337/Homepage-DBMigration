@@ -1,10 +1,11 @@
 from abc import ABCMeta, abstractmethod
+from module.db_controll_interface import DBControllInterface
 from util.typedef import Row, Table
 from util.err import RowNotFoundError
 from util.db_controller import DBController
 
 
-class CategoryTransferer(metaclass=ABCMeta):
+class CategoryTransferer(DBControllInterface, metaclass=ABCMeta):
     _dbController: DBController
 
     _categoryTransferTable: Table
@@ -22,9 +23,6 @@ class CategoryTransferer(metaclass=ABCMeta):
 
     def __init__(self) -> None:
         self._categoryTransferTable = list()
-
-    def setDBController(self, dbController: DBController) -> None:
-        self._dbController = dbController
 
     @abstractmethod
     def transferCategory(self) -> None: pass

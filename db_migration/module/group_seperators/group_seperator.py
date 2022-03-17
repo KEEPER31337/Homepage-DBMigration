@@ -1,12 +1,11 @@
 from abc import ABCMeta
 from typing import List
+from module.db_controll_interface import DoubleDBControllInterface
 from util.typedef import Row, Table
 from util.db_controller import DBController
 
 
-class GroupSeperator(metaclass=ABCMeta):
-    _oldDBController: DBController
-    _newDBController: DBController
+class GroupSeperator(DoubleDBControllInterface, metaclass=ABCMeta):
 
     __oldGroupSrlDict: Row
     __newGroupSrlDict: Row
@@ -32,12 +31,6 @@ class GroupSeperator(metaclass=ABCMeta):
 
         self.__oldGroupSrlDict = dict()
         self.__newGroupSrlDict = dict()
-
-    def setOldDBController(self, dbController: DBController) -> None:
-        self._oldDBController = dbController
-
-    def setNewDBController(self, dbController: DBController) -> None:
-        self._newDBController = dbController
 
     def addGroupSrlDict(self, groupName: str, oldSrl: int, newSrl: int) -> None:
         self.__oldGroupSrlDict[groupName] = oldSrl

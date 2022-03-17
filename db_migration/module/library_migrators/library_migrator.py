@@ -1,11 +1,10 @@
 from abc import ABCMeta, abstractmethod
+from module.db_controll_interface import DoubleDBControllInterface
 from util.typedef import Row, Table
 from util.db_controller import DBController
 
 
-class LibraryMigrator(metaclass=ABCMeta):
-    __oldDBController: DBController
-    __newDBController: DBController
+class LibraryMigrator(DoubleDBControllInterface, metaclass=ABCMeta):
 
     __oldTableMigrate: str
     __newTableMigrate: str
@@ -22,19 +21,13 @@ class LibraryMigrator(metaclass=ABCMeta):
         self.__oldTableMigrate = oldTableMigrate
         self.__newTableMigrate = newTableMigrate
 
-    def setOldDBController(self, dbController: DBController) -> None:
-        self.__oldDBController = dbController
-
-    def setNewDBController(self, dbController: DBController) -> None:
-        self.__newDBController = dbController
-
     def _migrateLibrary(self) -> None:
         libraryTable = self.__selectLibrary()
         editedLibraryTable = self.__getEditedLibraryTable(libraryTable)
         self.__insertLibrary(editedLibraryTable)
 
     def __selectLibrary(self) -> Table:
-        cursor = self.__oldDBController.getCursor()
+        cursor = self._oldDBController.getCursor()
         cursor.execute(self.__formatSelectLibraryQuery())
         libraryTable = cursor.fetchall()
         return libraryTable
@@ -77,13 +70,13 @@ class LibraryMigrator(metaclass=ABCMeta):
         return row
 
     def __insertLibrary(self, editedLibraryTable: Table) -> None:
-        cursor = self.__newDBController.getCursor()
+        cursor = self._newDBController.getCursor()
 
         cursor.executemany(
             self.__formatInsertLibraryQuery(),
             editedLibraryTable
         )
-        self.__newDBController.getDB().commit()
+        self._newDBController.getDB().commit()
 
     def __formatInsertLibraryQuery(self) -> str:
         return self._insertLibraryFormat.format(newTableMigrate=self.__newTableMigrate)

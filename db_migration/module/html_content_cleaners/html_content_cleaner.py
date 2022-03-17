@@ -1,4 +1,5 @@
 from abc import ABCMeta
+from module.db_controll_interface import DBControllInterface
 from util.err import DataLenOverError, DuplicatedColumnExistErrorLog, LxmlCleanerParseErrorLog
 from util.typedef import Row, Table
 from pymysql import OperationalError
@@ -10,8 +11,7 @@ from util.db_controller import DBController
 CONTENT_MAX_LENGTH = 65535
 
 
-class HtmlContentCleaner(metaclass=ABCMeta):
-    __dbController: DBController
+class HtmlContentCleaner(DBControllInterface, metaclass=ABCMeta):
 
     __cleanContentCol: str
     __tableClean: str
@@ -44,9 +44,6 @@ class HtmlContentCleaner(metaclass=ABCMeta):
         self.addSafeAttribute("href")
         self.addSafeAttribute("src")
 
-    def setDBController(self, dbController: DBController) -> None:
-        self.__dbController = dbController
-
     def addSafeAttribute(self, attributeAdd: str) -> None:
         self.__safeAttributeSet.add(attributeAdd)
 
@@ -59,7 +56,7 @@ class HtmlContentCleaner(metaclass=ABCMeta):
 
     def __addCleanContentColumn(self) -> None:
         try:
-            self.__dbController.getCursor().execute(
+            self._dbController.getCursor().execute(
                 self.__formatAddCleanContentColumnQuery())
         except OperationalError as oe:
             print(DuplicatedColumnExistErrorLog(
@@ -74,7 +71,7 @@ class HtmlContentCleaner(metaclass=ABCMeta):
             cleanContentCol=self.__cleanContentCol)
 
     def __selectContent(self) -> Table:
-        cursor = self.__dbController.getCursor()
+        cursor = self._dbController.getCursor()
         cursor.execute(self.__formatSelectContentQuery())
         tableContent = cursor.fetchall()
         return tableContent
@@ -144,9 +141,9 @@ class HtmlContentCleaner(metaclass=ABCMeta):
         return md(htmlContent)
 
     def __updateCleanContent(self, cleanContentTable: Table) -> None:
-        self.__dbController.getCursor().executemany(
+        self._dbController.getCursor().executemany(
             self.__formatUpdateCleanContentQuery(), cleanContentTable)
-        self.__dbController.getDB().commit()
+        self._dbController.getDB().commit()
 
     def __formatUpdateCleanContentQuery(self) -> str:
         return self.__updateCleanContentFormat.format(
