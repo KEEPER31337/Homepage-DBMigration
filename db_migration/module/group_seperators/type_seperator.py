@@ -12,4 +12,4 @@ class TypeSeperator(TypeRankSeperator):
         super().__init__(memberSrlCol, groupSrlCol, groupTitleCol, typeIdCol)
 
     def seperateType(self) -> None:
-        self.seperateTypeRank()
+        self._seperateTypeRank()

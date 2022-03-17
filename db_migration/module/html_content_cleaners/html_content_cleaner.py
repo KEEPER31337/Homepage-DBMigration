@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from util.err import DataLenOverError, DuplicatedColumnExistErrorLog, LxmlCleanerParseErrorLog
 from util.typedef import Row, Table
 from pymysql import OperationalError
@@ -11,90 +11,90 @@ CONTENT_MAX_LENGTH = 65535
 
 
 class HtmlContentCleaner(metaclass=ABCMeta):
-    dbController: DBController
+    __dbController: DBController
 
-    cleanContentCol: str
-    tableClean: str
-    srlCol: str
+    __cleanContentCol: str
+    __tableClean: str
+    __srlCol: str
 
-    safeAttributeSet: set
+    __safeAttributeSet: set
 
-    selectContentFormat = (
+    __selectContentFormat = (
         "SELECT {srlCol}, content"
         " FROM {tableClean};")
 
-    addCleanContentColumnFormat = (
+    __addCleanContentColumnFormat = (
         "ALTER TABLE {tableClean}"
         " ADD {cleanContentCol} TEXT DEFAULT NULL")
 
-    updateCleanContentFormat = (
+    __updateCleanContentFormat = (
         "UPDATE {tableClean}"
         " SET {cleanContentCol} = %({cleanContentCol})s"
         " WHERE {srlCol} = %({srlCol})s;")
 
-    @abstractmethod
     def __init__(self, cleanContentCol: str,
                  tableClean: str,
                  srlCol: str) -> None:
 
-        self.cleanContentCol = cleanContentCol
-        self.tableClean = tableClean
-        self.srlCol = srlCol
+        self.__cleanContentCol = cleanContentCol
+        self.__tableClean = tableClean
+        self.__srlCol = srlCol
 
-        self.safeAttributeSet = set()
+        self.__safeAttributeSet = set()
         self.addSafeAttribute("href")
         self.addSafeAttribute("src")
 
     def setDBController(self, dbController: DBController) -> None:
-        self.dbController = dbController
+        self.__dbController = dbController
 
     def addSafeAttribute(self, attributeAdd: str) -> None:
-        self.safeAttributeSet.add(attributeAdd)
+        self.__safeAttributeSet.add(attributeAdd)
 
     def cleanHtmlContent(self) -> None:
-        self.addCleanContentColumn()
+        self.__addCleanContentColumn()
 
-        contentTable = self.selectContent()
-        cleanContentTable = self.getCleanContentTable(contentTable)
-        self.updateCleanContent(cleanContentTable)
+        contentTable = self.__selectContent()
+        cleanContentTable = self.__getCleanContentTable(contentTable)
+        self.__updateCleanContent(cleanContentTable)
 
-    def addCleanContentColumn(self) -> None:
+    def __addCleanContentColumn(self) -> None:
         try:
-            self.dbController.getCursor().execute(self.formatAddCleanContentColumnQuery())
+            self.__dbController.getCursor().execute(
+                self.__formatAddCleanContentColumnQuery())
         except OperationalError as oe:
             print(DuplicatedColumnExistErrorLog(
                 err=oe,
                 className=self.__class__.__name__,
-                methodName=self.addCleanContentColumn.__name__,
-                columnName=self.cleanContentCol))
+                methodName=self.__addCleanContentColumn.__name__,
+                columnName=self.__cleanContentCol))
 
-    def formatAddCleanContentColumnQuery(self) -> str:
-        return self.addCleanContentColumnFormat.format(
-            tableClean=self.tableClean,
-            cleanContentCol=self.cleanContentCol)
+    def __formatAddCleanContentColumnQuery(self) -> str:
+        return self.__addCleanContentColumnFormat.format(
+            tableClean=self.__tableClean,
+            cleanContentCol=self.__cleanContentCol)
 
-    def selectContent(self) -> Table:
-        cursor = self.dbController.getCursor()
-        cursor.execute(self.formatSelectContentQuery())
+    def __selectContent(self) -> Table:
+        cursor = self.__dbController.getCursor()
+        cursor.execute(self.__formatSelectContentQuery())
         tableContent = cursor.fetchall()
         return tableContent
 
-    def formatSelectContentQuery(self) -> str:
-        return self.selectContentFormat.format(
-            srlCol=self.srlCol,
-            tableClean=self.tableClean)
+    def __formatSelectContentQuery(self) -> str:
+        return self.__selectContentFormat.format(
+            srlCol=self.__srlCol,
+            tableClean=self.__tableClean)
 
-    def getCleanContentTable(self, contentTable: Table) -> Table:
+    def __getCleanContentTable(self, contentTable: Table) -> Table:
 
         for i, row in enumerate(contentTable):
-            cleanContent = self.getCleanContent(row)
-            contentTable[i][self.cleanContentCol] = cleanContent
+            cleanContent = self.__getCleanContent(row)
+            contentTable[i][self.__cleanContentCol] = cleanContent
 
         return contentTable
 
-    def getCleanContent(self, contentRow: Row) -> str:
+    def __getCleanContent(self, contentRow: Row) -> str:
         cleanContent: str
-        cleaner = self.getHtmlCleaner()
+        cleaner = self.__getHtmlCleaner()
 
         try:
             cleanContent = cleaner.clean_html(contentRow["content"])
@@ -103,26 +103,26 @@ class HtmlContentCleaner(metaclass=ABCMeta):
             print(LxmlCleanerParseErrorLog(
                 err=pe,
                 className=self.__class__.__name__,
-                methodName=self.getCleanContent.__name__,
+                methodName=self.__getCleanContent.__name__,
                 msg="Return empty string."))
             return ""
 
         try:
-            if(self.checkHtmlContentSize(cleanContent)):
+            if(self.__checkHtmlContentSize(cleanContent)):
                 raise DataLenOverError(
                     className=self.__class__.__name__,
-                    methodName=self.getCleanContent.__name__,
+                    methodName=self.__getCleanContent.__name__,
                     msg="Redundant tags will be removed.")
 
         except DataLenOverError as de:
             print(de)
-            cleanContent = self.removeRedundantTag(cleanContent)
+            cleanContent = self.__removeRedundantTag(cleanContent)
 
         try:
-            if(self.checkHtmlContentSize(cleanContent)):
+            if(self.__checkHtmlContentSize(cleanContent)):
                 raise DataLenOverError(
                     className=self.__class__.__name__,
-                    methodName=self.getCleanContent.__name__,
+                    methodName=self.__getCleanContent.__name__,
                     msg=("Content is over the limit length even redundant tags removed..."
                          "Content will be empty string."))
 
@@ -132,24 +132,24 @@ class HtmlContentCleaner(metaclass=ABCMeta):
 
         return cleanContent
 
-    def getHtmlCleaner(self) -> clean.Cleaner:
+    def __getHtmlCleaner(self) -> clean.Cleaner:
         return clean.Cleaner(
             safe_attrs_only=True,
-            safe_attrs=self.safeAttributeSet)
+            safe_attrs=self.__safeAttributeSet)
 
-    def checkHtmlContentSize(self, htmlContent: str) -> bool:
+    def __checkHtmlContentSize(self, htmlContent: str) -> bool:
         return len(htmlContent) > CONTENT_MAX_LENGTH
 
-    def removeRedundantTag(self, htmlContent: str) -> str:
+    def __removeRedundantTag(self, htmlContent: str) -> str:
         return md(htmlContent)
 
-    def updateCleanContent(self, cleanContentTable: Table) -> None:
-        self.dbController.getCursor().executemany(
-            self.formatUpdateCleanContentQuery(), cleanContentTable)
-        self.dbController.getDB().commit()
+    def __updateCleanContent(self, cleanContentTable: Table) -> None:
+        self.__dbController.getCursor().executemany(
+            self.__formatUpdateCleanContentQuery(), cleanContentTable)
+        self.__dbController.getDB().commit()
 
-    def formatUpdateCleanContentQuery(self) -> str:
-        return self.updateCleanContentFormat.format(
-            srlCol=self.srlCol,
-            tableClean=self.tableClean,
-            cleanContentCol=self.cleanContentCol)
+    def __formatUpdateCleanContentQuery(self) -> str:
+        return self.__updateCleanContentFormat.format(
+            srlCol=self.__srlCol,
+            tableClean=self.__tableClean,
+            cleanContentCol=self.__cleanContentCol)

@@ -4,54 +4,53 @@ from util.db_controller import DBController
 
 
 class LibraryMigrator(metaclass=ABCMeta):
-    oldDBController: DBController
-    newDBController: DBController
+    __oldDBController: DBController
+    __newDBController: DBController
 
-    oldTableMigrate: str
-    newTableMigrate: str
+    __oldTableMigrate: str
+    __newTableMigrate: str
 
-    selectLibraryFormat = ("SELECT number, name, author"
-                           " FROM {oldTableMigrate};")
+    __selectLibraryFormat = ("SELECT number, name, author"
+                             " FROM {oldTableMigrate};")
 
-    insertLibraryFormat: str
+    _insertLibraryFormat: str
 
-    @abstractmethod
     def __init__(self,
                  oldTableMigrate: str,
                  newTableMigrate: str) -> None:
 
-        self.oldTableMigrate = oldTableMigrate
-        self.newTableMigrate = newTableMigrate
+        self.__oldTableMigrate = oldTableMigrate
+        self.__newTableMigrate = newTableMigrate
 
     def setOldDBController(self, dbController: DBController) -> None:
-        self.oldDBController = dbController
+        self.__oldDBController = dbController
 
     def setNewDBController(self, dbController: DBController) -> None:
-        self.newDBController = dbController
+        self.__newDBController = dbController
 
-    def migrateLibrary(self) -> None:
-        libraryTable = self.selectLibrary()
-        editedLibraryTable = self.getEditedLibraryTable(libraryTable)
-        self.insertLibrary(editedLibraryTable)
+    def _migrateLibrary(self) -> None:
+        libraryTable = self.__selectLibrary()
+        editedLibraryTable = self.__getEditedLibraryTable(libraryTable)
+        self.__insertLibrary(editedLibraryTable)
 
-    def selectLibrary(self) -> Table:
-        cursor = self.oldDBController.getCursor()
-        cursor.execute(self.formatSelectLibraryQuery())
+    def __selectLibrary(self) -> Table:
+        cursor = self.__oldDBController.getCursor()
+        cursor.execute(self.__formatSelectLibraryQuery())
         libraryTable = cursor.fetchall()
         return libraryTable
 
-    def formatSelectLibraryQuery(self) -> str:
-        return self.selectLibraryFormat.format(oldTableMigrate=self.oldTableMigrate)
+    def __formatSelectLibraryQuery(self) -> str:
+        return self.__selectLibraryFormat.format(oldTableMigrate=self.__oldTableMigrate)
 
-    def getEditedLibraryTable(self, libraryTable: Table) -> Table:
+    def __getEditedLibraryTable(self, libraryTable: Table) -> Table:
         editedLibraryTable: Table = list()
 
         for row in libraryTable:
-            name = self.getLibraryName(row["name"])
-            bookEquipmentIndex = self.findLibrary(editedLibraryTable, name)
+            name = self._getLibraryName(row["name"])
+            bookEquipmentIndex = self.__findLibrary(editedLibraryTable, name)
 
             if(bookEquipmentIndex == -1):
-                editedLibraryTable.append(self.editLibraryRow(row))
+                editedLibraryTable.append(self._editLibraryRow(row))
             else:
                 editedLibraryTable[bookEquipmentIndex]["total"] += 1
                 editedLibraryTable[bookEquipmentIndex]["enable"] += 1
@@ -59,9 +58,9 @@ class LibraryMigrator(metaclass=ABCMeta):
         return editedLibraryTable
 
     @abstractmethod
-    def getLibraryName(self, name: str) -> str: pass
+    def _getLibraryName(self, name: str) -> str: pass
 
-    def findLibrary(self, table: Table, name: str) -> int:
+    def __findLibrary(self, table: Table, name: str) -> int:
 
         for i in range(len(table)-1, -1, -1):
             if(table[i]["name"] == name):
@@ -69,22 +68,22 @@ class LibraryMigrator(metaclass=ABCMeta):
         return -1
 
     @abstractmethod
-    def editLibraryRow(self, row: Row) -> Row: pass
+    def _editLibraryRow(self, row: Row) -> Row: pass
 
-    def setNameTotalOnRow(self, row: Row) -> Row:
-        row["name"] = self.getLibraryName(row["name"])
+    def _setNameTotalOnRow(self, row: Row) -> Row:
+        row["name"] = self._getLibraryName(row["name"])
         row["total"] = 1
         row["enable"] = 1
         return row
 
-    def insertLibrary(self, editedLibraryTable: Table) -> None:
-        cursor = self.newDBController.getCursor()
+    def __insertLibrary(self, editedLibraryTable: Table) -> None:
+        cursor = self.__newDBController.getCursor()
 
         cursor.executemany(
-            self.formatInsertLibraryQuery(),
+            self.__formatInsertLibraryQuery(),
             editedLibraryTable
         )
-        self.newDBController.getDB().commit()
+        self.__newDBController.getDB().commit()
 
-    def formatInsertLibraryQuery(self) -> str:
-        return self.insertLibraryFormat.format(newTableMigrate=self.newTableMigrate)
+    def __formatInsertLibraryQuery(self) -> str:
+        return self._insertLibraryFormat.format(newTableMigrate=self.__newTableMigrate)

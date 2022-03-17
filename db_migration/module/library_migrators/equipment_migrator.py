@@ -4,27 +4,27 @@ from module.library_migrators.library_migrator import LibraryMigrator
 
 class EquipmentMigrator(LibraryMigrator):
 
-    insertEquipmentFormat = ("INSERT INTO {newTableMigrate}(name,information,total)"
-                             " VALUES(%(name)s,%(author)s,%(total)s);")
+    __insertEquipmentFormat = ("INSERT INTO {newTableMigrate}(name,information,total)"
+                               " VALUES(%(name)s,%(author)s,%(total)s);")
 
     def __init__(self,
                  oldTableMigrate: str = "equipment",
                  newTableMigrate: str = "equipment") -> None:
 
-        self.insertLibraryFormat = self.insertEquipmentFormat
+        self._insertLibraryFormat = self.__insertEquipmentFormat
         super().__init__(oldTableMigrate, newTableMigrate)
 
-    def getLibraryName(self, equipmentName: str) -> str:
-        return self.getSplitedEquipmentName(equipmentName)
+    def migrateEquipment(self) -> None:
+        self._migrateLibrary()
 
-    def getSplitedEquipmentName(self, equipmentName: str) -> str:
+    def _getLibraryName(self, equipmentName: str) -> str:
+        return self.__getSplitedEquipmentName(equipmentName)
+
+    def __getSplitedEquipmentName(self, equipmentName: str) -> str:
         return equipmentName.split('_')[0]
 
-    def editLibraryRow(self, row: Row) -> Row:
-        return self.editEquipmentRow(row)
+    def _editLibraryRow(self, row: Row) -> Row:
+        return self.__editEquipmentRow(row)
 
-    def editEquipmentRow(self, row: Row) -> Row:
-        return self.setNameTotalOnRow(row)
-
-    def migrateEquipment(self) -> None:
-        self.migrateLibrary()
+    def __editEquipmentRow(self, row: Row) -> Row:
+        return self._setNameTotalOnRow(row)

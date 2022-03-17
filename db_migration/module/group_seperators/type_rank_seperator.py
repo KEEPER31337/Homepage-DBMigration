@@ -1,50 +1,49 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from util.typedef import Table
 from module.group_seperators.group_seperator import GroupSeperator
 
 
 class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
 
-    typeRankIdCol: str
+    __typeRankIdCol: str
 
-    updateTypeRankFormat = (
+    __updateTypeRankFormat = (
         "UPDATE member"
         " SET {typeRankIdCol} = %({groupSrlCol})s"
         " WHERE id = %({memberSrlCol})s;")
 
-    @abstractmethod
     def __init__(self,
                  memberSrlCol: str,
                  groupSrlCol: str,
                  groupTitleCol: str,
                  typeRankIdCol: str) -> None:
 
-        self.typeRankIdCol = typeRankIdCol
+        self.__typeRankIdCol = typeRankIdCol
 
         super().__init__(memberSrlCol, groupSrlCol, groupTitleCol)
 
-    def seperateTypeRank(self) -> None:
-        typeRankSrlTable = self.selectTypeRankSrl()
-        editedTypeRankSrlTable = self.getEditedTypeRankSrlTable(
+    def _seperateTypeRank(self) -> None:
+        typeRankSrlTable = self.__selectTypeRankSrl()
+        editedTypeRankSrlTable = self.__getEditedTypeRankSrlTable(
             typeRankSrlTable)
-        self.updateTypeRank(editedTypeRankSrlTable)
+        self.__updateTypeRank(editedTypeRankSrlTable)
 
-    def selectTypeRankSrl(self) -> Table:
-        return self.selectGroupSrl()
+    def __selectTypeRankSrl(self) -> Table:
+        return self._selectGroupSrl()
 
-    def getEditedTypeRankSrlTable(self, typeRankSrlTable: Table) -> Table:
-        return self.getEditedGroupSrlTable(typeRankSrlTable)
+    def __getEditedTypeRankSrlTable(self, typeRankSrlTable: Table) -> Table:
+        return self._getEditedGroupSrlTable(typeRankSrlTable)
 
-    def updateTypeRank(self, typeRankSrlTable: Table) -> None:
-        cursor = self.newDBController.getCursor()
+    def __updateTypeRank(self, typeRankSrlTable: Table) -> None:
+        cursor = self._newDBController.getCursor()
         cursor.executemany(
-            self.formatUpdateTypeRankQuery(),
+            self.__formatUpdateTypeRankQuery(),
             typeRankSrlTable)
         # pymysql.err.IntegrityError : FK 비일치
-        self.newDBController.getDB().commit()
+        self._newDBController.getDB().commit()
 
-    def formatUpdateTypeRankQuery(self) -> str:
-        return self.updateTypeRankFormat.format(
-            typeRankIdCol=self.typeRankIdCol,
-            memberSrlCol=self.memberSrlCol,
-            groupSrlCol=self.groupSrlCol)
+    def __formatUpdateTypeRankQuery(self) -> str:
+        return self.__updateTypeRankFormat.format(
+            typeRankIdCol=self.__typeRankIdCol,
+            memberSrlCol=self._memberSrlCol,
+            groupSrlCol=self._groupSrlCol)

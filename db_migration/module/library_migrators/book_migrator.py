@@ -4,43 +4,43 @@ from module.library_migrators.library_migrator import LibraryMigrator
 
 class BookMigrator(LibraryMigrator):
 
-    bookDepartmentDict: dict
+    __bookDepartmentDict: dict
 
-    insertBookFormat = ("INSERT INTO {newTableMigrate}(title,author,total,department)"
-                        " VALUES(%(name)s,%(author)s,%(total)s,%(department)s);")
+    __insertBookFormat = ("INSERT INTO {newTableMigrate}(title,author,total,department)"
+                          " VALUES(%(name)s,%(author)s,%(total)s,%(department)s);")
 
     def __init__(self,
                  oldTableMigrate: str = "books",
                  newTableMigrate: str = "book") -> None:
 
-        self.insertLibraryFormat = self.insertBookFormat
-        self.bookDepartmentDict = dict()
+        self._insertLibraryFormat = self.__insertBookFormat
+        self.__bookDepartmentDict = dict()
         super().__init__(oldTableMigrate, newTableMigrate)
 
-    def getLibraryName(self, bookName: str) -> str:
-        return self.getBookName(bookName)
-
-    def getBookName(self, bookName: str) -> str:
-        return bookName.strip()
-
     def addBookDepartment(self, oldDepartmentNumber: int, newDepartmentId: int) -> None:
-        self.bookDepartmentDict[oldDepartmentNumber] = newDepartmentId
-
-    def parseBookDepartment(self, bookNumber: str) -> int:
-        oldNumber = int(bookNumber[0])
-        return self.bookDepartmentDict[oldNumber]
-
-    def setBookDepartment(self, row: Row) -> Row:
-        row["department"] = self.parseBookDepartment(row["number"])
-        return row
-
-    def editBookRow(self, row: Row) -> Row:
-        row = self.setNameTotalOnRow(row)
-        row = self.setBookDepartment(row)
-        return row
-
-    def editLibraryRow(self, row: Row) -> Row:
-        return self.editBookRow(row)
+        self.__bookDepartmentDict[oldDepartmentNumber] = newDepartmentId
 
     def migrateBook(self) -> None:
-        self.migrateLibrary()
+        self._migrateLibrary()
+
+    def _getLibraryName(self, bookName: str) -> str:
+        return self.__getBookName(bookName)
+
+    def __getBookName(self, bookName: str) -> str:
+        return bookName.strip()
+
+    def __setBookDepartment(self, row: Row) -> Row:
+        row["department"] = self.__parseBookDepartment(row["number"])
+        return row
+
+    def __parseBookDepartment(self, bookNumber: str) -> int:
+        oldNumber = int(bookNumber[0])
+        return self.__bookDepartmentDict[oldNumber]
+
+    def _editLibraryRow(self, row: Row) -> Row:
+        return self.__editBookRow(row)
+
+    def __editBookRow(self, row: Row) -> Row:
+        row = self._setNameTotalOnRow(row)
+        row = self.__setBookDepartment(row)
+        return row

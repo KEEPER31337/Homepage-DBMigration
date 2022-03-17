@@ -10,15 +10,15 @@ from module.extra_vars_inserters.extra_vars_parser import ExtraVarsParser
 class ExtraVarsInserter:
     dbController: DBController
 
-    addStudentNumberColumnQuery = (
+    __addStudentNumberColumnQuery = (
         "ALTER TABLE xe_member"
         " ADD student_number VARCHAR(45) DEFAULT NULL")
 
-    selectMemberQuery = (
+    __selectMemberQuery = (
         "SELECT member_srl, extra_vars"
         " FROM `xe_member`;")
 
-    updateMemberQuery = (
+    __updateMemberQuery = (
         "UPDATE xe_member"
         " SET student_number = %(student_number)s"
         " WHERE member_srl = %(member_srl)s;")
@@ -27,35 +27,35 @@ class ExtraVarsInserter:
         self.dbController = dbController
 
     def insertExtraVars(self) -> None:
-        self.addExtraVarsColumns()
-        memberTable = self.selectMember()
-        appendedMemberTable = self.appendParsedExtraVars(memberTable)
-        self.updateMemberTable(appendedMemberTable)
+        self.__addExtraVarsColumns()
+        memberTable = self.__selectMember()
+        appendedMemberTable = self.__appendParsedExtraVars(memberTable)
+        self.__updateMemberTable(appendedMemberTable)
 
-    def addExtraVarsColumns(self) -> None:
+    def __addExtraVarsColumns(self) -> None:
         try:
-            self.dbController.getCursor().execute(self.addStudentNumberColumnQuery)
+            self.dbController.getCursor().execute(self.__addStudentNumberColumnQuery)
         except OperationalError as oe:
             print(DuplicatedColumnExistErrorLog(
                 err=oe,
                 className=self.__class__.__name__,
-                methodName=self.addExtraVarsColumns.__name__,
+                methodName=self.__addExtraVarsColumns.__name__,
                 columnName="student_number"))
 
-    def selectMember(self) -> Table:
+    def __selectMember(self) -> Table:
         cursor = self.dbController.getCursor()
-        cursor.execute(self.selectMemberQuery)
+        cursor.execute(self.__selectMemberQuery)
         memberTable = cursor.fetchall()
         return memberTable
 
-    def appendParsedExtraVars(self, memberTable: Table) -> Table:
+    def __appendParsedExtraVars(self, memberTable: Table) -> Table:
         for i, row in enumerate(memberTable):
             parsedExtraVars = ExtraVarsParser.parseExtraVars(row['extra_vars'])
             memberTable[i].update(parsedExtraVars)
 
         return memberTable
 
-    def updateMemberTable(self, appendedMemberTable: Table) -> None:
+    def __updateMemberTable(self, appendedMemberTable: Table) -> None:
         self.dbController.getCursor().executemany(
-            self.updateMemberQuery, appendedMemberTable)
+            self.__updateMemberQuery, appendedMemberTable)
         self.dbController.getDB().commit()

@@ -4,26 +4,26 @@ from util.db_controller import DBController
 
 
 class CategoryController:
-    dbController: DBController
+    __dbController: DBController
 
-    categoryTable: Table
-    newCategoryTable: Table
+    __categoryTable: Table
+    __newCategoryTable: Table
 
-    insertNewCategoryQuery = (
+    __insertNewCategoryQuery = (
         "INSERT INTO category(`id`, `name`, `parent_id`, `href`)"
         " VALUES(%(id)s,%(name)s,%(parent_id)s,%(href)s);")
 
-    updateCategoryQuery = (
+    __updateCategoryQuery = (
         "UPDATE `category`"
         " SET `name`=%(name)s, `parent_id`=%(parent_id)s, `href`=%(href)s"
         " WHERE `id` = %(id)s;")
 
     def __init__(self) -> None:
-        self.categoryTable = list()
-        self.newCategoryTable = list()
+        self.__categoryTable = list()
+        self.__newCategoryTable = list()
 
     def setDBController(self, dbController: DBController) -> None:
-        self.dbController = dbController
+        self.__dbController = dbController
 
     def appendCategoryByList(self,
                              categoryListAppend: List[Tuple[int, str, int, str]],
@@ -36,15 +36,15 @@ class CategoryController:
                  "href": i[3]})
 
     def controlCategory(self) -> None:
-        self.insertNewCategory(self.newCategoryTable)
-        self.updateCategory(self.categoryTable)
+        self.__insertNewCategory(self.__newCategoryTable)
+        self.__updateCategory(self.__categoryTable)
 
-    def insertNewCategory(self, newCategoryTable: Table) -> None:
-        self.dbController.getCursor().executemany(
-            self.insertNewCategoryQuery, newCategoryTable)
-        self.dbController.getDB().commit()
+    def __insertNewCategory(self, newCategoryTable: Table) -> None:
+        self.__dbController.getCursor().executemany(
+            self.__insertNewCategoryQuery, newCategoryTable)
+        self.__dbController.getDB().commit()
 
-    def updateCategory(self, categoryTable: Table) -> None:
-        self.dbController.getCursor().executemany(
-            self.updateCategoryQuery, categoryTable)
-        self.dbController.getDB().commit()
+    def __updateCategory(self, categoryTable: Table) -> None:
+        self.__dbController.getCursor().executemany(
+            self.__updateCategoryQuery, categoryTable)
+        self.__dbController.getDB().commit()

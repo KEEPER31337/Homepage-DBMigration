@@ -24,8 +24,8 @@ testComments = [{'comment_srl': 1, 'parent_srl': 0},
                 {'comment_srl': 13, 'parent_srl': 13},
                 {'comment_srl': 14, 'parent_srl': 15}]
 
-parentPuller.parentPulledTable = testComments
-parentPuller.initVisited()
-pp(parentPuller.travelParentPulledTable())
+parentPuller.__parentPulledTable = testComments
+parentPuller.__initVisited()
+pp(parentPuller.__travelParentPulledTable())
 
 # parentPuller.pullParent()

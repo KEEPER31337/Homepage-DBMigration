@@ -4,18 +4,21 @@ from module.category_transferers.category_transferer import CategoryTransferer
 
 class LeafCategoryTransferer(CategoryTransferer):
 
-    leafDepth: int = 1
+    __leafDepth: int = 1
 
-    selectChildCategoryQuery = (
+    __selectChildCategoryQuery = (
         "SELECT id, parent_id, name"
         " FROM category"
         " WHERE parent_id = %(parent_category_id)s;")
 
     def setLeafDepth(self, leafDepth: int) -> None:
-        self.leafDepth = leafDepth
+        self.__leafDepth = leafDepth
 
     # simillar overloading
-    def appendCategoryTransferDict(self, rootCategoryId: int, newCategoryId: int = None) -> None:
+    def appendCategoryTransferDict(
+            self,
+            rootCategoryId: int,
+            newCategoryId: int = None) -> None:
 
         isNewTransferred = bool(newCategoryId)
         if not isNewTransferred:
@@ -26,55 +29,55 @@ class LeafCategoryTransferer(CategoryTransferer):
             "new_category_id": newCategoryId,
             "new_transferred": isNewTransferred}
 
-        self.categoryTransferTable.append(categoryTransferDict)
+        self._categoryTransferTable.append(categoryTransferDict)
 
     def transferCategory(self) -> None:
-        self.transferLeafCategory()
+        self.__transferLeafCategory()
 
-    def transferLeafCategory(self) -> None:
-        unifiedLeafCategoryTable = self.getUnifiedLeafCategoryTable()
-        self.updatePostingCategory(unifiedLeafCategoryTable)
+    def __transferLeafCategory(self) -> None:
+        unifiedLeafCategoryTable = self.__getUnifiedLeafCategoryTable()
+        self._updatePostingCategory(unifiedLeafCategoryTable)
 
-    def getUnifiedLeafCategoryTable(self) -> None:
+    def __getUnifiedLeafCategoryTable(self) -> None:
         unifiedLeafCategoryTable: Table = list()
 
-        for row in self.categoryTransferTable:
+        for row in self._categoryTransferTable:
 
-            leafChildCategoryTable = self.getRootLeafChildCategory(row)
+            leafChildCategoryTable = self.__getRootLeafChildCategory(row)
 
             newCategoryId = row["new_category_id"]
-            leafCategoryTable = self.getLeafCategoryTable(
+            leafCategoryTable = self.__getLeafCategoryTable(
                 leafChildCategoryTable, newCategoryId)
             unifiedLeafCategoryTable += leafCategoryTable
 
         return unifiedLeafCategoryTable
 
-    def getRootLeafChildCategory(self, categoryTransfer: Row) -> Table:
+    def __getRootLeafChildCategory(self, categoryTransfer: Row) -> Table:
         rootCategoryId = categoryTransfer["old_category_id"]
         newTransferred = categoryTransfer["new_transferred"]
 
-        leafChildCategoryTable = self.findChildCategory(
-            rootCategoryId, self.leafDepth)
+        leafChildCategoryTable = self.__findChildCategory(
+            rootCategoryId, self.__leafDepth)
 
         if newTransferred:
-            rootCategoryName = self.getCategoryNameById(rootCategoryId)
+            rootCategoryName = self._getCategoryNameById(rootCategoryId)
 
             for i, row in enumerate(leafChildCategoryTable):
                 leafChildCategoryTable[i]["name"] = f"{rootCategoryName}{row['name']}"
 
         return leafChildCategoryTable
 
-    def findChildCategory(self, parentCategoryId: int, depth: int) -> Table:
+    def __findChildCategory(self, parentCategoryId: int, depth: int) -> Table:
         parentCategoryData = {"parent_category_id": parentCategoryId}
 
         if depth < 1:
             return list()
 
-        childCategoryTable = self.selectChildCategory(parentCategoryData)
+        childCategoryTable = self.__selectChildCategory(parentCategoryData)
 
         if depth == 1:
             for i, row in enumerate(childCategoryTable):
-                childCategoryTable[i]["name"] = self.coverName(row["name"])
+                childCategoryTable[i]["name"] = self._coverName(row["name"])
 
             return childCategoryTable
 
@@ -85,22 +88,22 @@ class LeafCategoryTransferer(CategoryTransferer):
                 categoryId = childCategoryRow["id"]
                 categoryName = childCategoryRow["name"]
 
-                grandChildCategoryTable = self.findChildCategory(
+                grandChildCategoryTable = self.__findChildCategory(
                     categoryId, depth-1)
 
                 for i, row in enumerate(grandChildCategoryTable):
-                    grandChildCategoryTable[i]["name"] = f"{self.coverName(categoryName)}{row['name']}"
+                    grandChildCategoryTable[i]["name"] = f"{self._coverName(categoryName)}{row['name']}"
 
                 leafChildCategoryTable += grandChildCategoryTable
 
         return leafChildCategoryTable
 
-    def selectChildCategory(self, parentCategoryData: Row) -> Table:
-        cursor = self.dbController.getCursor()
-        cursor.execute(self.selectChildCategoryQuery, parentCategoryData)
+    def __selectChildCategory(self, parentCategoryData: Row) -> Table:
+        cursor = self._dbController.getCursor()
+        cursor.execute(self.__selectChildCategoryQuery, parentCategoryData)
         return cursor.fetchall()
 
-    def getLeafCategoryTable(self, childCategoryTable: Table, newCategoryId: int) -> Table:
+    def __getLeafCategoryTable(self, childCategoryTable: Table, newCategoryId: int) -> Table:
         leafCategoryTable: Table = list()
 
         for childCategoryRow in childCategoryTable:

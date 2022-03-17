@@ -4,13 +4,13 @@ from module.group_seperators.group_seperator import GroupSeperator
 
 class JobSeperator(GroupSeperator):
 
-    defaultJobId: int
+    __defaultJobId: int
 
-    insertJobFormat = (
+    __insertJobFormat = (
         "INSERT INTO member_has_member_job(member_id, member_job_id)"
         " VALUES(%({memberSrlCol})s,%({groupSrlCol})s);")
 
-    selectMemberSrlFormat = (
+    __selectMemberSrlFormat = (
         "SELECT member_srl AS {memberSrlCol}"
         " FROM xe_member;")
 
@@ -22,52 +22,52 @@ class JobSeperator(GroupSeperator):
         super().__init__(memberSrlCol, jobSrlCol, jobTitleCol)
 
     def setDefaultJobId(self, id: int) -> None:
-        self.defaultJobId = id
+        self.__defaultJobId = id
 
     def seperateJob(self) -> None:
-        jobSrlTable = self.selectJobSrl()
-        editedJobSrlTable = self.getEditedJobSrlTable(jobSrlTable)
+        jobSrlTable = self.__selectJobSrl()
+        editedJobSrlTable = self.__getEditedJobSrlTable(jobSrlTable)
 
-        memberSrlTable = self.selectMemberSrl()
-        defaultJobTable = self.getDefaultJobTable(memberSrlTable)
+        memberSrlTable = self.__selectMemberSrl()
+        defaultJobTable = self.__getDefaultJobTable(memberSrlTable)
 
         jobTable = editedJobSrlTable + defaultJobTable
-        self.insertJob(jobTable)
+        self.__insertJob(jobTable)
 
-    def selectJobSrl(self) -> Table:
-        return self.selectGroupSrl()
+    def __selectJobSrl(self) -> Table:
+        return self._selectGroupSrl()
 
-    def getEditedJobSrlTable(self, jobSrlTable: Table) -> Table:
-        return self.getEditedGroupSrlTable(jobSrlTable)
+    def __getEditedJobSrlTable(self, jobSrlTable: Table) -> Table:
+        return self._getEditedGroupSrlTable(jobSrlTable)
 
-    def selectMemberSrl(self) -> Table:
-        cursor = self.oldDBController.getCursor()
-        cursor.execute(self.formatSelectMemberSrlQuery())
+    def __selectMemberSrl(self) -> Table:
+        cursor = self._oldDBController.getCursor()
+        cursor.execute(self.__formatSelectMemberSrlQuery())
 
         memberSrlTable = cursor.fetchall()
         return memberSrlTable
 
-    def formatSelectMemberSrlQuery(self) -> str:
-        return self.selectMemberSrlFormat.format(
-            memberSrlCol=self.memberSrlCol)
+    def __formatSelectMemberSrlQuery(self) -> str:
+        return self.__selectMemberSrlFormat.format(
+            memberSrlCol=self._memberSrlCol)
 
-    def getDefaultJobTable(self, memberSrlTable: Table) -> Table:
+    def __getDefaultJobTable(self, memberSrlTable: Table) -> Table:
         for i in range(len(memberSrlTable)):
-            memberSrlTable[i][self.groupSrlCol] = self.defaultJobId
+            memberSrlTable[i][self._groupSrlCol] = self.__defaultJobId
 
         return memberSrlTable
 
-    def insertJob(self, jobTable: Table) -> None:
-        cursor = self.newDBController.getCursor()
+    def __insertJob(self, jobTable: Table) -> None:
+        cursor = self._newDBController.getCursor()
 
         # pymysql.err.IntegrityError : FK 비일치
         cursor.executemany(
-            self.formatInsertJobQuery(),
+            self.__formatInsertJobQuery(),
             jobTable
         )
-        self.newDBController.getDB().commit()
+        self._newDBController.getDB().commit()
 
-    def formatInsertJobQuery(self) -> str:
-        return self.insertJobFormat.format(
-            memberSrlCol=self.memberSrlCol,
-            groupSrlCol=self.groupSrlCol)
+    def __formatInsertJobQuery(self) -> str:
+        return self.__insertJobFormat.format(
+            memberSrlCol=self._memberSrlCol,
+            groupSrlCol=self._groupSrlCol)

@@ -5,26 +5,26 @@ from util.db_controller import DBController
 
 
 class CategoryTransferer(metaclass=ABCMeta):
-    dbController: DBController
+    _dbController: DBController
 
-    categoryTransferTable: Table
+    _categoryTransferTable: Table
 
-    selectCategoryNameQuery = (
+    _selectCategoryNameQuery = (
         "SELECT name"
         " FROM category"
         " WHERE id = %(category_id)s;")
 
-    updatePostingCategoryQuery = (
+    _updatePostingCategoryQuery = (
         "UPDATE posting"
         " SET category_id = %(new_category_id)s,"
         " title = CONCAT(%(old_category_name)s, title)"
         " WHERE category_id = %(old_category_id)s;")
 
     def __init__(self) -> None:
-        self.categoryTransferTable = list()
+        self._categoryTransferTable = list()
 
     def setDBController(self, dbController: DBController) -> None:
-        self.dbController = dbController
+        self._dbController = dbController
 
     @abstractmethod
     def transferCategory(self) -> None: pass
@@ -32,23 +32,23 @@ class CategoryTransferer(metaclass=ABCMeta):
     @abstractmethod
     def appendCategoryTransferDict(self) -> None: pass
 
-    def updatePostingCategory(self, updatePostingCategoryTable: Table) -> None:
-        self.dbController.getCursor().executemany(
-            self.updatePostingCategoryQuery, updatePostingCategoryTable)
-        self.dbController.getDB().commit()
+    def _updatePostingCategory(self, updatePostingCategoryTable: Table) -> None:
+        self._dbController.getCursor().executemany(
+            self._updatePostingCategoryQuery, updatePostingCategoryTable)
+        self._dbController.getDB().commit()
 
-    def getCategoryNameById(self, categoryId: int) -> str:
+    def _getCategoryNameById(self, categoryId: int) -> str:
         categoryIdCol = "category_id"
         categoryIdData = {categoryIdCol: categoryId}
         selectCategoryNameCondition = f"{categoryIdCol}={categoryId}"
 
-        categoryNameRow = self.selectCategoryName(categoryIdData)
+        categoryNameRow = self._selectCategoryName(categoryIdData)
 
         try:
             if not categoryNameRow:
                 raise RowNotFoundError(
                     className=self.__class__.__name__,
-                    methodName=self.getCategoryNameById.__name__,
+                    methodName=self._getCategoryNameById.__name__,
                     selectCondition=selectCategoryNameCondition,
                     msg="Return empty string.")
 
@@ -56,14 +56,14 @@ class CategoryTransferer(metaclass=ABCMeta):
             print(re)
             return ""
 
-        categoryName = self.coverName(categoryNameRow["name"])
+        categoryName = self._coverName(categoryNameRow["name"])
 
         return categoryName
 
-    def selectCategoryName(self, categoryIdData: Row) -> Row:
-        cursor = self.dbController.getCursor()
-        cursor.execute(self.selectCategoryNameQuery, categoryIdData)
+    def _selectCategoryName(self, categoryIdData: Row) -> Row:
+        cursor = self._dbController.getCursor()
+        cursor.execute(self._selectCategoryNameQuery, categoryIdData)
         return cursor.fetchone()
 
-    def coverName(self, categoryName: str) -> str:
+    def _coverName(self, categoryName: str) -> str:
         return f"[{categoryName}]"

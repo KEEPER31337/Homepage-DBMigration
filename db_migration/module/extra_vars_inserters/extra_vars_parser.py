@@ -11,15 +11,15 @@ class ExtraVarsParser:
         splitedExtraVars = extraVars.split(';')
         splitedExtraVars = [x.strip('}').strip('{') for x in splitedExtraVars]
 
-        studentNumber = cls.parseStudentNumber(splitedExtraVars)
-        studentNumber = studentNumber if cls.checkStudentNumber(
+        studentNumber = cls.__parseStudentNumber(splitedExtraVars)
+        studentNumber = studentNumber if cls.__checkStudentNumber(
             studentNumber) else None
 
         valueParsed = {"student_number": studentNumber}
         return valueParsed
 
     @classmethod
-    def parseStudentNumber(cls, splitedExtraVars: List[str]) -> str:
+    def __parseStudentNumber(cls, splitedExtraVars: List[str]) -> str:
         studentNumberKey = "s:13:\"studentnumber\""
 
         try:
@@ -28,22 +28,22 @@ class ExtraVarsParser:
             print(StringNotFoundErrorLog(
                 err=ve,
                 className=cls.__name__,
-                methodName=cls.parseStudentNumber.__name__,
+                methodName=cls.__parseStudentNumber.__name__,
                 stringFound=studentNumberKey,
                 msg="Return empty string."))
             return ""
 
         studentNumberIndex = studentNumberKeyIndex + 1
-        studentNumber = cls.parseValue(splitedExtraVars[studentNumberIndex])
+        studentNumber = cls.__parseValue(splitedExtraVars[studentNumberIndex])
 
         return studentNumber
 
     @classmethod
-    def parseValue(cls, rawValue: str) -> str:
+    def __parseValue(cls, rawValue: str) -> str:
         return rawValue.split(':')[-1].strip('\"')
 
     @classmethod
-    def checkStudentNumber(cls, studentNumber: str) -> bool:
+    def __checkStudentNumber(cls, studentNumber: str) -> bool:
         if (not studentNumber) or len(studentNumber) == 2:
             return False
         return True
