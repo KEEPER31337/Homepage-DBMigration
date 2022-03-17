@@ -131,7 +131,7 @@ INSERT INTO
 SELECT
         f.file_srl,
         f.source_filename,
-        f.uploaded_filename,
+        CONCAT("keeper_files/",f.uploaded_filename),
         f.file_size,
         f.regdate,
         f.ipaddress,
