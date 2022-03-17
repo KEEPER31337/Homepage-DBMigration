@@ -1,13 +1,13 @@
-from category_transferers.__main__ import transferCategory
 from util.db_controller import DBController
-from category_mappers.__main__ import mapCategory
-from category_controllers.__main__ import controlCategory
-from extra_vars_inserters.__main__ import insertExtraVars
-from html_content_cleaners.__main__ import cleanHtmlContent
-from parent_pullers.__main__ import pullParent
-from data_migrators.__main__ import migrateData
-from group_seperators.__main__ import seperateGroup
-from library_migrators.__main__ import migrateLibrary
+from module.category_transferers.__main__ import transferCategory
+from module.category_mappers.__main__ import mapCategory
+from module.category_controllers.__main__ import controlCategory
+from module.extra_vars_inserters.__main__ import insertExtraVars
+from module.html_content_cleaners.__main__ import cleanHtmlContent
+from module.parent_pullers.__main__ import pullParent
+from module.data_migrators.__main__ import migrateData
+from module.group_seperators.__main__ import seperateGroup
+from module.library_migrators.__main__ import migrateLibrary
 
 
 if __name__ == "__main__":
