@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from module.db_controll_interface import DBControllInterface
+from module.interface import DBControllInterface
 from util.typedef import Row, Table
 from util.err import RowNotFoundError
 from util.db_controller import DBController

@@ -1,5 +1,5 @@
 from abc import ABCMeta
-from module.db_controll_interface import DBControllInterface
+from module.interface import DBControllInterface, FormatInterface
 from util.err import DataLenOverError, DuplicatedColumnExistErrorLog, LxmlCleanerParseErrorLog
 from util.typedef import Row, Table
 from pymysql import OperationalError
@@ -10,7 +10,7 @@ from markdownify import markdownify as md
 CONTENT_MAX_LENGTH = 65535
 
 
-class HtmlContentCleaner(DBControllInterface, metaclass=ABCMeta):
+class HtmlContentCleaner(DBControllInterface, FormatInterface, metaclass=ABCMeta):
 
     __cleanContentCol: str
     __tableClean: str
@@ -56,7 +56,7 @@ class HtmlContentCleaner(DBControllInterface, metaclass=ABCMeta):
     def __addCleanContentColumn(self) -> None:
         try:
             self._dbController.getCursor().execute(
-                self.__formatAddCleanContentColumnQuery())
+                self._formatQuery(self.__addCleanContentColumnFormat))
         except OperationalError as oe:
             print(DuplicatedColumnExistErrorLog(
                 err=oe,
@@ -64,21 +64,17 @@ class HtmlContentCleaner(DBControllInterface, metaclass=ABCMeta):
                 methodName=self.__addCleanContentColumn.__name__,
                 columnName=self.__cleanContentCol))
 
-    def __formatAddCleanContentColumnQuery(self) -> str:
-        return self.__addCleanContentColumnFormat.format(
+    def _formatQuery(self, queryFormat: str) -> str:
+        return queryFormat.format(
+            srlCol=self.__srlCol,
             tableClean=self.__tableClean,
             cleanContentCol=self.__cleanContentCol)
 
     def __selectContent(self) -> Table:
         cursor = self._dbController.getCursor()
-        cursor.execute(self.__formatSelectContentQuery())
+        cursor.execute(self._formatQuery(self.__selectContentFormat))
         tableContent = cursor.fetchall()
         return tableContent
-
-    def __formatSelectContentQuery(self) -> str:
-        return self.__selectContentFormat.format(
-            srlCol=self.__srlCol,
-            tableClean=self.__tableClean)
 
     def __getCleanContentTable(self, contentTable: Table) -> Table:
 
@@ -141,11 +137,5 @@ class HtmlContentCleaner(DBControllInterface, metaclass=ABCMeta):
 
     def __updateCleanContent(self, cleanContentTable: Table) -> None:
         self._dbController.getCursor().executemany(
-            self.__formatUpdateCleanContentQuery(), cleanContentTable)
+            self._formatQuery(self.__updateCleanContentFormat), cleanContentTable)
         self._dbController.getDB().commit()
-
-    def __formatUpdateCleanContentQuery(self) -> str:
-        return self.__updateCleanContentFormat.format(
-            srlCol=self.__srlCol,
-            tableClean=self.__tableClean,
-            cleanContentCol=self.__cleanContentCol)

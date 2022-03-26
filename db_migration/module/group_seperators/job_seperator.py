@@ -1,8 +1,9 @@
 from util.typedef import Table
+from module.interface import FormatInterface
 from module.group_seperators.group_seperator import GroupSeperator
 
 
-class JobSeperator(GroupSeperator):
+class JobSeperator(GroupSeperator, FormatInterface):
 
     __defaultJobId: int
 
@@ -42,14 +43,15 @@ class JobSeperator(GroupSeperator):
 
     def __selectMemberSrl(self) -> Table:
         cursor = self._oldDBController.getCursor()
-        cursor.execute(self.__formatSelectMemberSrlQuery())
+        cursor.execute(self._formatQuery(self.__selectMemberSrlFormat))
 
         memberSrlTable = cursor.fetchall()
         return memberSrlTable
 
-    def __formatSelectMemberSrlQuery(self) -> str:
-        return self.__selectMemberSrlFormat.format(
-            memberSrlCol=self._memberSrlCol)
+    def _formatQuery(self, queryFormat: str) -> str:
+        return queryFormat.format(
+            memberSrlCol=self._memberSrlCol,
+            groupSrlCol=self._groupSrlCol)
 
     def __getDefaultJobTable(self, memberSrlTable: Table) -> Table:
         for i in range(len(memberSrlTable)):
@@ -62,12 +64,7 @@ class JobSeperator(GroupSeperator):
 
         # pymysql.err.IntegrityError : FK 비일치
         cursor.executemany(
-            self.__formatInsertJobQuery(),
+            self._formatQuery(self.__insertJobFormat),
             jobTable
         )
         self._newDBController.getDB().commit()
-
-    def __formatInsertJobQuery(self) -> str:
-        return self.__insertJobFormat.format(
-            memberSrlCol=self._memberSrlCol,
-            groupSrlCol=self._groupSrlCol)

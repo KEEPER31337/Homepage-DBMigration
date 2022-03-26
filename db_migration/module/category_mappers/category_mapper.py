@@ -1,11 +1,11 @@
 from typing import Dict
-from module.db_controll_interface import DBControllInterface
-from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
+from util.err import DuplicatedColumnExistErrorLog
 from pymysql import OperationalError
+from module.interface import DBControllInterface, FormatInterface
 
 
-class CategoryMapper(DBControllInterface):
+class CategoryMapper(DBControllInterface, FormatInterface):
 
     __parentIdCol: str
     __newCategoryTable: str
@@ -52,7 +52,8 @@ class CategoryMapper(DBControllInterface):
 
     def __addParentIdColumn(self) -> None:
         try:
-            self._dbController.getCursor().execute(self.__formatAddParentIdColumnQuery())
+            self._dbController.getCursor().execute(
+                self._formatQuery(self.__addParentIdColumnFormat))
         except OperationalError as oe:
             print(DuplicatedColumnExistErrorLog(
                 err=oe,
@@ -60,8 +61,10 @@ class CategoryMapper(DBControllInterface):
                 methodName=self.__addParentIdColumn.__name__,
                 columnName=self.__parentIdCol))
 
-    def __formatAddParentIdColumnQuery(self) -> str:
-        return self.__addParentIdColumnFormat.format(parentIdCol=self.__parentIdCol)
+    def _formatQuery(self, queryFormat: str) -> str:
+        return queryFormat.format(
+            parentIdCol=self.__parentIdCol,
+            newCategoryTable=self.__newCategoryTable)
 
     def __selectCategory(self) -> Table:
         cursor = self._dbController.getCursor()
@@ -92,18 +95,10 @@ class CategoryMapper(DBControllInterface):
 
     def __updateCategoryTable(self, categoryTable: Table) -> None:
         self._dbController.getCursor().executemany(
-            self.__formatUpdateMappedParentIdQuery(), categoryTable)
+            self._formatQuery(self.__updateMappedParentIdFormat), categoryTable)
         self._dbController.getDB().commit()
-
-    def __formatUpdateMappedParentIdQuery(self) -> str:
-        return self.__updateMappedParentIdFormat.format(parentIdCol=self.__parentIdCol)
 
     def __createNewCategoryTable(self) -> None:
         cursor = self._dbController.getCursor()
-        cursor.execute(self.__formatCreateNewCategoryQuery())
+        cursor.execute(self._formatQuery(self.__createNewCategoryFormat))
         self._dbController.getDB().commit()
-
-    def __formatCreateNewCategoryQuery(self) -> str:
-        return self.__createNewCategoryFormat.format(
-            parentIdCol=self.__parentIdCol,
-            newCategoryTable=self.__newCategoryTable)

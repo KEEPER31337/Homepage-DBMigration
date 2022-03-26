@@ -1,8 +1,9 @@
 from util.typedef import Table
 from util.err import ParentSrlEqualError, ParentSrlNotFoundError
+from module.interface import DBControllInterface, FormatInterface
 
 
-class ParentPuller:
+class ParentPuller(DBControllInterface, FormatInterface):
 
     __parentPulledTable: Table
 
@@ -35,11 +36,11 @@ class ParentPuller:
 
     def __selectParentPulled(self) -> Table:
         cursor = self._dbController.getCursor()
-        cursor.execute(self.__formatSelectParentPulledQuery())
+        cursor.execute(self._formatQuery(self.__selectParentPulledFormat))
         return cursor.fetchall()
 
-    def __formatSelectParentPulledQuery(self) -> str:
-        return self.__selectParentPulledFormat.format(
+    def _formatQuery(self, queryFormat: str) -> str:
+        return queryFormat.format(
             tableNameParentPull=self.__tableNameParentPull,
             tableSrlCol=self.__tableSrlCol,
             parentSrlCol=self.__parentSrlCol)
@@ -108,11 +109,5 @@ class ParentPuller:
 
     def __updateParentPulled(self, pulledTable: Table) -> None:
         self._dbController.getCursor().executemany(
-            self.__formatUpdateParentPulledQuery(), pulledTable)
+            self._formatQuery(self.__updateParentPulledFormat), pulledTable)
         self._dbController.getDB().commit()
-
-    def __formatUpdateParentPulledQuery(self) -> str:
-        return self.__updateParentPulledFormat.format(
-            tableNameParentPull=self.__tableNameParentPull,
-            tableSrlCol=self.__tableSrlCol,
-            parentSrlCol=self.__parentSrlCol)

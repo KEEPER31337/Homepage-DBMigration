@@ -1,10 +1,11 @@
 from abc import ABCMeta
 from typing import List
-from module.db_controll_interface import DoubleDBControllInterface
 from util.typedef import Row, Table
+from module.interface import DoubleDBControllInterface, FormatInterface
 
 
-class GroupSeperator(DoubleDBControllInterface, metaclass=ABCMeta):
+# TODO : format 메소드 중복문제 해결
+class GroupSeperator(DoubleDBControllInterface, FormatInterface, metaclass=ABCMeta):
 
     __oldGroupSrlDict: Row
     __newGroupSrlDict: Row
@@ -13,7 +14,7 @@ class GroupSeperator(DoubleDBControllInterface, metaclass=ABCMeta):
     _groupSrlCol: str
     _groupTitleCol: str
 
-    selectGroupSrlFormat = (
+    __selectGroupSrlFormat = (
         "SELECT t1.member_srl AS {memberSrlCol}, t2.group_srl AS {groupSrlCol}, t2.title AS {groupTitleCol}"
         " FROM xe_member_group_member as t1, xe_member_group as t2"
         " WHERE (t1.group_srl = t2.group_srl AND"
@@ -47,10 +48,10 @@ class GroupSeperator(DoubleDBControllInterface, metaclass=ABCMeta):
         return oldGroupTable
 
     def __getSelectGroupSrlQuery(self) -> str:
-        return f"{self.__formatSelectGroupSrlQuery()}{self.__getGroupConditionFormat()}"
+        return f"{self._formatQuery(self.__selectGroupSrlFormat)}{self.__getGroupConditionFormat()}"
 
-    def __formatSelectGroupSrlQuery(self) -> str:
-        return self.selectGroupSrlFormat.format(
+    def _formatQuery(self, queryFormat: str) -> str:
+        return queryFormat.format(
             memberSrlCol=self._memberSrlCol,
             groupSrlCol=self._groupSrlCol,
             groupTitleCol=self._groupTitleCol)

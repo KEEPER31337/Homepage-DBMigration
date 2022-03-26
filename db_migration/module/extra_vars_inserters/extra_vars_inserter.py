@@ -1,6 +1,6 @@
 # Add student number columns, parse extra_vars column and update rows.
 
-from module.db_controll_interface import DBControllInterface
+from module.interface import DBControllInterface
 from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
 from pymysql import OperationalError

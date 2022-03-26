@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from module.db_controll_interface import DoubleDBControllInterface
+from module.interface import DoubleDBControllInterface, FormatInterface
 from util.typedef import Row, Table
 
 
-class LibraryMigrator(DoubleDBControllInterface, metaclass=ABCMeta):
+class LibraryMigrator(DoubleDBControllInterface, FormatInterface, metaclass=ABCMeta):
 
     __oldTableMigrate: str
     __newTableMigrate: str
@@ -27,12 +27,14 @@ class LibraryMigrator(DoubleDBControllInterface, metaclass=ABCMeta):
 
     def __selectLibrary(self) -> Table:
         cursor = self._oldDBController.getCursor()
-        cursor.execute(self.__formatSelectLibraryQuery())
+        cursor.execute(self._formatQuery(self.__selectLibraryFormat))
         libraryTable = cursor.fetchall()
         return libraryTable
 
-    def __formatSelectLibraryQuery(self) -> str:
-        return self.__selectLibraryFormat.format(oldTableMigrate=self.__oldTableMigrate)
+    def _formatQuery(self, queryFormat: str) -> str:
+        return queryFormat.format(
+            oldTableMigrate=self.__oldTableMigrate,
+            newTableMigrate=self.__newTableMigrate)
 
     def __getEditedLibraryTable(self, libraryTable: Table) -> Table:
         editedLibraryTable: Table = list()
@@ -72,10 +74,7 @@ class LibraryMigrator(DoubleDBControllInterface, metaclass=ABCMeta):
         cursor = self._newDBController.getCursor()
 
         cursor.executemany(
-            self.__formatInsertLibraryQuery(),
+            self._formatQuery(self._insertLibraryFormat),
             editedLibraryTable
         )
         self._newDBController.getDB().commit()
-
-    def __formatInsertLibraryQuery(self) -> str:
-        return self._insertLibraryFormat.format(newTableMigrate=self.__newTableMigrate)

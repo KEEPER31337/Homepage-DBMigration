@@ -1,9 +1,10 @@
 from abc import ABCMeta
+from module.interface import FormatInterface
 from util.typedef import Table
 from module.group_seperators.group_seperator import GroupSeperator
 
 
-class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
+class TypeRankSeperator(GroupSeperator, FormatInterface, metaclass=ABCMeta):
 
     __typeRankIdCol: str
 
@@ -37,13 +38,13 @@ class TypeRankSeperator(GroupSeperator, metaclass=ABCMeta):
     def __updateTypeRank(self, typeRankSrlTable: Table) -> None:
         cursor = self._newDBController.getCursor()
         cursor.executemany(
-            self.__formatUpdateTypeRankQuery(),
+            self._formatQuery(self.__updateTypeRankFormat),
             typeRankSrlTable)
         # pymysql.err.IntegrityError : FK 비일치
         self._newDBController.getDB().commit()
 
-    def __formatUpdateTypeRankQuery(self) -> str:
-        return self.__updateTypeRankFormat.format(
+    def _formatQuery(self, queryFormat: str) -> str:
+        return queryFormat.format(
             typeRankIdCol=self.__typeRankIdCol,
             memberSrlCol=self._memberSrlCol,
             groupSrlCol=self._groupSrlCol)
