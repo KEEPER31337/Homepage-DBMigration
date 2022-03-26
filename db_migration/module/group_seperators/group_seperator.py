@@ -2,7 +2,6 @@ from abc import ABCMeta
 from typing import List
 from module.db_controll_interface import DoubleDBControllInterface
 from util.typedef import Row, Table
-from util.db_controller import DBController
 
 
 class GroupSeperator(DoubleDBControllInterface, metaclass=ABCMeta):

@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from module.db_controll_interface import DoubleDBControllInterface
 from util.typedef import Row, Table
-from util.db_controller import DBController
 
 
 class LibraryMigrator(DoubleDBControllInterface, metaclass=ABCMeta):

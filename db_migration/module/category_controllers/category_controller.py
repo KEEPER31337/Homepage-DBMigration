@@ -1,7 +1,6 @@
 from typing import List, Tuple
 from module.db_controll_interface import DBControllInterface
 from util.typedef import Table
-from util.db_controller import DBController
 
 
 class CategoryController(DBControllInterface):

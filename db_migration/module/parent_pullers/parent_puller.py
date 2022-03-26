@@ -1,6 +1,5 @@
 from util.typedef import Table
 from util.err import ParentSrlEqualError, ParentSrlNotFoundError
-from util.db_controller import DBController
 
 
 class ParentPuller:
