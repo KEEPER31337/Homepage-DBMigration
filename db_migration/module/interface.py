@@ -1,5 +1,12 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 from util.db_controller import DBController
+
+
+class FormatInterface(metaclass=ABCMeta):
+
+    @abstractmethod()
+    def _formatQuery() -> None:
+        pass
 
 
 class DBControllInterface(metaclass=ABCMeta):
