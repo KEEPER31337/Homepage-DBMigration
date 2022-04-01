@@ -14,7 +14,6 @@ def controlCategory(newDB: DBController):
         (116, '자유게시판', 2, 'board'),
         (63908, '익명게시판', 2, 'board'),
         (117, '발표자료', 3, 'board'),
-        (105900, '2021학년도 2학기', 3, 'board'),
         (5424, '스터디 발표자료', 3, 'board'),
         (2996, '기술문서', 3, 'board'),
         (23400, '회계부', 3, 'board'),
@@ -40,6 +39,8 @@ def controlCategory(newDB: DBController):
         (6, '포인트', 0, None),
         (8, '이벤트', 219, 'event'),
         (9, '동아리 일정', 219, 'schedule'),
+        (10, '오류제보', 0, 'board'),
+        (11, '졸업생 게시판', 0, 'board'),
         (27, '기자재 신청', 5, 'library')
     ]
 
