@@ -2,7 +2,8 @@ from typing import Dict
 from util.typedef import Table
 from util.err import DuplicatedColumnExistErrorLog
 from pymysql import OperationalError
-from module.interface import SingleDBControllable, queryFormattable
+from interface.db_controllable import SingleDBControllable
+from interface.query_formattable import queryFormattable
 
 
 class CategoryMapper(SingleDBControllable, queryFormattable):

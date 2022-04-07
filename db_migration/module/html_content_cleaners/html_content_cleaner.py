@@ -1,5 +1,6 @@
 from abc import ABCMeta
-from module.interface import SingleDBControllable, queryFormattable
+from interface.db_controllable import SingleDBControllable
+from interface.query_formattable import queryFormattable
 from util.err import DataLenOverError, DuplicatedColumnExistErrorLog, LxmlCleanerParseErrorLog
 from util.typedef import Row, Table
 from pymysql import OperationalError

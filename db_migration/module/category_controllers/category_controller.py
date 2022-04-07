@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from module.interface import SingleDBControllable
 from util.typedef import Table
+from interface.db_controllable import SingleDBControllable
 
 
 class CategoryController(SingleDBControllable):

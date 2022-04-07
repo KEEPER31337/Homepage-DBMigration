@@ -1,25 +1,19 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from util.db_controller import DBController
-
-
-class queryFormattable(metaclass=ABCMeta):
-
-    @abstractmethod
-    def _formatQuery(self) -> None:
-        pass
 
 
 class DBControllable(metaclass=ABCMeta):
     pass
 
-class SingleDBControllable(DBControllable,metaclass=ABCMeta):
+
+class SingleDBControllable(DBControllable, metaclass=ABCMeta):
     _dbController: DBController
 
     def setDBController(self, dbController: DBController) -> None:
         self._dbController = dbController
 
 
-class DoubleDBControllable(DBControllable,metaclass=ABCMeta):
+class DoubleDBControllable(DBControllable, metaclass=ABCMeta):
     _oldDBController: DBController
     _newDBController: DBController
 

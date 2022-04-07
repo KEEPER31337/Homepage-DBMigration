@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from module.interface import DoubleDBControllable, queryFormattable
+from interface.db_controllable import DoubleDBControllable
+from interface.query_formattable import queryFormattable
 from util.typedef import Row, Table
 
 

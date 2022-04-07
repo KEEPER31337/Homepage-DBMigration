@@ -1,7 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
 from util.typedef import Row, Table
-from module.interface import DoubleDBControllable, queryFormattable
+from interface.db_controllable import DoubleDBControllable
+from interface.query_formattable import queryFormattable
 
 
 class GroupSeperator(DoubleDBControllable, queryFormattable, metaclass=ABCMeta):

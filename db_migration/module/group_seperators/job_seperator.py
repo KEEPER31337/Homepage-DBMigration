@@ -1,5 +1,5 @@
 from util.typedef import Table
-from module.interface import queryFormattable
+from interface.query_formattable import queryFormattable
 from module.group_seperators.group_seperator import GroupSeperator
 
 

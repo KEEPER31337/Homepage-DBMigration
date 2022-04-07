@@ -1,6 +1,7 @@
 from util.typedef import Table
 from util.err import ParentSrlEqualError, ParentSrlNotFoundError
-from module.interface import SingleDBControllable, queryFormattable
+from interface.db_controllable import SingleDBControllable
+from interface.query_formattable import queryFormattable
 
 
 class ParentPuller(SingleDBControllable, queryFormattable):
