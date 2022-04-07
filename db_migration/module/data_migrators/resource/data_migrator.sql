@@ -1,6 +1,6 @@
 USE {dstDB};
 
-INSERT INTO
+INSERT IGNORE INTO
     member (
         id,
         login_id,
@@ -28,7 +28,7 @@ FROM {srcDB}.xe_member AS m
 LEFT JOIN {srcDB}.xe_point AS p
 ON m.member_srl = p.member_srl;
 
-INSERT INTO
+INSERT IGNORE INTO
     category (
         id,
         name,
@@ -40,7 +40,7 @@ SELECT
         module_parent_srl
 FROM {srcDB}.new_category;
 
-INSERT INTO
+INSERT IGNORE INTO
     posting (
         id,
         title,
@@ -86,7 +86,7 @@ ON d.member_srl = m.member_srl
 INNER JOIN {srcDB}.new_category AS n
 ON d.module_srl = n.module_srl;
 
-INSERT INTO
+INSERT IGNORE INTO
     comment (
         id,
         content,
@@ -118,7 +118,7 @@ ON c.member_srl = m.member_srl
 INNER JOIN {srcDB}.xe_documents AS d
 ON c.document_srl = d.document_srl;
 
-INSERT INTO
+INSERT IGNORE INTO
     file (
         id,
         file_name,
@@ -142,7 +142,7 @@ LEFT JOIN {srcDB}.xe_documents AS d
 ON f.upload_target_srl = d.document_srl;
 
 
-INSERT INTO
+INSERT IGNORE INTO
     attendance(
         id,
         time,
