@@ -46,9 +46,9 @@ def controlCategory(newDB: DBController):
     categoryController = CategoryController()
     categoryController.setDBController(newDB)
     categoryController.appendCategoryByList(
-        categoryList, categoryController.categoryTable)
+        categoryList, categoryController.__categoryTable)
     categoryController.appendCategoryByList(
-        newCategoryList, categoryController.newCategoryTable)
+        newCategoryList, categoryController.__newCategoryTable)
     categoryController.controlCategory()
 
 

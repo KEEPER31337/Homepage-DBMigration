@@ -7,6 +7,7 @@ class CategoryController(SingleDBControllable):
     __categoryTable: Table
     __newCategoryTable: Table
 
+    # TODO : INSERT / UPDATE 통합 (ON DUPLICATE)
     __insertNewCategoryQuery = (
         "INSERT INTO category(`id`, `name`, `parent_id`, `href`)"
         " VALUES(%(id)s,%(name)s,%(parent_id)s,%(href)s);")
