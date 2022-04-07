@@ -47,4 +47,5 @@ class TypeRankSeperator(GroupSeperator, FormatInterface, metaclass=ABCMeta):
         return queryFormat.format(
             typeRankIdCol=self.__typeRankIdCol,
             memberSrlCol=self._memberSrlCol,
-            groupSrlCol=self._groupSrlCol)
+            groupSrlCol=self._groupSrlCol,
+            groupTitleCol=self._groupTitleCol)

@@ -1,10 +1,9 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 from typing import List
 from util.typedef import Row, Table
 from module.interface import DoubleDBControllInterface, FormatInterface
 
 
-# TODO : format 메소드 중복문제 해결
 class GroupSeperator(DoubleDBControllInterface, FormatInterface, metaclass=ABCMeta):
 
     __oldGroupSrlDict: Row
@@ -50,11 +49,9 @@ class GroupSeperator(DoubleDBControllInterface, FormatInterface, metaclass=ABCMe
     def __getSelectGroupSrlQuery(self) -> str:
         return f"{self._formatQuery(self.__selectGroupSrlFormat)}{self.__getGroupConditionFormat()}"
 
-    def _formatQuery(self, queryFormat: str) -> str:
-        return queryFormat.format(
-            memberSrlCol=self._memberSrlCol,
-            groupSrlCol=self._groupSrlCol,
-            groupTitleCol=self._groupTitleCol)
+    @abstractmethod
+    def _formatQuery(self) -> None:
+        pass
 
     def __getGroupConditionFormat(self) -> str:
         conditionFormat = "%s"

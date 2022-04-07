@@ -4,8 +4,8 @@ from util.db_controller import DBController
 
 class FormatInterface(metaclass=ABCMeta):
 
-    @abstractmethod()
-    def _formatQuery() -> None:
+    @abstractmethod
+    def _formatQuery(self) -> None:
         pass
 
 

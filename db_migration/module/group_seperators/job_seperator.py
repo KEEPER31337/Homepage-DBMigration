@@ -51,7 +51,8 @@ class JobSeperator(GroupSeperator, FormatInterface):
     def _formatQuery(self, queryFormat: str) -> str:
         return queryFormat.format(
             memberSrlCol=self._memberSrlCol,
-            groupSrlCol=self._groupSrlCol)
+            groupSrlCol=self._groupSrlCol,
+            groupTitleCol=self._groupTitleCol)
 
     def __getDefaultJobTable(self, memberSrlTable: Table) -> Table:
         for i in range(len(memberSrlTable)):
