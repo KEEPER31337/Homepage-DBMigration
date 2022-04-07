@@ -2,10 +2,10 @@ from typing import Dict
 from util.typedef import Table
 from util.err import DuplicatedColumnExistErrorLog
 from pymysql import OperationalError
-from module.interface import DBControllInterface, FormatInterface
+from module.interface import SingleDBControllable, queryFormattable
 
 
-class CategoryMapper(DBControllInterface, FormatInterface):
+class CategoryMapper(SingleDBControllable, queryFormattable):
 
     __parentIdCol: str
     __newCategoryTable: str

@@ -1,10 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
 from util.typedef import Row, Table
-from module.interface import DoubleDBControllInterface, FormatInterface
+from module.interface import DoubleDBControllable, queryFormattable
 
 
-class GroupSeperator(DoubleDBControllInterface, FormatInterface, metaclass=ABCMeta):
+class GroupSeperator(DoubleDBControllable, queryFormattable, metaclass=ABCMeta):
 
     __oldGroupSrlDict: Row
     __newGroupSrlDict: Row

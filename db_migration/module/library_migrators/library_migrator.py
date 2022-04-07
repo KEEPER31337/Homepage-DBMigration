@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from module.interface import DoubleDBControllInterface, FormatInterface
+from module.interface import DoubleDBControllable, queryFormattable
 from util.typedef import Row, Table
 
 
-class LibraryMigrator(DoubleDBControllInterface, FormatInterface, metaclass=ABCMeta):
+class LibraryMigrator(DoubleDBControllable, queryFormattable, metaclass=ABCMeta):
 
     __oldTableMigrate: str
     __newTableMigrate: str

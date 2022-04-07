@@ -1,13 +1,13 @@
 # Add student number columns, parse extra_vars column and update rows.
 
-from module.interface import DBControllInterface
+from module.interface import SingleDBControllable
 from util.err import DuplicatedColumnExistErrorLog
 from util.typedef import Table
 from pymysql import OperationalError
 from module.extra_vars_inserters.extra_vars_parser import ExtraVarsParser
 
 
-class ExtraVarsInserter(DBControllInterface):
+class ExtraVarsInserter(SingleDBControllable):
 
     __addStudentNumberColumnQuery = (
         "ALTER TABLE xe_member"

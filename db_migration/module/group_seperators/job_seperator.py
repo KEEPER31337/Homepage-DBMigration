@@ -1,9 +1,9 @@
 from util.typedef import Table
-from module.interface import FormatInterface
+from module.interface import queryFormattable
 from module.group_seperators.group_seperator import GroupSeperator
 
 
-class JobSeperator(GroupSeperator, FormatInterface):
+class JobSeperator(GroupSeperator, queryFormattable):
 
     __defaultJobId: int
 

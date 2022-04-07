@@ -1,11 +1,11 @@
 from abc import ABCMeta, abstractmethod
-from module.interface import DBControllInterface
+from module.interface import SingleDBControllable
 from util.typedef import Row, Table
 from util.err import RowNotFoundError
 from util.db_controller import DBController
 
 
-class CategoryTransferer(DBControllInterface, metaclass=ABCMeta):
+class CategoryTransferer(SingleDBControllable, metaclass=ABCMeta):
     _dbController: DBController
 
     _categoryTransferTable: Table

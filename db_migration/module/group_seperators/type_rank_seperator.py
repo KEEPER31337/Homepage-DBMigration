@@ -1,10 +1,10 @@
 from abc import ABCMeta
-from module.interface import FormatInterface
+from module.interface import queryFormattable
 from util.typedef import Table
 from module.group_seperators.group_seperator import GroupSeperator
 
 
-class TypeRankSeperator(GroupSeperator, FormatInterface, metaclass=ABCMeta):
+class TypeRankSeperator(GroupSeperator, queryFormattable, metaclass=ABCMeta):
 
     __typeRankIdCol: str
 

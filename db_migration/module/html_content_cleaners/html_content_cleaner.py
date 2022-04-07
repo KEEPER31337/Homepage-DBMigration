@@ -1,5 +1,5 @@
 from abc import ABCMeta
-from module.interface import DBControllInterface, FormatInterface
+from module.interface import SingleDBControllable, queryFormattable
 from util.err import DataLenOverError, DuplicatedColumnExistErrorLog, LxmlCleanerParseErrorLog
 from util.typedef import Row, Table
 from pymysql import OperationalError
@@ -10,7 +10,7 @@ from markdownify import markdownify as md
 CONTENT_MAX_LENGTH = 65535
 
 
-class HtmlContentCleaner(DBControllInterface, FormatInterface, metaclass=ABCMeta):
+class HtmlContentCleaner(SingleDBControllable, queryFormattable, metaclass=ABCMeta):
 
     __cleanContentCol: str
     __tableClean: str

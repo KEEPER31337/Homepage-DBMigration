@@ -1,9 +1,9 @@
 from typing import List, Tuple
-from module.interface import DBControllInterface
+from module.interface import SingleDBControllable
 from util.typedef import Table
 
 
-class CategoryController(DBControllInterface):
+class CategoryController(SingleDBControllable):
     __categoryTable: Table
     __newCategoryTable: Table
 
