@@ -15,6 +15,8 @@ class LeafCategoryTransferer(CategoryTransferer):
         self.__leafDepth = leafDepth
 
     # simillar overloading
+    # TODO 가변인자 이용
+    # TODO Dispatch overloading 고려
     def appendCategoryTransferDict(
             self,
             rootCategoryId: int,

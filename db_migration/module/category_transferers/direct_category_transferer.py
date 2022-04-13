@@ -3,6 +3,7 @@ from module.category_transferers.category_transferer import CategoryTransferer
 
 class DirectCategoryTransferer(CategoryTransferer):
 
+    # TODO 가변인자 이용
     def appendCategoryTransferDict(
             self,
             oldCategoryId: int,

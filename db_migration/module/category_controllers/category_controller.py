@@ -15,6 +15,7 @@ class CategoryController(SingleDBControllable):
     def __init__(self) -> None:
         self.__categoryTable = list()
 
+    # TODO 가변인자 이용
     def appendCategory(self,
                        categoryAppend: Tuple[int, str, int, str]) -> None:
         self.__categoryTable.append(
