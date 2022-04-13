@@ -5,42 +5,28 @@ from interface.db_controllable import SingleDBControllable
 
 class CategoryController(SingleDBControllable):
     __categoryTable: Table
-    __newCategoryTable: Table
 
-    # TODO : INSERT / UPDATE 통합 (ON DUPLICATE)
-    __insertNewCategoryQuery = (
-        "INSERT INTO category(`id`, `name`, `parent_id`, `href`)"
-        " VALUES(%(id)s,%(name)s,%(parent_id)s,%(href)s);")
-
-    __updateCategoryQuery = (
-        "UPDATE `category`"
-        " SET `name`=%(name)s, `parent_id`=%(parent_id)s, `href`=%(href)s"
-        " WHERE `id` = %(id)s;")
+    __insertCategoryQuery = (
+        "INSERT INTO category(id, name, parent_id, href)"
+        " VALUES(%(id)s,%(name)s,%(parent_id)s,%(href)s)"
+        " ON DUPLICATE KEY"
+        " UPDATE name=%(name)s, parent_id=%(parent_id)s, href=%(href)s;")
 
     def __init__(self) -> None:
         self.__categoryTable = list()
-        self.__newCategoryTable = list()
 
-    def appendCategoryByList(self,
-                             categoryListAppend: List[Tuple[int, str, int, str]],
-                             categoryTable: Table) -> None:
-        for i in categoryListAppend:
-            categoryTable.append(
-                {"id": i[0],
-                 "name": i[1],
-                 "parent_id": i[2],
-                 "href": i[3]})
+    def appendCategory(self,
+                       categoryAppend: Tuple[int, str, int, str]) -> None:
+        self.__categoryTable.append(
+            {"id": categoryAppend[0],
+             "name": categoryAppend[1],
+             "parent_id": categoryAppend[2],
+             "href": categoryAppend[3]})
 
     def controlCategory(self) -> None:
-        self.__insertNewCategory(self.__newCategoryTable)
-        self.__updateCategory(self.__categoryTable)
+        self.__insertCategory(self.__categoryTable)
 
-    def __insertNewCategory(self, newCategoryTable: Table) -> None:
+    def __insertCategory(self, categoryTable: Table) -> None:
         self._dbController.getCursor().executemany(
-            self.__insertNewCategoryQuery, newCategoryTable)
-        self._dbController.getDB().commit()
-
-    def __updateCategory(self, categoryTable: Table) -> None:
-        self._dbController.getCursor().executemany(
-            self.__updateCategoryQuery, categoryTable)
+            self.__insertCategoryQuery, categoryTable)
         self._dbController.getDB().commit()

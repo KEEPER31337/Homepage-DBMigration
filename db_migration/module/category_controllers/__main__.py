@@ -6,7 +6,8 @@ from module.category_controllers.category_controller import CategoryController
 def controlCategory(newDB: DBController):
     print(f"Controlling posting categories on {newDB.getDBName()}...")
 
-    categoryList = [
+    categoryInsertList = [
+        # categories to insert
         (219, 'KEEPER', 0, None),
         (29422, '동아리 소개', 219, 'about'),
         (105, '공지사항', 2, 'board'),
@@ -30,9 +31,8 @@ def controlCategory(newDB: DBController):
         (84493, '기자재 대여', 5, 'library'),
         (30052, '랭킹', 6, 'attendance'),
         (33777, '출석부', 6, 'attendance'),
-        (11302, '게임', 6, 'game')]
-
-    newCategoryList = [
+        (11302, '게임', 6, 'game'),
+        # categories to update
         (2, '게시판', 0, None),
         (3, '동아리활동', 0, None),
         (4, '정보', 0, None),
@@ -45,10 +45,10 @@ def controlCategory(newDB: DBController):
 
     categoryController = CategoryController()
     categoryController.setDBController(newDB)
-    categoryController.appendCategoryByList(
-        categoryList, categoryController.__categoryTable)
-    categoryController.appendCategoryByList(
-        newCategoryList, categoryController.__newCategoryTable)
+
+    for categoryInsert in categoryInsertList:
+        categoryController.appendCategory(categoryInsert)
+
     categoryController.controlCategory()
 
 
