@@ -1,13 +1,15 @@
+from util.typedef import IntPair
 from module.category_transferers.category_transferer import CategoryTransferer
 
 
 class DirectCategoryTransferer(CategoryTransferer):
 
-    # TODO 가변인자 이용
     def appendCategoryTransferDict(
             self,
-            oldCategoryId: int,
-            newCategoryId: int) -> None:
+            categoryIdPair: IntPair) -> None:
+
+        oldCategoryId: int = categoryIdPair[0]
+        newCategoryId: int = categoryIdPair[1]
 
         categoryTransferDict = {
             "old_category_id": oldCategoryId,

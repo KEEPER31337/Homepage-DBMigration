@@ -1,4 +1,5 @@
-from util.typedef import Row, Table
+from multipledispatch import dispatch
+from util.typedef import IntPair, Row, Table
 from module.category_transferers.category_transferer import CategoryTransferer
 
 
@@ -14,22 +15,30 @@ class LeafCategoryTransferer(CategoryTransferer):
     def setLeafDepth(self, leafDepth: int) -> None:
         self.__leafDepth = leafDepth
 
-    # simillar overloading
-    # TODO 가변인자 이용
-    # TODO Dispatch overloading 고려
+    @dispatch(int)
     def appendCategoryTransferDict(
             self,
-            rootCategoryId: int,
-            newCategoryId: int = None) -> None:
+            rootCategoryId: int) -> None:
 
-        isNewTransferred = bool(newCategoryId)
-        if not isNewTransferred:
-            newCategoryId = rootCategoryId
+        categoryTransferDict = {
+            "old_category_id": rootCategoryId,
+            "new_category_id": rootCategoryId,
+            "new_transferred": False}
+
+        self._categoryTransferTable.append(categoryTransferDict)
+
+    @dispatch(tuple)
+    def appendCategoryTransferDict(
+            self,
+            categoryIdPair: IntPair) -> None:
+
+        rootCategoryId: int = categoryIdPair[0]
+        newCategoryId: int = categoryIdPair[1]
 
         categoryTransferDict = {
             "old_category_id": rootCategoryId,
             "new_category_id": newCategoryId,
-            "new_transferred": isNewTransferred}
+            "new_transferred": True}
 
         self._categoryTransferTable.append(categoryTransferDict)
 
