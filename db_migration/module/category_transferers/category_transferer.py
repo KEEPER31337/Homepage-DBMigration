@@ -28,8 +28,7 @@ class CategoryTransferer(SingleDBControllable, metaclass=ABCMeta):
     @abstractmethod
     def transferCategory(self) -> None: pass
 
-    def appendCategoryTransfer(self,*args:Tuple[Union[int,CategoryIdPair]]):
-        categoriesAppend = args
+    def appendCategoryTransfer(self,*categoriesAppend:Tuple[Union[int,CategoryIdPair]]):
         for categoryAppend in categoriesAppend:
             self.appendCategoryTransferDict(categoryAppend)
 
