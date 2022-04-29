@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Tuple, Union
-from util.typedef import IntPair, Row, Table
+from util.typedef import CategoryIdPair, Row, Table
 from util.err import RowNotFoundError
 from util.db_controller import DBController
 from interface.db_controllable import SingleDBControllable
@@ -28,7 +28,7 @@ class CategoryTransferer(SingleDBControllable, metaclass=ABCMeta):
     @abstractmethod
     def transferCategory(self) -> None: pass
 
-    def appendCategoryTransfer(self,*args:Tuple[Union[int,IntPair]]):
+    def appendCategoryTransfer(self,*args:Tuple[Union[int,CategoryIdPair]]):
         categoriesAppend = args
         for categoryAppend in categoriesAppend:
             self.appendCategoryTransferDict(categoryAppend)

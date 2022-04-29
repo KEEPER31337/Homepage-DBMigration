@@ -1,4 +1,4 @@
-from util.typedef import IntPair
+from util.typedef import CategoryIdPair
 from module.category_transferers.category_transferer import CategoryTransferer
 
 
@@ -6,7 +6,7 @@ class DirectCategoryTransferer(CategoryTransferer):
 
     def appendCategoryTransferDict(
             self,
-            categoryIdPair: IntPair) -> None:
+            categoryIdPair: CategoryIdPair) -> None:
 
         oldCategoryId: int = categoryIdPair[0]
         newCategoryId: int = categoryIdPair[1]

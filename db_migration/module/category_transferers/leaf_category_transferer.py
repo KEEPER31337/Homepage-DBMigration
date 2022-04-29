@@ -1,5 +1,5 @@
 from multipledispatch import dispatch
-from util.typedef import IntPair, Row, Table
+from util.typedef import CategoryIdPair, Row, Table
 from module.category_transferers.category_transferer import CategoryTransferer
 
 
@@ -30,7 +30,7 @@ class LeafCategoryTransferer(CategoryTransferer):
     @dispatch(tuple)
     def appendCategoryTransferDict(
             self,
-            categoryIdPair: IntPair) -> None:
+            categoryIdPair: CategoryIdPair) -> None:
 
         rootCategoryId: int = categoryIdPair[0]
         newCategoryId: int = categoryIdPair[1]
