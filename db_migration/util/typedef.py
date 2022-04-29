@@ -4,3 +4,4 @@ Row = Dict[str, Union[int, str]]
 Table = List[Row]
 
 IntPair = Tuple[int,int]
+CategoryInfo = Tuple[int, str, int, str]

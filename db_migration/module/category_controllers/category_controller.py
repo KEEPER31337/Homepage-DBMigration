@@ -1,5 +1,5 @@
-from typing import List, Tuple
-from util.typedef import Table
+from typing import Tuple
+from util.typedef import CategoryInfo, Table
 from interface.db_controllable import SingleDBControllable
 
 
@@ -16,13 +16,16 @@ class CategoryController(SingleDBControllable):
         self.__categoryTable = list()
 
     # TODO 가변인자 이용
-    def appendCategory(self,
-                       categoryAppend: Tuple[int, str, int, str]) -> None:
-        self.__categoryTable.append(
-            {"id": categoryAppend[0],
-             "name": categoryAppend[1],
-             "parent_id": categoryAppend[2],
-             "href": categoryAppend[3]})
+    def appendCategory(
+            self,
+            *categoriesAppend: Tuple[CategoryInfo]) -> None:
+
+        for categoryAppend in categoriesAppend:
+            self.__categoryTable.append(
+                {"id": categoryAppend[0],
+                 "name": categoryAppend[1],
+                 "parent_id": categoryAppend[2],
+                 "href": categoryAppend[3]})
 
     def controlCategory(self) -> None:
         self.__insertCategory(self.__categoryTable)
