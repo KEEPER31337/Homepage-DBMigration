@@ -7,10 +7,8 @@ class CategoryController(SingleDBControllable):
     __categoryTable: Table
 
     __insertCategoryQuery = (
-        "INSERT INTO category(id, name, parent_id, href)"
-        " VALUES(%(id)s,%(name)s,%(parent_id)s,%(href)s)"
-        " ON DUPLICATE KEY"
-        " UPDATE name=%(name)s, parent_id=%(parent_id)s, href=%(href)s;")
+        "INSERT INTO category SET id=%(id)s, name=%(name)s, parent_id=%(parent_id)s, href=%(href)s"
+        " ON DUPLICATE KEY UPDATE name=%(name)s, parent_id=%(parent_id)s, href=%(href)s;")
 
     def __init__(self) -> None:
         self.__categoryTable = list()
