@@ -1,5 +1,5 @@
-from db_controller.db_controller import DBController
-from parent_puller.parent_puller import ParentPuller
+from util.db_controller import DBController
+from module.parent_pullers.parent_puller import ParentPuller
 from pprint import pprint as pp
 
 oldDB = DBController()
@@ -24,8 +24,8 @@ testComments = [{'comment_srl': 1, 'parent_srl': 0},
                 {'comment_srl': 13, 'parent_srl': 13},
                 {'comment_srl': 14, 'parent_srl': 15}]
 
-parentPuller.parentPulledTable = testComments
-parentPuller.initVisited()
-pp(parentPuller.travelParentPulledTable())
+parentPuller.__parentPulledTable = testComments
+parentPuller.__initVisited()
+pp(parentPuller.__travelParentPulledTable())
 
 # parentPuller.pullParent()

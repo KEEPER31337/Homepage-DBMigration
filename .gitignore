@@ -1,3 +1,5 @@
 __pycache__
 *.egg-info
 script/category_struct
+resource/dump
+resource/new_init

@@ -1,18 +1,31 @@
 #!/bin/bash
 
+# make sure your mysql service is running
 pip3 install -r requirements.txt
 python3 setup.py develop
 
-# 구 DB명 바꿔서 dump 적용
-# copy DB set
+# run old DB dump
+# mysql -u root -p < resource/dump/keeper_dump.sql
+
+# copy old DB tables
+echo "*Copying old DB tables..."
 mysql -u root -p < resource/keeper_copy_setter.sql
 
-# 신 DB init.sql의 category 기본값 삭제
-# 신 DB init.sql을 resource/로 옮기기
-mysql -u root -p < resource/keeper_new_init.sql
+# run new DB init.sql
+echo "*Runnning new DB init.sql..."
+mysql -u root -p < resource/new_init/keeper_new_init.sql
 
-# db_migration/__main__.py에서 copy DB명, 신 DB명 맞추기
+# delete new DB init category table rows
+echo "*Removing new DB init category table rows..."
+mysql -u root -p -e "DELETE FROM keeper_new.category;"
+
+# fill right DB name at db_migration/__main__.py
+# run main module
+echo "*Running main module..."
 python3 db_migration
 
 # Duplicated equipment merging
-# 구 DB 및 copy DB삭제
+
+# Remove copy & old db.
+# echo "*Removing copy & old db..."
+# mysql -u root -p -e "DROP DATABASE keeper; DROP DATABASE keeper_copy;"
