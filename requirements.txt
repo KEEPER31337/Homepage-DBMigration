@@ -2,4 +2,4 @@ setuptools
 PyMySQL
 lxml
 markdownify
-multipleddispatch
+multipledispatch
