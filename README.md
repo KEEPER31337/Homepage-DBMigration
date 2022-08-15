@@ -14,13 +14,13 @@
 
 <br/>
 
-### Introduction
+### 🏹Introduction
 &nbsp;&nbsp;기존 KEEPER 홈페이지는 [XpressEngine](https://www.xpressengine.com/)으로 생성된 웹사이트였습니다. DB 또한 해당 엔진으로 자동 생성 되었는데, [DB ASIS](#DB-ASIS)에서 볼 수 있듯이 테이블이 아주 많고, 복잡하고, 관계도 없습니다. 따라서 DB를 그대로 기용하기엔 불가능한 환경임을 고려, [새 DB](#DB-TOBE)를 설계하게 되었고, 이에 기존의 데이터를 이관하게 되었습니다.
 
-### Features
+### 🎨Features
 [Modules description](./FEATURE.md)
 
-### How to use (Linux)
+### 🪶How to use (Linux)
 
 ```bash
 git clone https://github.com/KEEPER31337/Homepage-DBMigration.git
@@ -31,7 +31,7 @@ cd Homepage-DBMigration
 ./script/migrate_keeper_db.sh
 ```
 
-### Required Python package
+### 📦Required Python package
 [requirements.txt](./requirements.txt)  
 
 <a href="https://pypi.org/project/setuptools/"><img src="https://img.shields.io/badge/-setuptools-336790" /></a>
@@ -40,9 +40,9 @@ cd Homepage-DBMigration
 <a href="https://pypi.org/project/markdownify/"><img src="https://img.shields.io/badge/-markdownify-FFE6FF" /></a>
 <a href="https://pypi.org/project/multipledispatch/"><img src="https://img.shields.io/badge/-multipledispatch-F2C63E" /></a>
 
-### DB ASIS
+### 🌙DB ASIS
 ![asis](./img/keeper_db_asis.png)
 
-### DB TOBE
-- 20220610 UPDATED
+### ☀️DB TOBE
+20220610 UPDATED
 ![tobe](./img/keeper_db_tobe_20220610.png)
